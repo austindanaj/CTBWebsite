@@ -165,17 +165,10 @@
 
      
       
-         <script>
-             $(document).ready(function () {
-                 $('#inputPassword').keypress(function (e) {
-                     if (e.keyCode == 13)
-                         $('#OkClicked').click();
-                 });
-             });
-        </script>
+       
 
 
-        <asp:Panel ID="loginContainer" runat="server">
+        <asp:Panel ID="loginContainer" runat="server" DefaultButton="OkClicked">
             <div class="modal fade loginSocialModal in" data-backdrop="static" id="loginModal" tabindex="-1" aria-hidden="false" style="display: block">
                 <div class="card card-container">
                     <div class="form-signin">

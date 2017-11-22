@@ -26,8 +26,8 @@
                                             <h3 style="color: #fff;">Advance Dev</h3>
                                             <br />
                                             <div class="progress">
-                                                <div id="prgAdvDev" runat="server" class="progress-bar  color1" role="progressbar" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100" style="width: 85%">
-                                                    <span id="spanAdvDev" runat="server" class="bar-width">85%</span>
+                                                <div id="prgAdvDev" runat="server" class="progress-bar  color1" role="progressbar" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100" style="width: 0%">
+                                                    <span id="spanAdvDev" runat="server" class="bar-width">0%</span>
                                                 </div>
 
                                             </div>
@@ -37,8 +37,8 @@
                                             <h3 style="color: #fff;">Production Dev (Auto)</h3>
                                             <br />
                                             <div class="progress">
-                                                <div id="prgProd" runat="server" class="progress-bar color2" role="progressbar" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100" style="width: 95%">
-                                                    <span id="spanProd" runat="server" class="bar-width">95%</span>
+                                                <div id="prgProd" runat="server" class="progress-bar color2" role="progressbar" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100" style="width: 0%">
+                                                    <span id="spanProd" runat="server" class="bar-width">0%</span>
                                                 </div>
                                             </div>
                                         </div>
@@ -47,8 +47,8 @@
                                             <h3 style="color: #fff;">Design in Market (Non-Auto)</h3>
                                             <br />
                                             <div class="progress">
-                                                <div id="prgDiM" runat="server" class="progress-bar color3" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: 80%">
-                                                    <span id="spanDiM" runat="server" class="bar-width">80%</span>
+                                                <div id="prgDiM" runat="server" class="progress-bar color3" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: 0%">
+                                                    <span id="spanDiM" runat="server" class="bar-width">0%</span>
                                                 </div>
                                             </div>
                                         </div>
@@ -57,8 +57,8 @@
                                             <h3 style="color: #fff;">Time Off</h3>
                                             <br />
                                             <div class="progress">
-                                                <div id="prgTOff" runat="server" class="progress-bar color4" role="progressbar" aria-valuenow="80" aria-valuemin="0" aria-valuemax="100" style="width: 90%">
-                                                    <span id="spanTOff" runat="server" class="bar-width">90%</span>
+                                                <div id="prgTOff" runat="server" class="progress-bar color4" role="progressbar" aria-valuenow="80" aria-valuemin="0" aria-valuemax="100" style="width: 0%">
+                                                    <span id="spanTOff" runat="server" class="bar-width">0%</span>
                                                 </div>
                                             </div>
                                         </div>

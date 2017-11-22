@@ -247,15 +247,15 @@ namespace CTBWebsite
             if (isProject)
             {
                 table = "ProjectHours";
-                readerQuery = "select ID, Hours_worked from ProjectHours where Alna_num=@value1 and Proj_ID=(select ID from Projects where Name=@value2) and Date_ID=@value3";
+                readerQuery = "select ID, Hours_worked from ProjectHours where Alna_num=@value1 and Proj_ID=(select Project_ID from Projects where Name=@value2) and Date_ID=@value3";
                 insertionQuery = "insert into ProjectHours values(@value1, (select Project_ID from Projects where Name=@value2), @value3, @value4)";
                 tableToUpdate = projectData;
             }
             else
             {
-                table = "VehicleHours";
-                insertionQuery = "insert into VehicleHours values(@value1, (select ID from Vehicles where Name=@value2), @value3, @value4)";
+                table = "VehicleHours";             
                 readerQuery = "select ID, Hours_worked from VehicleHours where Alna_num=@value1 and Vehicle_ID=(select ID from Vehicles where Name=@value2) and Date_ID=@value3";
+                insertionQuery = "insert into VehicleHours values(@value1, (select ID from Vehicles where Name=@value2), @value3, @value4)";
                 tableToUpdate = vehiclesData;
             }
 
