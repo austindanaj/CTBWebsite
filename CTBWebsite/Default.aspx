@@ -71,49 +71,49 @@
                 <!--/.item-->
 
                 <div class="item" style="background-image: url(images/slider/slide2.jpg)">
-                      <div class="banner-overlay">
-                    <div class="container">
-                        <div class="row slide-margin">
-                            <div class="col-sm-6">
-                                <div class="carousel-content">
-                                      <h1>Employees Out This Week</h1>
-                                      <asp:GridView ID="dgvOffThisWeek" Width="80%" HeaderStyle-VerticalAlign="Middle" HeaderStyle-HorizontalAlign="Center" RowStyle-VerticalAlign="Middle" RowStyle-HorizontalAlign="Center" AllowPaging="true" PageSize="5" OnPageIndexChanging="dgvOffThisWeek_PageIndexChanged" runat="server" ForeColor="WhiteSmoke"  CssClass="table table-bordered table-hover" />
-                                   
+                    <div class="banner-overlay">
+                        <div class="container">
+                            <div class="row slide-margin">
+                                <div class="col-sm-6">
+                                    <div class="carousel-content">
+                                        <h1>Employees Out This Week</h1>
+                                        <asp:GridView ID="dgvOffThisWeek" Width="80%" HeaderStyle-VerticalAlign="Middle" HeaderStyle-HorizontalAlign="Center" RowStyle-VerticalAlign="Middle" RowStyle-HorizontalAlign="Center" AllowPaging="true" PageSize="5" OnPageIndexChanging="dgvOffThisWeek_PageIndexChanged" runat="server" ForeColor="WhiteSmoke" CssClass="table table-bordered table-hover" />
+
+                                    </div>
+                                </div>
+
+                                <div class="col-sm-6 hidden-xs animation animated-item-4">
                                 </div>
                             </div>
-
-                            <div class="col-sm-6 hidden-xs animation animated-item-4">
-                              
-                            </div>
-                              </div>
                         </div>
                     </div>
                 </div>
                 <!--/.item-->
 
                 <div class="item" style="background-image: url(images/slider/slide3.jpg)">
-                         <div class="banner-overlay">
-                    <div class="container">
-                        <div class="row slide-margin">
-                           <div class="form-group" style="display: inline-block">
+                    <div class="banner-overlay">
+                        <div class="container">
+                            <div class="row slide-margin">
+                                <div class="form-group" style="display: inline-block">
                                     <h1 style="font-weight: 700; font-size: 50px;">Dowload Hours</h1>
-                                    <asp:DropDownList ID="ddlselectWeek" runat="server" CssClass="form-control"/><br />
+                                    <asp:DropDownList ID="ddlselectWeek" runat="server" CssClass="form-control" /><br />
                                     <asp:Button runat="server" OnClick="download" Text="Download" Width="100%" ForeColor="WhiteSmoke" CssClass="btn btn-signin btn-lg" />
-                                   </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
+                    <!--/.item-->
                 </div>
-                <!--/.item-->
+                <!--/.carousel-inner-->
             </div>
-            <!--/.carousel-inner-->
+            <!--/.carousel-->
+            <a class="prev hidden-xs" href="#main-slider" data-slide="prev">
+                <i class="fa fa-chevron-left"></i>
+            </a>
+            <a class="next hidden-xs" href="#main-slider" data-slide="next">
+                <i class="fa fa-chevron-right"></i>
+            </a>
         </div>
-        <!--/.carousel-->
-        <a class="prev hidden-xs" href="#main-slider" data-slide="prev">
-            <i class="fa fa-chevron-left"></i>
-        </a>
-        <a class="next hidden-xs" href="#main-slider" data-slide="next">
-            <i class="fa fa-chevron-right"></i>
-        </a>
     </section>
     <!--/#main-slider-->
     <section id="feature">
@@ -195,7 +195,7 @@
         <!--/.container-->
     </section>
     <!--/#feature-->
-    
+
 
 
 </asp:Content>

@@ -47,6 +47,31 @@ namespace CTBWebsite
             if (Session["Vehicle"] == null)
                 Session["Vehicle"] = false;
 
+
+            if (!IsPostBack)
+            {
+                if (Request.Cookies["userName"] != null)
+                {
+                    string userName = Request.Cookies["userName"].Value;
+                    Response.Cookies["userName"].Value = userName;
+                    Response.Cookies["userName"].Expires = DateTime.Now.AddDays(10);
+
+                    objConn = new SqlConnection(SuperPage.LOCAL_TO_SERVER_CONNECTION_STRING);
+                    objConn.Open();
+
+                    SqlDataReader reader = getReader("Select Alna_num, Name, Full_time, Vehicle from Employees where Employees.[Name]=@value1;", Server.HtmlEncode(Request.Cookies["userName"].Value), objConn);
+                    reader.Read();
+                    Session["Alna_num"] = reader.GetValue(0);
+                    Session["Name"] = reader.GetValue(1);
+                    Session["Full_time"] = reader.GetValue(2);
+                    Session["Vehicle"] = reader.GetValue(3);
+                    Session["loginStatus"] = Session["Name"];
+
+                    btnLogin.Visible = false;
+                    btnLogout.Visible = true;
+                }
+            }
+
         }
 
 
@@ -55,7 +80,7 @@ namespace CTBWebsite
 
             objConn = new SqlConnection(SuperPage.LOCAL_TO_SERVER_CONNECTION_STRING);
             objConn.Open();
-            SqlDataReader reader = getReader("SELECT Name FROM Employees where Active=@value1;", true, objConn);
+            SqlDataReader reader = getReader("SELECT Name FROM Employees where Active=@value1 Order By Name;", true, objConn);
 
             while (reader.Read())
             {
@@ -199,7 +224,12 @@ namespace CTBWebsite
         }
         protected void Sign_Out(Object sender, EventArgs e)
         {
-           
+
+            HttpCookie aCookie = Request.Cookies["userName"];
+            aCookie.Value = null;
+            aCookie.Expires = DateTime.Now.AddDays(-1);
+            Response.Cookies.Add(aCookie);
+
             Session.Clear();
             Session["loginStatus"] = "Sign In";         
           
@@ -239,7 +269,13 @@ namespace CTBWebsite
                 Session["Full_time"] = reader.GetValue(2);
                 Session["Vehicle"] = reader.GetValue(3);
                 Session["loginStatus"] = Session["Name"];
-             
+
+                HttpCookie aCookie = new HttpCookie("userName");
+                aCookie.Value = reader.GetValue(1).ToString();
+                aCookie.Expires = DateTime.Now.AddDays(10);
+                Response.Cookies.Add(aCookie);
+
+
                 redirectSafely("~/");
             }
             catch (Exception ex)
@@ -275,9 +311,7 @@ namespace CTBWebsite
         {
             try
             {
-                Server.ClearError();
                 Response.Redirect(path, false);
-                Context.ApplicationInstance.CompleteRequest();
             }
             catch (Exception e)
             {

@@ -31,6 +31,24 @@ namespace CTBWebsite {
         protected global::System.Web.UI.HtmlControls.HtmlAnchor timeOffPage;
         
         /// <summary>
+        /// btnProjects control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlGenericControl btnProjects;
+        
+        /// <summary>
+        /// A1 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlAnchor A1;
+        
+        /// <summary>
         /// lstSchedule control.
         /// </summary>
         /// <remarks>

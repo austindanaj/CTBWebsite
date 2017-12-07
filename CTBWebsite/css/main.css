@@ -510,6 +510,7 @@ input.search-form:hover {
     margin: 0 15px 0 0;
     border: 1px solid #0099FF;
     position: relative;
+    text-align: center;
 }
 
 #main-slider .carousel-indicators .active:after

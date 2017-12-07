@@ -6,7 +6,7 @@
     <section id="headerContent" style="height: 530px" class="no-margin slider">
         <div class="carousel slide">
             <div class="carousel-inner">
-                <div class="item active" style="background-image: url(images/slider/projecthours.jpg)">
+                <div class="item active" style="background-image: url(images/slider/projecthours.jpg);">
                     <div class="banner-overlay">
                         <div class="container">
                             <div class="carousel-content">
@@ -297,7 +297,7 @@
     <div class="clients-area center wow fadeInDown" >
       
         <div class="center wow fadeInDown animated">
-            <asp:GridView ID="dgvProject" runat="server" ForeColor="WhiteSmoke" HeaderStyle-VerticalAlign="Middle" HeaderStyle-HorizontalAlign="Center" RowStyle-VerticalAlign="Middle" RowStyle-HorizontalAlign="Center" AllowPaging="true" PageSize="15" OnPageIndexChanging="dgvProject_PageIndexChanged" CssClass="table table-bordered table-hover"
+            <asp:GridView ID="dgvProject" runat="server" ForeColor="WhiteSmoke" HeaderStyle-VerticalAlign="Middle" HeaderStyle-HorizontalAlign="Center" RowStyle-VerticalAlign="Middle" RowStyle-HorizontalAlign="Center" AllowPaging="true" PageSize="30" OnPageIndexChanging="dgvProject_PageIndexChanged" CssClass="table table-bordered table-hover"
                 OnRowDataBound="color" />
         </div>
         <div class="center wow fadeInDown animated">

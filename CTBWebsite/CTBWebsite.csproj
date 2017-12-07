@@ -164,9 +164,11 @@
     <Content Include="fonts\fontawesome-webfont.ttf" />
     <Content Include="fonts\fontawesome-webfont.woff" />
     <Content Include="fonts\FontAwesome.otf" />
+    <Content Include="GlobalADefault.aspx" />
     <Content Include="Hours.aspx" />
     <Content Include="images\404.xcf" />
     <Content Include="images\accordion1.png" />
+    <Content Include="images\a_icon.ico" />
     <Content Include="images\client1.png" />
     <Content Include="images\client2.png" />
     <Content Include="images\client3.png" />
@@ -442,6 +444,13 @@
     </Compile>
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
+    </Compile>
+    <Compile Include="GlobalADefault.aspx.cs">
+      <DependentUpon>GlobalADefault.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="GlobalADefault.aspx.designer.cs">
+      <DependentUpon>GlobalADefault.aspx</DependentUpon>
     </Compile>
     <Compile Include="Hours.aspx.cs">
       <DependentUpon>Hours.aspx</DependentUpon>

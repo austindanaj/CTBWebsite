@@ -136,10 +136,8 @@ namespace CTBWebsite {
 
 		protected void redirectSafely(string path) {
 			try {
-				Server.ClearError();
-				Response.Redirect(path, false);
-				Context.ApplicationInstance.CompleteRequest();
-			}
+                Response.Redirect(Request.RawUrl, false);
+            }
 			catch (Exception e) {
 				writeStackTrace("problem redirecting", e);
 			}
@@ -363,21 +361,21 @@ namespace CTBWebsite {
 			if (isActive) {
 				if (isProjectHours) {
 					modelData = getDataTable("select Project_ID, Abbreviation from Projects where Active=@value1 order by Projects.PriorityOrder", true, objConn);
-					employeesData = getDataTable("select Alna_num, Name, Full_time from Employees where Active=@value1", true, objConn);
+					employeesData = getDataTable("select Alna_num, Name, Full_time from Employees where Active=@value1 Order By Name", true, objConn);
 				}
 				else {
-					employeesData = getDataTable("select Alna_num, Name, Full_time from Employees where Active=@value1 and Vehicle=@value1", true, objConn);
+					employeesData = getDataTable("select Alna_num, Name, Full_time from Employees where Active=@value1 and Vehicle=@value1 Order By Name", true, objConn);
 					modelData = getDataTable("select ID, Abbreviation from Vehicles where Active=@value1", true, objConn);
 				}
 			}
 			else {
 				if (isProjectHours) {
 					modelData = getDataTable("select Project_ID, Abbreviation from Projects order by Projects.PriorityOrder", null, objConn);
-					employeesData = getDataTable("select Alna_num, Name, Full_time from Employees", null, objConn);
+					employeesData = getDataTable("select Alna_num, Name, Full_time from Employees Order By Name", null, objConn);
 				}
 				else {
 					modelData = getDataTable("select ID, Abbreviation from Vehicles", null, objConn);
-					employeesData = getDataTable("select Alna_num, Name, Full_time from Employees where Vehicle=@value1", true, objConn);
+					employeesData = getDataTable("select Alna_num, Name, Full_time from Employees where Vehicle=@value1 Order By Name", true, objConn);
 				}
 			}
 

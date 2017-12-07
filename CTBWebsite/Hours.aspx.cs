@@ -29,6 +29,8 @@ namespace CTBWebsite
                     initDate(objConn);
                 if (Session["Active"] == null)
                     Session["Active"] = true;
+                if (Session["SelectedDate"] == null)
+                    Session["SelectedDate"] = 0;
 
                 getDate();
                 getData();
@@ -79,6 +81,8 @@ namespace CTBWebsite
 
             foreach (DataRow d in datesData.Rows)
                 ddlselectWeek.Items.Add(((Date)d[0]).ToShortDateString());
+
+            ddlselectWeek.SelectedIndex = (int) Session["selectedDate"];
 
             Hashtable h = new Hashtable();
 
@@ -162,6 +166,7 @@ namespace CTBWebsite
                 Session["Date_ID"] = (int)reader.GetValue(0);
                 objConn.Close();
                 Session["Active"] = !chkInactive.Checked;
+                Session["selectedDate"] = ddlselectWeek.SelectedIndex;
                 redirectSafely("~/Hours");
             }
             else if (sender.Equals(btnSubmitPercent))
