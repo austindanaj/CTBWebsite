@@ -33,9 +33,9 @@
                                     <br />
                                     <div class="form-group">
                                         <div class="checkbox">
-                                             <asp:CheckBox ID="chkInactive" OnCheckedChanged="TriggerEvent" runat="server" Style="color: white;" Text=" Show Inactives" />
+                                            <asp:CheckBox ID="chkInactive" OnCheckedChanged="TriggerEvent" runat="server" Style="color: white;" Text=" Show Inactives" />
                                         </div>
-                                       
+
                                     </div>
 
 
@@ -43,68 +43,6 @@
                                     <%-- <p class="lead">Easy to use, Responsive features, Mobile-first approach <br> Browser compatibility Bootstrap is compatible with all modern browsers</p>--%>
                                 </div>
 
-
-
-
-
-
-
-
-
-
-
-
-
-                                <!--/.col-md-4-->
-                                <%--
-                    <div class="col-md-4 col-sm-6 wow fadeInDown" data-wow-duration="1000ms" data-wow-delay="600ms">
-                        <div class="feature-wrap">
-                            <i class="fa fa-th-list"></i>
-                            <h2>Menu or Navbar</h2>
-                            <h3>A standard navigation class navbar navbar-default</h3>
-                        </div>
-                    </div><!--/.col-md-4-->
-
-                    <div class="col-md-4 col-sm-6 wow fadeInDown" data-wow-duration="1000ms" data-wow-delay="600ms">
-                        <div class="feature-wrap">
-                            <i class="fa fa-th"></i>
-                            <h2>Grid System</h2>
-                            <h3>grid system allows up to 12 columns across the page</h3>
-                        </div>
-                    </div><!--/.col-md-4-->
-
-                    <div class="col-md-4 col-sm-6 wow fadeInDown" data-wow-duration="1000ms" data-wow-delay="600ms">
-                        <div class="feature-wrap">
-                            <i class="fa fa-cloud-download"></i>
-                            <h2>Easy to customize</h2>
-                            <h3>Bootstrap Grid system has four classes - xs, sm, md & lg</h3>
-                        </div>
-                    </div><!--/.col-md-4-->
-                
-                    <div class="col-md-4 col-sm-6 wow fadeInDown" data-wow-duration="1000ms" data-wow-delay="600ms">
-                        <div class="feature-wrap">
-                            <i class="fa fa-comment"></i>
-                            <h2>Modal & Tooltip</h2>
-                            <h3>Modal is a dialog box/popup, Tooltip is small pop-up box</h3>
-                        </div>
-                    </div><!--/.col-md-4-->
-
-                    <div class="col-md-4 col-sm-6 wow fadeInDown" data-wow-duration="1000ms" data-wow-delay="600ms">
-                        <div class="feature-wrap">
-                            <i class="fa fa-cogs"></i>
-                            <h2>Grid Settings</h2>
-                            <h3>xs (<768px), sm (>=768px), md (>=992px), lg (>=1200px)</h3>
-                        </div>
-                    </div><!--/.col-md-4-->
-
-                    <div class="col-md-4 col-sm-6 wow fadeInDown" data-wow-duration="1000ms" data-wow-delay="600ms">
-                        <div class="feature-wrap">
-                            <i class="fa fa-heart"></i>
-                            <h2>The Carousel Plugin</h2>
-                            <h3>The Carousel plugin is a Slideshow</h3>
-                        </div>
-                    </div><!--/.col-md-4-->
-                                --%>
                             </div>
                         </div>
                         <!--/.services-->
@@ -120,7 +58,6 @@
         <div class="carousel slide">
             <div class="carousel-inner">
                 <div class="item active" style="background-color: gainsboro">
-
                     <div class="container">
                         <div class="carousel-content">
                             <div id="pnlAddHours" runat="server" class="col-md-6 wow fadeInDown" data-wow-duration="1000ms" data-wow-delay="600ms">
@@ -186,85 +123,7 @@
             </div>
         </div>
 
-        <%--
-    <section id="main-slider" class="no-margin">
-        <div class="carousel slide">
-            <ol class="carousel-indicators">
-                <li data-target="#main-slider" data-slide-to="0" class="active"></li>
-                <li data-target="#main-slider" data-slide-to="1"></li>
-            </ol>
-            <div class="carousel-inner">
 
-                <div class="item active" style="background-image: url(images/slider/projecthours.jpg)">
-                    <div class="banner-overlay">
-                        <div class="container">
-                            <div class="row slide-margin">
-                                <div class="col-sm-6">
-                                    <div class="carousel-content">
-
-                                        <div class="col-md-9 wow fadeInDown" data-wow-duration="1000ms" data-wow-delay="600ms">
-                                            <h1 style="font-weight: 700; font-size: 50px;">Project Hours</h1>
-                                            <asp:Panel ID="pnlAddHours" runat="server">
-                                                <asp:Label ID="Label2" runat="server" Font-Size="24px" Text="Project Percent" />
-                                                <br />
-                                                <br />
-                                                <asp:DropDownList ID="ddlProjects" CssClass="form-control" runat="server" />
-                                                <br />
-                                                <br />
-                                                <asp:DropDownList ID="ddlHours" CssClass="form-control" runat="server" />
-                                                <br />
-                                                <br />
-                                                <asp:Button ID="btnSubmitPercent" runat="server" OnClick="TriggerEvent" Text="Submit" CssClass="btn btn-lg btn-primary btn-block btn-signin" Text-Align="Center" />
-                                                <br />
-                                                <asp:Label ID="lblUserHours" runat="server" ForeColor="#999999" Font-Size="X-Small" Text="Your Hours: 0/40" />
-                                            </asp:Panel>
-                                        </div>
-                                        <!--/.col-md-4-->
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <!--/.item-->
-
-                <div class="item" style="background-image: url(images/slider/vehiclehours.jpg)">
-                    <div class="banner-overlay">
-                        <div class="container">
-                            <div class="row slide-margin">
-                                <div class="col-sm-6">
-                                    <div class="carousel-content">
-
-
-                                        <div class="col-md-9  wow fadeInDown" data-wow-duration="1000ms" data-wow-delay="600ms">
-                                            <div class="feature-wrap">
-                                                <h1 style="font-weight: 700; font-size: 50px;">Vehicle Hours</h1>
-                                                <asp:Panel ID="pnlVehicleHours" runat="server" Visible="true">
-                                                    <asp:Label ForeColor="White" ID="vehicleHoursTerns" runat="server" Font-Size="24px" Text="Vehicle Hours" />
-                                                    <br />
-                                                    <br />
-                                                    <asp:DropDownList ID="ddlVehicles" CssClass="form-control" runat="server" Visible="true" />
-                                                    <br />
-                                                    <br />
-                                                    <asp:DropDownList ID="ddlHoursVehicles" runat="server" CssClass="form-control" Visible="true" />
-                                                    <br />
-                                                    <br />
-                                                    <asp:Button ID="btnSubmitVehicles" AutoPostBack="true" OnClick="TriggerEvent" runat="server" Text="Submit" CssClass="btn btn-lg btn-primary btn-block btn-signin" Text-Align="Center" Visible="true" />
-                                                </asp:Panel>
-                                            </div>
-                                        </div>
-                                        <!--/.col-md-4-->
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <!--/.item-->
-            </div>
-            <!--/.carousel-inner-->
-        </div>
-        --%>
         <!--/.carousel-->
         <a id="leftButton" class="prev hidden-xs" runat="server" onserverclick="TriggerEvent" visible="false">
             <i class="fa fa-chevron-left"></i>
@@ -294,19 +153,19 @@
 
     <!--/#feature-->
     <section id="middle">
-    <div class="clients-area center wow fadeInDown" >
-      
-        <div class="center wow fadeInDown animated">
-            <asp:GridView ID="dgvProject" runat="server" ForeColor="WhiteSmoke" HeaderStyle-VerticalAlign="Middle" HeaderStyle-HorizontalAlign="Center" RowStyle-VerticalAlign="Middle" RowStyle-HorizontalAlign="Center" AllowPaging="true" PageSize="30" OnPageIndexChanging="dgvProject_PageIndexChanged" CssClass="table table-bordered table-hover"
-                OnRowDataBound="color" />
-        </div>
-        <div class="center wow fadeInDown animated">
-            <asp:GridView ID="dgvCars" runat="server" ForeColor="WhiteSmoke" HeaderStyle-VerticalAlign="Middle" HeaderStyle-HorizontalAlign="Center" RowStyle-VerticalAlign="Middle" RowStyle-HorizontalAlign="Center" CssClass="table table-bordered table-hover"
-                Visible="false" />
+        <div class="clients-area center wow fadeInDown">
+
+            <div class="center wow fadeInDown animated">
+                <asp:GridView ID="dgvProject" runat="server" ForeColor="WhiteSmoke" HeaderStyle-VerticalAlign="Middle" HeaderStyle-HorizontalAlign="Center" RowStyle-VerticalAlign="Middle" RowStyle-HorizontalAlign="Center" AllowPaging="true" PageSize="30" OnPageIndexChanging="dgvProject_PageIndexChanged" CssClass="table table-bordered table-hover table-responsive"
+                    OnRowDataBound="color" />
+            </div>
+            <div class="center wow fadeInDown animated">
+                <asp:GridView ID="dgvCars" runat="server" ForeColor="WhiteSmoke" HeaderStyle-VerticalAlign="Middle" HeaderStyle-HorizontalAlign="Center" RowStyle-VerticalAlign="Middle" RowStyle-HorizontalAlign="Center" CssClass="table table-bordered table-hover table-responsive"
+                    Visible="false" />
 
             </div>
 
-       
-    </div>
-        </section>
+
+        </div>
+    </section>
 </asp:Content>

@@ -16,11 +16,13 @@
     <script src="js/bootstrap.min.js"></script>
     <%-- ------ CSS ------ --%>
     <link href="css/bootstrap.min.css" rel="stylesheet" type="text/css" />
+    <link href="css/font-awesome.css" rel="stylesheet" type="text/css" />
     <link href="css/font-awesome.min.css" rel="stylesheet" type="text/css" />
     <link href="css/animate.min.css" rel="stylesheet" type="text/css" />
     <link href="css/prettyPhoto.css" rel="stylesheet" type="text/css" />
     <link href="css/main.css" rel="stylesheet" type="text/css" />
     <link href="css/responsive.css" rel="stylesheet" type="text/css" />
+    <link href="css/stylish-portfolio.css" rel="stylesheet" type="text/css" />
 
     <link href="http://maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css"
         rel="stylesheet" type="text/css" />
@@ -45,7 +47,7 @@
     <link rel="shortcut icon" href="images/a_icon.ico" />
 </head>
 <body style="margin: 0; height: 100%;">
-    <form runat="server">
+    <form style="margin-bottom: 0;" runat="server">
         <!-- <audio src="Music/01 Ghosts N Stuff.m4a" autoplay="autoplay" loop="loop"></audio>-->
         <asp:ScriptManager runat="server">
             <Scripts>
@@ -128,56 +130,9 @@
         <asp:ContentPlaceHolder ID="MainContent" runat="server">
         </asp:ContentPlaceHolder>
 
+        <ajaxToolkit:ModalPopupExtender ID="mpeLogin" runat="server" TargetControlID="hiddenButton" PopupControlID="loginContainer" BackgroundCssClass="modalBackground" CancelControlID="CancelClicked" />
 
-
-        <!--/#bottom-->
-        <footer id="footer" class="midnight-blue">
-            <div class="container">
-                <div class="row">
-                    <div class="col-sm-6">
-                        <p>&copy; <%: DateTime.Now.Year %> - Connectivity Engineering Website</p>
-                    </div>
-                </div>
-            </div>
-            <a class="back-to-top"><i class="fa fa-2x fa-angle-up"></i></a>
-        </footer>
-        <!--/#footer-->
-        <!-- Back To Top -->
-        <script type="text/javascript">
-            jQuery(document).ready(function () {
-                var offset = 300;
-                var duration = 500;
-                jQuery(window).scroll(function () {
-                    if (jQuery(this).scrollTop() > offset) {
-                        jQuery('.back-to-top').fadeIn(duration);
-                    } else {
-                        jQuery('.back-to-top').fadeOut(duration);
-                    }
-                });
-
-                jQuery('.back-to-top').click(function (event) {
-                    event.preventDefault();
-                    jQuery('html, body').animate({ scrollTop: 0 }, duration);
-                    return false;
-                })
-            });
-        </script>
-
-        <!-- /top-link-block -->
-        <!-- Jscript -->
-
-
-        <script src="Scripts/jquery.prettyPhoto.js" type="text/javascript"></script>
-        <script src="Scripts/jquery.isotope.min.js" type="text/javascript"></script>
-        <script src="Scripts/main.js" type="text/javascript"></script>
-        <script src="Scripts/wow.min.js" type="text/javascript"></script>
-
-
-
-
-
-
-        <asp:Panel ID="loginContainer" runat="server" DefaultButton="OkClicked">
+       <%-- <asp:Panel ID="loginContainer" runat="server" DefaultButton="OkClicked" Style="display:none;">
             <div class="modal fade loginSocialModal in" data-backdrop="static" id="loginModal" tabindex="-1" aria-hidden="false" style="display: block">
                 <div class="card card-container">
                     <div class="form-signin">
@@ -221,11 +176,64 @@
             </div>
 
 
-        </asp:Panel>
+        </asp:Panel>--%>
+
+
+          <!--/#bottom-->
+        <footer id="footer" class="midnight-blue">
+            <div class="container">
+                <div class="row">
+                    <div class="col-sm-6">
+                        <p>&copy; <%: DateTime.Now.Year %> - Connectivity Engineering Website</p>
+                    </div>
+                </div>
+            </div>
+            <a class="back-to-top"><i class="fa fa-2x fa-angle-up"></i></a>
+        </footer>
+
         <asp:Button ID="hiddenButton" runat="server" Style="display: none" />
 
-        <ajaxToolkit:ModalPopupExtender ID="mpeLogin" runat="server" TargetControlID="hiddenButton" PopupControlID="loginContainer" BackgroundCssClass="modalBackground" CancelControlID="CancelClicked" />
+     
+      
+        <!--/#footer-->
+        <!-- Back To Top -->
+        <script type="text/javascript">
+            jQuery(document).ready(function () {
+                var offset = 300;
+                var duration = 500;
+                jQuery(window).scroll(function () {
+                    if (jQuery(this).scrollTop() > offset) {
+                        jQuery('.back-to-top').fadeIn(duration);
+                    } else {
+                        jQuery('.back-to-top').fadeOut(duration);
+                    }
+                });
+
+                jQuery('.back-to-top').click(function (event) {
+                    event.preventDefault();
+                    jQuery('html, body').animate({ scrollTop: 0 }, duration);
+                    return false;
+                })
+            });
+        </script>
+
+        <!-- /top-link-block -->
+        <!-- Jscript -->
+
+
+        <script src="Scripts/jquery.prettyPhoto.js" type="text/javascript"></script>
+        <script src="Scripts/jquery.isotope.min.js" type="text/javascript"></script>
+        <script src="Scripts/main.js" type="text/javascript"></script>
+        <script src="Scripts/wow.min.js" type="text/javascript"></script>
+
+
+
+
+
+
+
 
     </form>
+    
 </body>
 </html>

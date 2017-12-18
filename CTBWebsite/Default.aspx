@@ -133,7 +133,7 @@
                 <br />
                 <div class="row">
 
-                    <asp:GridView ID="dgvSchedule" HeaderStyle-VerticalAlign="Middle" HeaderStyle-HorizontalAlign="Center" RowStyle-VerticalAlign="Middle" RowStyle-HorizontalAlign="Center" runat="server" CssClass="table table-bordered" OnRowDataBound="color" />
+                    <asp:GridView ID="dgvSchedule" HeaderStyle-VerticalAlign="Middle" HeaderStyle-HorizontalAlign="Center" RowStyle-VerticalAlign="Middle" RowStyle-HorizontalAlign="Center" runat="server" CssClass="table table-bordered table-responsive" OnRowDataBound="color" />
                 </div>
 
                 <%-- 
