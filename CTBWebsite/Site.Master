@@ -132,7 +132,7 @@
 
         <ajaxToolkit:ModalPopupExtender ID="mpeLogin" runat="server" TargetControlID="hiddenButton" PopupControlID="loginContainer" BackgroundCssClass="modalBackground" CancelControlID="CancelClicked" />
 
-       <%-- <asp:Panel ID="loginContainer" runat="server" DefaultButton="OkClicked" Style="display:none;">
+        <asp:Panel ID="loginContainer" runat="server" DefaultButton="OkClicked" Style="display:none;">
             <div class="modal fade loginSocialModal in" data-backdrop="static" id="loginModal" tabindex="-1" aria-hidden="false" style="display: block">
                 <div class="card card-container">
                     <div class="form-signin">
@@ -176,7 +176,7 @@
             </div>
 
 
-        </asp:Panel>--%>
+        </asp:Panel>
 
 
           <!--/#bottom-->
@@ -194,7 +194,7 @@
         <asp:Button ID="hiddenButton" runat="server" Style="display: none" />
 
      
-      
+       
         <!--/#footer-->
         <!-- Back To Top -->
         <script type="text/javascript">

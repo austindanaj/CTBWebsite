@@ -2653,6 +2653,54 @@ img
     left: 50%;
     margin-left: -323px;
 }
+.modalContainer .loginSocialModal {
+    margin-left: -250px;
+    top: 50%;
+    -webkit-transform: translateY(-50%);
+    -ms-transform: translateY(-60%);
+    transform: translateY(-50%);
+    width: 500px;
+}
+
+.modalContainer {
+    width: 645px;
+    position: absolute;
+    top: 50%;
+    height: 284px;
+    margin-top: -142px;
+    left: 50%;
+    margin-left: -323px;
+}
+
+.modalContent {
+    position: relative;
+    background-color: #fff;
+    border: 1px solid #999;
+    border: 1px solid rgba(0,0,0,.2);
+    -webkit-box-shadow: 0 3px 9px rgba(0,0,0,.5);
+    box-shadow: 0 3px 9px rgba(0,0,0,.5);
+    background-clip: padding-box;
+    outline: none;
+}
+.modalBackground {
+    height: 100%;
+    background-color: #3a3a3a;
+    filter: alpha(opacity=70);
+    opacity: 0.7;
+}
+
+.modalHeader {
+    padding: 15px;
+    border-bottom: 1px solid #e5e5e5;
+    min-height: 16.42857143px;
+    display: block;
+}
+
+.modalHeader {
+    margin-top: -2px;
+    border: 0 none;
+    background-color: #f7f7f7;
+}
 
 .modalContent {
     position: relative;
@@ -3034,4 +3082,106 @@ body {
 .itemText {
     font-size: medium;
     color: #222;
+}
+.linkButton {
+    font-size: xx-large;
+    color: gainsboro;
+}
+.linkButton:hover {
+   color:#1f1f20
+}
+
+
+
+.modalReportContainer .reportModal {
+    margin-left: -250px;
+    top: 30%;
+    -webkit-transform: translateY(-50%);
+    -ms-transform: translateY(-60%);
+    transform: translateY(-50%);
+    width: 500px;
+}
+
+.modalReportContainer {
+    width: 645px;
+    position: absolute;
+    top: 50%;
+    height: 284px;
+    margin-top: -142px;
+    left: 50%;
+    margin-left: -323px;
+}
+
+.modalReportContent {
+    position: relative;
+    background-color: #fff;
+    border: 1px solid #999;
+    border: 1px solid rgba(0,0,0,.2);
+    -webkit-box-shadow: 0 3px 9px rgba(0,0,0,.5);
+    box-shadow: 0 3px 9px rgba(0,0,0,.5);
+    background-clip: padding-box;
+    outline: none;
+}
+
+.modalReportBackground {
+    height: 100%;
+    background-color: #3a3a3a;
+    filter: alpha(opacity=70);
+    opacity: 0.7;
+}
+
+.modalReportHeader {
+    padding: 15px;
+    border-bottom: 1px solid #e5e5e5;
+    min-height: 16.42857143px;
+    display: block;
+}
+
+.modalReportHeader {
+    margin-top: -2px;
+    border: 0 none;
+    background-color: #f7f7f7;
+}
+
+.report-container.report-card {
+    max-width: 700px;
+  
+}
+/*
+ * Card component
+ */
+.report-card {
+    background-color: #F7F7F7;
+    /* just in case there no content*/
+    padding: 20px 25px 30px;
+    margin: 0 auto 25px;
+    margin-top: 100px;
+    /* shadows and rounded borders */
+    -moz-border-radius: 2px;
+    -webkit-border-radius: 2px;
+    border-radius: 2px;
+    -moz-box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.3);
+    -webkit-box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.3);
+    box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.3);
+}
+
+.tool-container.tool-card {
+    max-width: 400px;
+}
+/*
+ * Card component
+ */
+.tool-card {
+    background-color: #F7F7F7;
+    /* just in case there no content*/
+    padding: 20px 25px 30px;
+    margin: 0 auto 25px;
+    margin-top: 100px;
+    /* shadows and rounded borders */
+    -moz-border-radius: 2px;
+    -webkit-border-radius: 2px;
+    border-radius: 2px;
+    -moz-box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.3);
+    -webkit-box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.3);
+    box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.3);
 }
