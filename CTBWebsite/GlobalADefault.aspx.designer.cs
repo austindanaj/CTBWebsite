@@ -157,15 +157,6 @@ namespace CTBWebsite {
         protected global::System.Web.UI.WebControls.GridView dgvReports;
         
         /// <summary>
-        /// ddlFileFilterType control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.DropDownList ddlFileFilterType;
-        
-        /// <summary>
         /// ddlFileVehicleFilter control.
         /// </summary>
         /// <remarks>
@@ -182,6 +173,15 @@ namespace CTBWebsite {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.DropDownList ddlFilePhoneFilter;
+        
+        /// <summary>
+        /// ddlFileFilterType control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.DropDownList ddlFileFilterType;
         
         /// <summary>
         /// ddlFileAuthorFilter control.
@@ -218,6 +218,33 @@ namespace CTBWebsite {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.GridView dgvFiles;
+        
+        /// <summary>
+        /// ddlImageVehicleFilter control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.DropDownList ddlImageVehicleFilter;
+        
+        /// <summary>
+        /// ddlImageAuthorFilter control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.DropDownList ddlImageAuthorFilter;
+        
+        /// <summary>
+        /// txtImageDateFilter control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.TextBox txtImageDateFilter;
         
         /// <summary>
         /// pnlImages control.

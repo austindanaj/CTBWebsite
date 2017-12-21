@@ -269,27 +269,33 @@
                         <ContentTemplate>
                             <div class="row">
                                 <div class="container">
-                                    <div class="col-md-2">
-                                        <asp:DropDownList ID="ddlFileFilterType" OnSelectedIndexChanged="ddlFileFilterType_OnSelectedIndexChanged" CssClass="form-control" runat="server" AutoPostBack="true">
-                                            <asp:ListItem Text="-- File Type Filter --" Value="-1" />
-                                        </asp:DropDownList>
-                                    </div>
-                                    <div class="col-md-2">
+
+                                    <div style="width: 20%" class="col-md-2">
                                         <asp:DropDownList ID="ddlFileVehicleFilter" OnSelectedIndexChanged="ddlFileVehicleFilter_OnSelectedIndexChanged" CssClass="form-control" runat="server" AutoPostBack="true">
                                             <asp:ListItem Text="-- Vehicle Filter --" Value="-1" />
                                         </asp:DropDownList>
                                     </div>
-                                    <div class="col-md-2">
+                                    <div style="width: 20%" class="col-md-2">
                                         <asp:DropDownList ID="ddlFilePhoneFilter" OnSelectedIndexChanged="ddlFilePhoneFilter_OnSelectedIndexChanged" CssClass="form-control" runat="server" AutoPostBack="true">
                                             <asp:ListItem Text="-- Phone Filter --" Value="-1" />
                                         </asp:DropDownList>
                                     </div>
-                                    <div class="col-md-2">
+                                    <div style="width: 20%" class="col-md-2">
+                                        <asp:DropDownList ID="ddlFileFilterType" OnSelectedIndexChanged="ddlFileFilterType_OnSelectedIndexChanged" CssClass="form-control" runat="server" AutoPostBack="true">
+                                            <asp:ListItem Text="-- File Type Filter --" Value="-1" />
+                                            <asp:ListItem Text="Calibration" Value="0" />
+                                            <asp:ListItem Text="TD1" Value="1" />
+                                            <asp:ListItem Text="TD2" Value="2" />
+                                            <asp:ListItem Text="TD3" Value="3" />
+                                            <asp:ListItem Text="TD4" Value="4" />
+                                        </asp:DropDownList>
+                                    </div>
+                                    <div style="width: 20%" class="col-md-2">
                                         <asp:DropDownList ID="ddlFileAuthorFilter" OnSelectedIndexChanged="ddlFileAuthorFilter_OnSelectedIndexChanged" CssClass="form-control" runat="server" AutoPostBack="true">
                                             <asp:ListItem Text="-- Author Filter --" Value="-1" />
                                         </asp:DropDownList>
                                     </div>
-                                    <div class="col-md-2">
+                                    <div style="width: 20%" class="col-md-2">
                                         <div class='input-group date' id='datetimepicker5'>
                                             <asp:TextBox runat="server" placeholder="-- Date Filter --" OnTextChanged="txtFileDateFilter_OnTextChanged" ID="txtFileDateFilter" CssClass="form-control" Style="margin-bottom: 0px;" />
                                             <span class="input-group-addon">
@@ -392,81 +398,116 @@
                                 </asp:Panel>
                             </div>
                         </ContentTemplate>
-                        <Triggers>
-                            <asp:AsyncPostBackTrigger ControlID="dgvFiles" EventName="RowCommand" />
-                        </Triggers>
+
                     </asp:UpdatePanel>
                 </div>
                 <div class="tab-pane" id="Images">
                     <!-- Images Tabs -->
-                    <asp:Panel ID="pnlImages" runat="server">
-                        <asp:GridView ID="dgvImages" runat="server"
-                            HeaderStyle-VerticalAlign="Middle"
-                            HeaderStyle-HorizontalAlign="Center"
-                            RowStyle-VerticalAlign="Middle"
-                            RowStyle-HorizontalAlign="Center"
-                            AllowPaging="true"
-                            PageSize="30"
-                            OnRowCommand="dgvImages_OnRowCommand"
-                            AutoGenerateColumns="False"
-                            CssClass="table table-bordered table-responsive">
-                            <Columns>
-                                <asp:TemplateField HeaderText="ID" SortExpression="ID">
-                                    <ItemTemplate>
-                                        <asp:Label runat="server"
-                                            Text='<%# Eval("ID") %>'></asp:Label>
-                                    </ItemTemplate>
-                                </asp:TemplateField>
-                                <asp:TemplateField HeaderText="Name" SortExpression="Name">
-                                    <ItemTemplate>
-                                        <asp:LinkButton runat="server"
-                                            CommandName="Download_File" CommandArgument='<%#Eval("Image_Path") + "," + Eval("Image_Ext") %>'
-                                            Text='<%# Eval("Image_Name") %>'></asp:LinkButton>
-                                    </ItemTemplate>
-                                </asp:TemplateField>
 
-                                <asp:TemplateField HeaderText="Vehicle" SortExpression="F">
-                                    <ItemTemplate>
-                                        <asp:Label runat="server"
-                                            Text='<%# Eval("Vehicle_Name") %>'></asp:Label>
-                                    </ItemTemplate>
-                                </asp:TemplateField>
+                    <asp:UpdatePanel runat="server">
+                        <ContentTemplate>
 
-                                <asp:TemplateField HeaderText="Author 1" SortExpression="Author_1">
-                                    <ItemTemplate>
-                                        <asp:Label runat="server"
-                                            Text='<%# Eval("Author_1") %>'></asp:Label>
-                                    </ItemTemplate>
-                                </asp:TemplateField>
 
-                                <asp:TemplateField HeaderText="Created" SortExpression="Date_Created">
-                                    <ItemTemplate>
-                                        <asp:Label runat="server"
-                                            Text='<%# Eval("Date_Created") %>'></asp:Label>
-                                    </ItemTemplate>
-                                </asp:TemplateField>
-                                <asp:TemplateField HeaderText="Uploaded" SortExpression="Date_Inserted">
-                                    <ItemTemplate>
-                                        <asp:Label runat="server"
-                                            Text='<%# Eval("Date_Inserted") %>'></asp:Label>
-                                    </ItemTemplate>
-                                </asp:TemplateField>
-                                <asp:TemplateField HeaderText="Updated" SortExpression="Date_Updated">
-                                    <ItemTemplate>
-                                        <asp:Label runat="server"
-                                            Text='<%# Eval("Date_Updated") %>'></asp:Label>
-                                    </ItemTemplate>
-                                </asp:TemplateField>
-                                <asp:TemplateField HeaderText="Comment" SortExpression="Comment">
-                                    <ItemTemplate>
-                                        <asp:Label runat="server"
-                                            Text='<%# Eval("Comment") %>'></asp:Label>
-                                    </ItemTemplate>
-                                </asp:TemplateField>
+                            <div class="row">
+                                <div class="container">
 
-                            </Columns>
-                        </asp:GridView>
-                    </asp:Panel>
+                                    <div class="col-md-4">
+                                        <asp:DropDownList ID="ddlImageVehicleFilter" OnSelectedIndexChanged="ddlImageVehicleFilter_OnSelectedIndexChanged" CssClass="form-control" runat="server" AutoPostBack="true">
+                                            <asp:ListItem Text="-- Vehicle Filter --" Value="-1" />
+                                        </asp:DropDownList>
+                                    </div>
+
+                                    <div class="col-md-4">
+                                        <asp:DropDownList ID="ddlImageAuthorFilter" OnSelectedIndexChanged="ddlImageAuthorFilter_OnSelectedIndexChanged" CssClass="form-control" runat="server" AutoPostBack="true">
+                                            <asp:ListItem Text="-- Author Filter --" Value="-1" />
+                                        </asp:DropDownList>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class='input-group date' id='datetimepicker6'>
+                                            <asp:TextBox runat="server" placeholder="-- Date Filter --" OnTextChanged="txtImageDateFilter_OnTextChanged" ID="txtImageDateFilter" CssClass="form-control" Style="margin-bottom: 0px;" />
+                                            <span class="input-group-addon">
+                                                <span class="glyphicon glyphicon-calendar"></span>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                            <br />
+                            <div class="row">
+                                <asp:Panel ID="pnlImages" runat="server">
+                                    <asp:GridView ID="dgvImages" runat="server"
+                                        HeaderStyle-VerticalAlign="Middle"
+                                        HeaderStyle-HorizontalAlign="Center"
+                                        RowStyle-VerticalAlign="Middle"
+                                        RowStyle-HorizontalAlign="Center"
+                                        AllowPaging="true"
+                                        OnSorting="dgvImages_OnSorting"
+                                        AllowSorting="True"
+                                        PageSize="30"
+                                        OnRowCommand="dgvImages_OnRowCommand"
+                                        AutoGenerateColumns="False"
+                                        CssClass="table table-bordered table-responsive">
+                                        <Columns>
+                                            <asp:TemplateField HeaderText="ID" SortExpression="ID">
+                                                <ItemTemplate>
+                                                    <asp:Label runat="server"
+                                                        Text='<%# Eval("ID") %>'></asp:Label>
+                                                </ItemTemplate>
+                                            </asp:TemplateField>
+                                            <asp:TemplateField HeaderText="Name" SortExpression="Name">
+                                                <ItemTemplate>
+                                                    <asp:LinkButton runat="server" ID="lnkImageFile"
+                                                        CommandName="Download_File" CommandArgument='<%#Eval("Image_Path") + "," + Eval("Image_Ext") %>'
+                                                        Text='<%# Eval("Image_Name") %>'></asp:LinkButton>
+                                                </ItemTemplate>
+                                            </asp:TemplateField>
+
+                                            <asp:TemplateField HeaderText="Vehicle" SortExpression="F">
+                                                <ItemTemplate>
+                                                    <asp:Label runat="server"
+                                                        Text='<%# Eval("Vehicle_Name") %>'></asp:Label>
+                                                </ItemTemplate>
+                                            </asp:TemplateField>
+
+                                            <asp:TemplateField HeaderText="Author 1" SortExpression="Author_1">
+                                                <ItemTemplate>
+                                                    <asp:Label runat="server"
+                                                        Text='<%# Eval("Author_1") %>'></asp:Label>
+                                                </ItemTemplate>
+                                            </asp:TemplateField>
+
+                                            <asp:TemplateField HeaderText="Created" SortExpression="Date_Created">
+                                                <ItemTemplate>
+                                                    <asp:Label runat="server"
+                                                        Text='<%# Eval("Date_Created") %>'></asp:Label>
+                                                </ItemTemplate>
+                                            </asp:TemplateField>
+                                            <asp:TemplateField HeaderText="Uploaded" SortExpression="Date_Inserted">
+                                                <ItemTemplate>
+                                                    <asp:Label runat="server"
+                                                        Text='<%# Eval("Date_Inserted") %>'></asp:Label>
+                                                </ItemTemplate>
+                                            </asp:TemplateField>
+                                            <asp:TemplateField HeaderText="Updated" SortExpression="Date_Updated">
+                                                <ItemTemplate>
+                                                    <asp:Label runat="server"
+                                                        Text='<%# Eval("Date_Updated") %>'></asp:Label>
+                                                </ItemTemplate>
+                                            </asp:TemplateField>
+                                            <asp:TemplateField HeaderText="Comment" SortExpression="Comment">
+                                                <ItemTemplate>
+                                                    <asp:Label runat="server"
+                                                        Text='<%# Eval("Comment") %>'></asp:Label>
+                                                </ItemTemplate>
+                                            </asp:TemplateField>
+
+                                        </Columns>
+                                    </asp:GridView>
+                                </asp:Panel>
+                            </div>
+                        </ContentTemplate>
+                    </asp:UpdatePanel>
                 </div>
                 <div class="tab-pane" id="Tools">
                     <!-- Tools Tabs -->
@@ -776,126 +817,130 @@
                     </div>
                     <div>
                         <div>
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <asp:DropDownList ID="ddlFileVehicle" runat="server" ValidationGroup="UploadGroup" CssClass="form-control">
-                                            <asp:ListItem Text="-- Select a Vehicle --" />
-                                        </asp:DropDownList>
-                                        <asp:RequiredFieldValidator ID="RequiredFieldValidator3" ForeColor="Red"
-                                            ControlToValidate="ddlFileVehicle" InitialValue="-- Select a Vehicle --"
-                                            ValidationGroup="UploadGroup"
-                                            ErrorMessage="Select a vehicle."
-                                            runat="Server">
-                                        </asp:RequiredFieldValidator>
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-
-                                    <div class="form-group">
-                                        <asp:DropDownList ID="ddlFileAuthor1" runat="server" ValidationGroup="UploadGroup" CssClass="form-control">
-                                            <asp:ListItem Text="-- Select Author 1 --" />
-                                        </asp:DropDownList>
-                                        <asp:RequiredFieldValidator ID="RequiredFieldValidator1" ForeColor="Red"
-                                            ControlToValidate="ddlFileAuthor1" InitialValue="-- Select Author 1 --"
-                                            ValidationGroup="UploadGroup"
-                                            ErrorMessage="Select an Author."
-                                            runat="Server">
-                                        </asp:RequiredFieldValidator>
-                                    </div>
-
-                                </div>
-                            </div>
-
-                            <div class="row">
-                                <div class="col-md-6">
-
-
-                                    <div class="form-group">
-                                        <asp:DropDownList ID="ddlFilePhone" runat="server" ValidationGroup="UploadGroup" CssClass="form-control">
-                                            <asp:ListItem Text="-- Select a Phone --" />
-                                        </asp:DropDownList>
-                                        <asp:RequiredFieldValidator ID="RequiredFieldValidator4" ForeColor="Red"
-                                            ControlToValidate="ddlFilePhone" InitialValue="-- Select a Phone --"
-                                            ValidationGroup="UploadGroup"
-                                            ErrorMessage="Select a Phone."
-                                            runat="Server">
-                                        </asp:RequiredFieldValidator>
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <asp:DropDownList ID="ddlFileAuthor2" runat="server" ValidationGroup="UploadGroup" CssClass="form-control">
-                                            <asp:ListItem Text="-- Select Author 2 --" />
-                                        </asp:DropDownList>
-                                    </div>
-                                </div>
-                            </div>
-
-
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <asp:DropDownList ID="ddlFileType" runat="server" ValidationGroup="UploadGroup" CssClass="form-control">
-                                            <asp:ListItem Text="-- Select a File Type --" />
-                                            <asp:ListItem Text="Calibration" />
-                                            <asp:ListItem Text="TD1" />
-                                            <asp:ListItem Text="TD2" />
-                                            <asp:ListItem Text="TD3" />
-                                            <asp:ListItem Text="TD4" />
-                                        </asp:DropDownList>
-                                        <asp:RequiredFieldValidator ID="RequiredFieldValidator13" ForeColor="Red"
-                                            ControlToValidate="ddlFileType" InitialValue="-- Select a File Type --"
-                                            ValidationGroup="UploadGroup"
-                                            ErrorMessage="Select a File Type."
-                                            runat="Server">
-                                        </asp:RequiredFieldValidator>
-                                    </div>
-
-
-
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <div class='input-group date' id='datetimepicker2'>
-                                            <input type='text' id="txtFileDate" runat="server" placeholder="-- Select a Date --" class="form-control" style="margin-bottom: 0px;" />
-                                            <span class="input-group-addon">
-                                                <span class="glyphicon glyphicon-calendar"></span>
-                                            </span>
+                            <asp:UpdatePanel runat="server">
+                                <ContentTemplate>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <asp:DropDownList ID="ddlFileVehicle" runat="server" ValidationGroup="UploadGroup" CssClass="form-control">
+                                                    <asp:ListItem Text="-- Select a Vehicle --" />
+                                                </asp:DropDownList>
+                                                <asp:RequiredFieldValidator ID="RequiredFieldValidator3" ForeColor="Red"
+                                                    ControlToValidate="ddlFileVehicle" InitialValue="-- Select a Vehicle --"
+                                                    ValidationGroup="UploadGroup"
+                                                    ErrorMessage="Select a vehicle."
+                                                    runat="Server">
+                                                </asp:RequiredFieldValidator>
+                                            </div>
                                         </div>
-                                        <asp:RequiredFieldValidator ID="RequiredFieldValidator14" ForeColor="Red"
-                                            ControlToValidate="txtFileDate" InitialValue=""
-                                            ValidationGroup="UploadGroup"
-                                            ErrorMessage="Select a Date."
-                                            runat="Server">
-                                        </asp:RequiredFieldValidator>
+                                        <div class="col-md-6">
+
+                                            <div class="form-group">
+                                                <asp:DropDownList ID="ddlFileAuthor1" runat="server" ValidationGroup="UploadGroup" CssClass="form-control">
+                                                    <asp:ListItem Text="-- Select Author 1 --" />
+                                                </asp:DropDownList>
+                                                <asp:RequiredFieldValidator ID="RequiredFieldValidator1" ForeColor="Red"
+                                                    ControlToValidate="ddlFileAuthor1" InitialValue="-- Select Author 1 --"
+                                                    ValidationGroup="UploadGroup"
+                                                    ErrorMessage="Select an Author."
+                                                    runat="Server">
+                                                </asp:RequiredFieldValidator>
+                                            </div>
+
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-md-6">
+
+
+                                            <div class="form-group">
+                                                <asp:DropDownList ID="ddlFilePhone" runat="server" ValidationGroup="UploadGroup" CssClass="form-control">
+                                                    <asp:ListItem Text="-- Select a Phone --" />
+                                                </asp:DropDownList>
+                                                <asp:RequiredFieldValidator ID="RequiredFieldValidator4" ForeColor="Red"
+                                                    ControlToValidate="ddlFilePhone" InitialValue="-- Select a Phone --"
+                                                    ValidationGroup="UploadGroup"
+                                                    ErrorMessage="Select a Phone."
+                                                    runat="Server">
+                                                </asp:RequiredFieldValidator>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <asp:DropDownList ID="ddlFileAuthor2" runat="server" ValidationGroup="UploadGroup" CssClass="form-control">
+                                                    <asp:ListItem Text="-- Select Author 2 --" />
+                                                </asp:DropDownList>
+                                            </div>
+                                        </div>
                                     </div>
 
 
-                                </div>
-                            </div>
-                            <div class="row">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <asp:DropDownList ID="ddlFileType" runat="server" ValidationGroup="UploadGroup" CssClass="form-control">
+                                                    <asp:ListItem Text="-- Select a File Type --" Value="-1" />
+                                                    <asp:ListItem Text="Calibration" Value="0" />
+                                                    <asp:ListItem Text="TD1" Value="1" />
+                                                    <asp:ListItem Text="TD2" Value="2" />
+                                                    <asp:ListItem Text="TD3" Value="3" />
+                                                    <asp:ListItem Text="TD4" Value="4" />
+                                                </asp:DropDownList>
+                                                <asp:RequiredFieldValidator ID="RequiredFieldValidator13" ForeColor="Red"
+                                                    ControlToValidate="ddlFileType" InitialValue="-- Select a File Type --"
+                                                    ValidationGroup="UploadGroup"
+                                                    ErrorMessage="Select a File Type."
+                                                    runat="Server">
+                                                </asp:RequiredFieldValidator>
+                                            </div>
 
-                                <div class="form-group" style="padding-left: 15px; padding-right: 15px;">
-                                    <asp:FileUpload ID="fileUpload" runat="server" />
-                                    <asp:RequiredFieldValidator ID="RequiredFieldValidator15" ForeColor="Red"
-                                        ControlToValidate="fileUpload"
-                                        ValidationGroup="UploadGroup"
-                                        ErrorMessage="Select a File."
-                                        runat="Server">
-                                    </asp:RequiredFieldValidator>
-
-                                </div>
-                            </div>
-
-                            <div class="form-group">
-                                <asp:TextBox ID="txtFileComment" placeholder="Comment" runat="server" Style="max-height: 200px; max-width: 100%;" Height="200px" CssClass="form-control" TextMode="MultiLine"></asp:TextBox>
-                            </div>
 
 
-                            <div class="form-group">
-                                <asp:Button ID="UploadClicked" class="btn btn-lg btn-primary btn-block btn-signin" runat="server" Text="Upload File" type="submit" ValidationGroup="UploadGroup" />
-                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <div class='input-group date' id='datetimepicker2'>
+                                                    <input type='text' id="txtFileDate" runat="server" placeholder="-- Select a Date --" class="form-control" style="margin-bottom: 0px;" />
+                                                    <span class="input-group-addon">
+                                                        <span class="glyphicon glyphicon-calendar"></span>
+                                                    </span>
+                                                </div>
+                                                <asp:RequiredFieldValidator ID="RequiredFieldValidator14" ForeColor="Red"
+                                                    ControlToValidate="txtFileDate" InitialValue=""
+                                                    ValidationGroup="UploadGroup"
+                                                    ErrorMessage="Select a Date."
+                                                    runat="Server">
+                                                </asp:RequiredFieldValidator>
+                                            </div>
+
+
+                                        </div>
+                                    </div>
+                                    <div class="row">
+
+                                        <div class="form-group" style="padding-left: 15px; padding-right: 15px;">
+                                            <asp:FileUpload ID="fileUpload" runat="server" />
+                                            <asp:RequiredFieldValidator ID="RequiredFieldValidator15" ForeColor="Red"
+                                                ControlToValidate="fileUpload"
+                                                ValidationGroup="UploadGroup"
+                                                ErrorMessage="Select a File."
+                                                runat="Server">
+                                            </asp:RequiredFieldValidator>
+
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <asp:TextBox ID="txtFileComment" placeholder="Comment" runat="server" Style="max-height: 200px; max-width: 100%;" Height="200px" CssClass="form-control" TextMode="MultiLine"></asp:TextBox>
+                                    </div>
+
+
+                                    <div class="form-group">
+                                        <asp:Button ID="UploadClicked" class="btn btn-lg btn-primary btn-block btn-signin" runat="server" Text="Upload File" type="submit" ValidationGroup="UploadGroup" />
+                                    </div>
+                                </ContentTemplate>
+                            </asp:UpdatePanel>
                         </div>
                     </div>
                 </div>
@@ -916,67 +961,72 @@
                         <br />
                     </div>
                     <div>
-                        <div class="row" style="padding-right: 15px; padding-left: 15px;">
-                            <div class="form-group">
-                                <asp:DropDownList ID="ddlImageVehicle" runat="server" ValidationGroup="ImageGroup" CssClass="form-control">
-                                    <asp:ListItem Text="-- Select a Vehicle --" />
-                                </asp:DropDownList>
-                                <asp:RequiredFieldValidator ID="RequiredFieldValidator16" ForeColor="Red"
-                                    ControlToValidate="ddlImageVehicle" InitialValue="-- Select a Vehicle --"
-                                    ValidationGroup="ImageGroup"
-                                    ErrorMessage="Select a vehicle."
-                                    runat="Server">
-                                </asp:RequiredFieldValidator>
-                            </div>
+                        <asp:UpdatePanel runat="server">
+                            <ContentTemplate>
+                                <div class="row" style="padding-right: 15px; padding-left: 15px;">
+                                    <div class="form-group">
+                                        <asp:DropDownList ID="ddlImageVehicle" runat="server" ValidationGroup="ImageGroup" CssClass="form-control">
+                                            <asp:ListItem Text="-- Select a Vehicle --" />
+                                        </asp:DropDownList>
+                                        <asp:RequiredFieldValidator ID="RequiredFieldValidator16" ForeColor="Red"
+                                            ControlToValidate="ddlImageVehicle" InitialValue="-- Select a Vehicle --"
+                                            ValidationGroup="ImageGroup"
+                                            ErrorMessage="Select a vehicle."
+                                            runat="Server">
+                                        </asp:RequiredFieldValidator>
+                                    </div>
 
-                        </div>
-                        <div class="row" style="padding-right: 15px; padding-left: 15px;">
-                            <div class="form-group">
-                                <div class='input-group date' id='datetimepicker3'>
-                                    <input type='text' id="txtImageDate" runat="server" placeholder="-- Date Picture was Taken --" class="form-control" style="margin-bottom: 0px;" />
-                                    <span class="input-group-addon">
-                                        <span class="glyphicon glyphicon-calendar"></span>
-                                    </span>
                                 </div>
-                                <asp:RequiredFieldValidator ID="RequiredFieldValidator17" ForeColor="Red"
-                                    ControlToValidate="txtImageDate" InitialValue=""
-                                    ValidationGroup="ImageGroup"
-                                    ErrorMessage="Select a Date."
-                                    runat="Server">
-                                </asp:RequiredFieldValidator>
-                            </div>
 
-                        </div>
+                                <div class="row" style="padding-right: 15px; padding-left: 15px;">
+                                    <div class="form-group">
+                                        <div class='input-group date' id='datetimepicker3'>
+                                            <input type='text' id="txtImageDate" runat="server" placeholder="-- Date Picture was Taken --" class="form-control" style="margin-bottom: 0px;" />
+                                            <span class="input-group-addon">
+                                                <span class="glyphicon glyphicon-calendar"></span>
+                                            </span>
+                                        </div>
+                                        <asp:RequiredFieldValidator ID="RequiredFieldValidator17" ForeColor="Red"
+                                            ControlToValidate="txtImageDate" InitialValue=""
+                                            ValidationGroup="ImageGroup"
+                                            ErrorMessage="Select a Date."
+                                            runat="Server">
+                                        </asp:RequiredFieldValidator>
+                                    </div>
 
-
-                        <div class="row" style="padding-right: 15px; padding-left: 15px;">
-                            <div class="form-group">
-                                <asp:FileUpload ID="imageUpload" runat="server" />
-                                <asp:RequiredFieldValidator ID="RequiredFieldValidator18" ForeColor="Red"
-                                    ControlToValidate="imageUpload"
-                                    ValidationGroup="ImageGroup"
-                                    ErrorMessage="Select a File."
-                                    runat="Server">
-                                </asp:RequiredFieldValidator>
-
-                            </div>
-                        </div>
-                        <div class="row" style="padding-right: 15px; padding-left: 15px;">
-                            <div class="form-group">
-                                <asp:TextBox ID="txtImageComment" placeholder="Comment" runat="server" Style="max-height: 200px; max-width: 100%;" Height="200px" CssClass="form-control" TextMode="MultiLine"></asp:TextBox>
-                            </div>
+                                </div>
 
 
-                        </div>
+                                <div class="row" style="padding-right: 15px; padding-left: 15px;">
+                                    <div class="form-group">
+                                        <asp:FileUpload ID="imageUpload" runat="server" />
+                                        <asp:RequiredFieldValidator ID="RequiredFieldValidator18" ForeColor="Red"
+                                            ControlToValidate="imageUpload"
+                                            ValidationGroup="ImageGroup"
+                                            ErrorMessage="Select a File."
+                                            runat="Server">
+                                        </asp:RequiredFieldValidator>
+
+                                    </div>
+                                </div>
+                                <div class="row" style="padding-right: 15px; padding-left: 15px;">
+                                    <div class="form-group">
+                                        <asp:TextBox ID="txtImageComment" placeholder="Comment" runat="server" Style="max-height: 200px; max-width: 100%;" Height="200px" CssClass="form-control" TextMode="MultiLine"></asp:TextBox>
+                                    </div>
+
+
+                                </div>
 
 
 
 
-                        <div class="row" style="padding-right: 15px; padding-left: 15px;">
-                            <div class="form-group">
-                                <asp:Button ID="btnUploadImage" class="btn btn-lg btn-primary btn-block btn-signin" runat="server" Text="Upload Image" type="submit" ValidationGroup="ImageGroup" />
-                            </div>
-                        </div>
+                                <div class="row" style="padding-right: 15px; padding-left: 15px;">
+                                    <div class="form-group">
+                                        <asp:Button ID="btnUploadImage" class="btn btn-lg btn-primary btn-block btn-signin" runat="server" Text="Upload Image" type="submit" ValidationGroup="ImageGroup" />
+                                    </div>
+                                </div>
+                            </ContentTemplate>
+                        </asp:UpdatePanel>
 
 
 
@@ -1134,6 +1184,14 @@
             $("#datetimepicker5").on("dp.change",
                 function (e) {
                     __doPostBack('<%= txtFileDateFilter.ClientID %>', '');
+
+                });
+            $('#datetimepicker6').datetimepicker({
+                format: 'MM/DD/YYYY'
+            });
+            $("#datetimepicker6").on("dp.change",
+                function (e) {
+                    __doPostBack('<%= txtImageDateFilter.ClientID %>', '');
 
                 });
         }
