@@ -1,4 +1,4 @@
-﻿<%@ Page Language="C#" validateRequest="false" enableEventValidation="false" MasterPageFile="~/Site.Master" AutoEventWireup="true" CodeBehind="GlobalADefault.aspx.cs" Inherits="CTBWebsite.GlobalADefault" %>
+﻿<%@ Page Language="C#" ValidateRequest="false" EnableEventValidation="false" MasterPageFile="~/Site.Master" AutoEventWireup="true" CodeBehind="GlobalADefault.aspx.cs" Inherits="CTBWebsite.GlobalADefault" %>
 
 <%@ Register Assembly="AjaxControlToolkit" Namespace="AjaxControlToolkit" TagPrefix="ajaxToolkit" %>
 
@@ -26,16 +26,16 @@
                                         <div class="col-md-3" style="text-align: center">
                                             <asp:UpdatePanel runat="server">
                                                 <ContentTemplate>
-                                            <asp:LinkButton ID="CreateReport" CssClass="linkButton" OnClick="CreateReport_OnClick" runat="server" Text='Create Report' />
+                                                    <asp:LinkButton ID="CreateReport" CssClass="linkButton" OnClick="CreateReport_OnClick" runat="server" Text='Create Report' />
                                                 </ContentTemplate>
                                             </asp:UpdatePanel>
                                         </div>
                                         <div class="col-md-3" style="text-align: center">
-                                        <asp:UpdatePanel runat="server">
-                                        <ContentTemplate>
-                                            <asp:LinkButton ID="UploadFile" CssClass="linkButton" OnClick="UploadFile_OnClick" runat="server" Text='Upload File' />
-                                            </ContentTemplate>
-                                        </asp:UpdatePanel>
+                                            <asp:UpdatePanel runat="server">
+                                                <ContentTemplate>
+                                                    <asp:LinkButton ID="UploadFile" CssClass="linkButton" OnClick="UploadFile_OnClick" runat="server" Text='Upload File' />
+                                                </ContentTemplate>
+                                            </asp:UpdatePanel>
                                         </div>
                                         <div class="col-md-3" style="text-align: center">
                                         </div>
@@ -47,18 +47,18 @@
                                         <div class="col-md-3" style="text-align: center">
                                         </div>
                                         <div class="col-md-3" style="text-align: center">
-                                        <asp:UpdatePanel runat="server">
-                                        <ContentTemplate>
-                                            <asp:LinkButton ID="UploadImage" CssClass="linkButton" OnClick="UploadImage_OnClick" runat="server" Text='Upload Image' />
-                                            </ContentTemplate>
-                                        </asp:UpdatePanel>
+                                            <asp:UpdatePanel runat="server">
+                                                <ContentTemplate>
+                                                    <asp:LinkButton ID="UploadImage" CssClass="linkButton" OnClick="UploadImage_OnClick" runat="server" Text='Upload Image' />
+                                                </ContentTemplate>
+                                            </asp:UpdatePanel>
                                         </div>
                                         <div class="col-md-3" style="text-align: center">
-                                        <asp:UpdatePanel runat="server">
-                                        <ContentTemplate>
-                                            <asp:LinkButton ID="UploadTool" CssClass="linkButton" OnClick="UploadTool_OnClick" runat="server" Text='Upload Tool' />
-                                            </ContentTemplate>
-                                        </asp:UpdatePanel>
+                                            <asp:UpdatePanel runat="server">
+                                                <ContentTemplate>
+                                                    <asp:LinkButton ID="UploadTool" CssClass="linkButton" OnClick="UploadTool_OnClick" runat="server" Text='Upload Tool' />
+                                                </ContentTemplate>
+                                            </asp:UpdatePanel>
                                         </div>
                                         <div class="col-md-3" style="text-align: center">
                                         </div>
@@ -104,134 +104,159 @@
         </div>
     </aside>
     <section id="services" class="services bg-primary">
+
         <div class="container">
             <div class="row tab-content">
                 <div class="tab-pane active" id="Reports">
                     <!-- Report Tabs -->
                     <asp:UpdatePanel runat="server" ID="udpReport" ChildrenAsTriggers="True">
                         <ContentTemplate>
-                            
-                            
+
+
                             <div class="row">
-                                <asp:DropDownList ID="ddlVehicleReportFilter" CssClass="form-control" runat="server" AutoPostBack="true" OnSelectedIndexChanged="ddlVehicleReportFilter_OnSelectedIndexChanged">
-                                    <asp:ListItem Text="-- Vehicle Filter --" Value="-1" />
-                                </asp:DropDownList>
+                                <div class="container">
+                                    <div class="col-md-3">
+                                        <asp:DropDownList ID="ddlVehicleReportFilter" OnSelectedIndexChanged="ddlVehicleReportFilter_OnSelectedIndexChanged" CssClass="form-control" runat="server" AutoPostBack="true">
+                                            <asp:ListItem Text="-- Vehicle Filter --" Value="-1" />
+                                        </asp:DropDownList>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <asp:DropDownList ID="ddlPhoneReportFilter" OnSelectedIndexChanged="ddlPhoneReportFilter_OnSelectedIndexChanged" CssClass="form-control" runat="server" AutoPostBack="true">
+                                            <asp:ListItem Text="-- Phone Filter --" Value="-1" />
+                                        </asp:DropDownList>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <asp:DropDownList ID="ddlEmployeeReportFilter" OnSelectedIndexChanged="ddlEmployeeReportFilter_OnSelectedIndexChanged" CssClass="form-control" runat="server" AutoPostBack="true">
+                                            <asp:ListItem Text="-- Author Filter --" Value="-1" />
+                                        </asp:DropDownList>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class='input-group date' id='datetimepicker4'>
+                                            <asp:TextBox runat="server" placeholder="-- Date Filter --" OnTextChanged="txtReportFilterDate_OnTextChanged" ID="txtReportFilterDate" CssClass="form-control" Style="margin-bottom: 0px;" />
+                                            <span class="input-group-addon">
+                                                <span class="glyphicon glyphicon-calendar"></span>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+
                             </div>
+                            <br />
                             <div class="row">
 
-                            <asp:Panel ID="pnlReports" runat="server">
-                                <asp:GridView ID="dgvReports" runat="server"
-                                    HeaderStyle-VerticalAlign="Middle"
-                                    HeaderStyle-HorizontalAlign="Center"
-                                    RowStyle-VerticalAlign="Middle"
-                                    RowStyle-HorizontalAlign="Center"
-                                    AllowPaging="true"
-                                    AllowSorting="True"
-                                    OnSorting="dgvReports_OnSorting"
-                                    PageSize="30"
-                                    OnRowCommand="dgvReports_OnRowCommand"
-                                    AutoGenerateColumns="False"
-                                    CssClass="table table-bordered table-responsive">
-                                    <Columns>
-                                        <asp:TemplateField HeaderText="ID" SortExpression="ID">
-                                            <ItemTemplate>
-                                                <asp:Label runat="server"
-                                                    Text='<%# Eval("ID") %>'></asp:Label>
-                                            </ItemTemplate>
-                                        </asp:TemplateField>
-                                        <asp:TemplateField HeaderText="Report" SortExpression="Report_Name">
-                                            <ItemTemplate>
-                                                <asp:LinkButton runat="server" AutoPostBack="true" ID="lnkReportFile"
-                                                    CommandName="Download_File" CommandArgument='<%#Eval("Report_Path") + "," + Eval("Report_Ext") %>'
-                                                    Text='<%# Eval("Report_Name") %>'></asp:LinkButton>
-                                            </ItemTemplate>
-                                        </asp:TemplateField>
-                                        <asp:TemplateField HeaderText="Vehicle" SortExpression="Vehicle_Name">
-                                            <ItemTemplate>
-                                                <asp:Label runat="server"
-                                                    Text='<%# Eval("Vehicle_Name") %>'></asp:Label>
-                                            </ItemTemplate>
-                                        </asp:TemplateField>
-                                        <asp:TemplateField HeaderText="Phone" SortExpression="Phone_Name">
-                                            <ItemTemplate>
-                                                <asp:Label runat="server"
-                                                    Text='<%# Eval("Phone_Name") %>'></asp:Label>
-                                            </ItemTemplate>
-                                        </asp:TemplateField>
-                                        <asp:TemplateField HeaderText="Calibration" SortExpression="Calibration_Name">
-                                            <ItemTemplate>
-                                                <asp:LinkButton runat="server" ID="lnkReportCalibration"
-                                                    CommandName="Download_File" CommandArgument='<%#Eval("Calibration_Path") + "," + Eval("Calibration_Ext") %>'
-                                                    Text='<%# Eval("Calibration_Name") %>'></asp:LinkButton>
-                                            </ItemTemplate>
-                                        </asp:TemplateField>
-                                        <asp:TemplateField HeaderText="TD1" SortExpression="TD1_Name">
-                                            <ItemTemplate>
-                                                <asp:LinkButton runat="server" ID="lnkReportTD1"
-                                                    CommandName="Download_File" CommandArgument='<%#Eval("TD1_Path") + "," + Eval("TD1_Ext")%>'
-                                                    Text='<%# Eval("TD1_Name") %>'></asp:LinkButton>
-                                            </ItemTemplate>
-                                        </asp:TemplateField>
-                                        <asp:TemplateField HeaderText="TD2" SortExpression="TD2_Name">
-                                            <ItemTemplate>
-                                                <asp:LinkButton runat="server" ID="lnkReportTD2"
-                                                    CommandName="Download_File" CommandArgument='<%#Eval("TD2_Path") + "," + Eval("TD2_Ext") %>'
-                                                    Text='<%# Eval("TD2_Name") %>'></asp:LinkButton>
-                                            </ItemTemplate>
-                                        </asp:TemplateField>
-                                        <asp:TemplateField HeaderText="TD3" SortExpression="TD3_Name">
-                                            <ItemTemplate>
-                                                <asp:LinkButton runat="server" ID="lnkReportTD3"
-                                                    CommandName="Download_File" CommandArgument='<%#Eval("TD3_Path") + "," + Eval("TD3_Ext") %>'
-                                                    Text='<%# Eval("TD3_Name") %>'></asp:LinkButton>
-                                            </ItemTemplate>
-                                        </asp:TemplateField>
-                                        <asp:TemplateField HeaderText="TD4" SortExpression="TD4_Name">
-                                            <ItemTemplate>
-                                                <asp:LinkButton runat="server" ID="lnkReportTD4"
-                                                    CommandName="Download_File" CommandArgument='<%#Eval("TD4_Path") + "," + Eval("TD4_Ext") %>'
-                                                    Text='<%# Eval("TD4_Name") %>'></asp:LinkButton>
-                                            </ItemTemplate>
-                                        </asp:TemplateField>
-                                        <asp:TemplateField HeaderText="Author 1" SortExpression="Author_1">
-                                            <ItemTemplate>
-                                                <asp:Label runat="server"
-                                                    Text='<%# Eval("Author_1") %>'></asp:Label>
-                                            </ItemTemplate>
-                                        </asp:TemplateField>
-                                        <asp:TemplateField HeaderText="Author 2" SortExpression="Author_2">
-                                            <ItemTemplate>
-                                                <asp:Label runat="server"
-                                                    Text='<%# Eval("Author_2") %>'></asp:Label>
-                                            </ItemTemplate>
-                                        </asp:TemplateField>
-                                        <asp:TemplateField HeaderText="Created" SortExpression="Date_Created">
-                                            <ItemTemplate>
-                                                <asp:Label runat="server"
-                                                    Text='<%# Eval("Date_Created") %>'></asp:Label>
-                                            </ItemTemplate>
-                                        </asp:TemplateField>
-                                        <asp:TemplateField HeaderText="Uploaded" SortExpression="Date_Inserted">
-                                            <ItemTemplate>
-                                                <asp:Label runat="server"
-                                                    Text='<%# Eval("Date_Inserted") %>'></asp:Label>
-                                            </ItemTemplate>
-                                        </asp:TemplateField>
-                                        <asp:TemplateField HeaderText="Updated" SortExpression="Date_Updated">
-                                            <ItemTemplate>
-                                                <asp:Label runat="server"
-                                                    Text='<%# Eval("Date_Updated") %>'></asp:Label>
-                                            </ItemTemplate>
-                                        </asp:TemplateField>
-                                        <asp:TemplateField HeaderText="Comment" SortExpression="Comment">
-                                            <ItemTemplate>
-                                                <asp:Label runat="server"
-                                                    Text='<%# Eval("Comment") %>'></asp:Label>
-                                            </ItemTemplate>
-                                        </asp:TemplateField>
-                                    </Columns>
-                                </asp:GridView>
-                            </asp:Panel>
+                                <asp:Panel ID="pnlReports" runat="server">
+                                    <asp:GridView ID="dgvReports" runat="server"
+                                        HeaderStyle-VerticalAlign="Middle"
+                                        HeaderStyle-HorizontalAlign="Center"
+                                        RowStyle-VerticalAlign="Middle"
+                                        RowStyle-HorizontalAlign="Center"
+                                        AllowPaging="true"
+                                        AllowSorting="True"
+                                        OnSorting="dgvReports_OnSorting"
+                                        PageSize="30"
+                                        OnRowCommand="dgvReports_OnRowCommand"
+                                        AutoGenerateColumns="False"
+                                        CssClass="table table-bordered table-responsive">
+                                        <Columns>
+                                            <asp:TemplateField HeaderText="ID" SortExpression="ID">
+                                                <ItemTemplate>
+                                                    <asp:Label runat="server"
+                                                        Text='<%# Eval("ID") %>'></asp:Label>
+                                                </ItemTemplate>
+                                            </asp:TemplateField>
+                                            <asp:TemplateField HeaderText="Report" SortExpression="Report_Name">
+                                                <ItemTemplate>
+                                                    <asp:LinkButton runat="server" AutoPostBack="true" ID="lnkReportFile"
+                                                        CommandName="Download_File" CommandArgument='<%#Eval("Report_Path") + "," + Eval("Report_Ext") %>'
+                                                        Text='<%# Eval("Report_Name") %>'></asp:LinkButton>
+                                                </ItemTemplate>
+                                            </asp:TemplateField>
+                                            <asp:TemplateField HeaderText="Vehicle" SortExpression="Vehicle_Name">
+                                                <ItemTemplate>
+                                                    <asp:Label runat="server"
+                                                        Text='<%# Eval("Vehicle_Name") %>'></asp:Label>
+                                                </ItemTemplate>
+                                            </asp:TemplateField>
+                                            <asp:TemplateField HeaderText="Phone" SortExpression="Phone_Name">
+                                                <ItemTemplate>
+                                                    <asp:Label runat="server"
+                                                        Text='<%# Eval("Phone_Abv") %>'></asp:Label>
+                                                </ItemTemplate>
+                                            </asp:TemplateField>
+                                            <asp:TemplateField HeaderText="Calibration" SortExpression="Calibration_Name">
+                                                <ItemTemplate>
+                                                    <asp:LinkButton runat="server" ID="lnkReportCalibration"
+                                                        CommandName="Download_File" CommandArgument='<%#Eval("Calibration_Path") + "," + Eval("Calibration_Ext") %>'
+                                                        Text='<%# Eval("Calibration_Name") %>'></asp:LinkButton>
+                                                </ItemTemplate>
+                                            </asp:TemplateField>
+                                            <asp:TemplateField HeaderText="TD1" SortExpression="TD1_Name">
+                                                <ItemTemplate>
+                                                    <asp:LinkButton runat="server" ID="lnkReportTD1"
+                                                        CommandName="Download_File" CommandArgument='<%#Eval("TD1_Path") + "," + Eval("TD1_Ext")%>'
+                                                        Text='<%# Eval("TD1_Name") %>'></asp:LinkButton>
+                                                </ItemTemplate>
+                                            </asp:TemplateField>
+                                            <asp:TemplateField HeaderText="TD2" SortExpression="TD2_Name">
+                                                <ItemTemplate>
+                                                    <asp:LinkButton runat="server" ID="lnkReportTD2"
+                                                        CommandName="Download_File" CommandArgument='<%#Eval("TD2_Path") + "," + Eval("TD2_Ext") %>'
+                                                        Text='<%# Eval("TD2_Name") %>'></asp:LinkButton>
+                                                </ItemTemplate>
+                                            </asp:TemplateField>
+                                            <asp:TemplateField HeaderText="TD3" SortExpression="TD3_Name">
+                                                <ItemTemplate>
+                                                    <asp:LinkButton runat="server" ID="lnkReportTD3"
+                                                        CommandName="Download_File" CommandArgument='<%#Eval("TD3_Path") + "," + Eval("TD3_Ext") %>'
+                                                        Text='<%# Eval("TD3_Name") %>'></asp:LinkButton>
+                                                </ItemTemplate>
+                                            </asp:TemplateField>
+                                            <asp:TemplateField HeaderText="TD4" SortExpression="TD4_Name">
+                                                <ItemTemplate>
+                                                    <asp:LinkButton runat="server" ID="lnkReportTD4"
+                                                        CommandName="Download_File" CommandArgument='<%#Eval("TD4_Path") + "," + Eval("TD4_Ext") %>'
+                                                        Text='<%# Eval("TD4_Name") %>'></asp:LinkButton>
+                                                </ItemTemplate>
+                                            </asp:TemplateField>
+                                            <asp:TemplateField HeaderText="Author 1" SortExpression="Author_1">
+                                                <ItemTemplate>
+                                                    <asp:Label runat="server"
+                                                        Text='<%# Eval("Author_1") %>'></asp:Label>
+                                                </ItemTemplate>
+                                            </asp:TemplateField>
+                                            <asp:TemplateField HeaderText="Author 2" SortExpression="Author_2">
+                                                <ItemTemplate>
+                                                    <asp:Label runat="server"
+                                                        Text='<%# Eval("Author_2") %>'></asp:Label>
+                                                </ItemTemplate>
+                                            </asp:TemplateField>
+                                            <asp:TemplateField HeaderText="Created" SortExpression="Date_Created">
+                                                <ItemTemplate>
+                                                    <asp:Label runat="server"
+                                                        Text='<%# Eval("Date_Created") %>'></asp:Label>
+                                                </ItemTemplate>
+                                            </asp:TemplateField>
+                                            <asp:TemplateField HeaderText="Uploaded" SortExpression="Date_Inserted">
+                                                <ItemTemplate>
+                                                    <asp:Label runat="server"
+                                                        Text='<%# Eval("Date_Inserted") %>'></asp:Label>
+                                                </ItemTemplate>
+                                            </asp:TemplateField>
+                                            <asp:TemplateField HeaderText="Updated" SortExpression="Date_Updated">
+                                                <ItemTemplate>
+                                                    <asp:Label runat="server"
+                                                        Text='<%# Eval("Date_Updated") %>'></asp:Label>
+                                                </ItemTemplate>
+                                            </asp:TemplateField>
+                                            <asp:TemplateField HeaderText="Comment" SortExpression="Comment">
+                                                <ItemTemplate>
+                                                    <asp:Label runat="server"
+                                                        Text='<%# Eval("Comment") %>'></asp:Label>
+                                                </ItemTemplate>
+                                            </asp:TemplateField>
+                                        </Columns>
+                                    </asp:GridView>
+                                </asp:Panel>
                             </div>
                         </ContentTemplate>
 
@@ -242,94 +267,130 @@
                     <!-- Files Tabs -->
                     <asp:UpdatePanel runat="server">
                         <ContentTemplate>
-                            <asp:Panel ID="pnlFiles" runat="server">
-                                <asp:GridView ID="dgvFiles" runat="server"
-                                    HeaderStyle-VerticalAlign="Middle"
-                                    HeaderStyle-HorizontalAlign="Center"
-                                    RowStyle-VerticalAlign="Middle"
-                                    RowStyle-HorizontalAlign="Center"
-                                    AllowPaging="true"
-                                    OnSorting="dgvFiles_OnSorting"
-                                    AllowSorting="true"
-                                    PageSize="30"
-                                    OnRowCommand="dgvFiles_OnRowCommand"
-                                    AutoGenerateColumns="False"
-                                    CssClass="table table-bordered table-responsive">
-                                    <Columns>
+                            <div class="row">
+                                <div class="container">
+                                    <div class="col-md-2">
+                                        <asp:DropDownList ID="ddlFileFilterType" OnSelectedIndexChanged="ddlFileFilterType_OnSelectedIndexChanged" CssClass="form-control" runat="server" AutoPostBack="true">
+                                            <asp:ListItem Text="-- File Type Filter --" Value="-1" />
+                                        </asp:DropDownList>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <asp:DropDownList ID="ddlFileVehicleFilter" OnSelectedIndexChanged="ddlFileVehicleFilter_OnSelectedIndexChanged" CssClass="form-control" runat="server" AutoPostBack="true">
+                                            <asp:ListItem Text="-- Vehicle Filter --" Value="-1" />
+                                        </asp:DropDownList>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <asp:DropDownList ID="ddlFilePhoneFilter" OnSelectedIndexChanged="ddlFilePhoneFilter_OnSelectedIndexChanged" CssClass="form-control" runat="server" AutoPostBack="true">
+                                            <asp:ListItem Text="-- Phone Filter --" Value="-1" />
+                                        </asp:DropDownList>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <asp:DropDownList ID="ddlFileAuthorFilter" OnSelectedIndexChanged="ddlFileAuthorFilter_OnSelectedIndexChanged" CssClass="form-control" runat="server" AutoPostBack="true">
+                                            <asp:ListItem Text="-- Author Filter --" Value="-1" />
+                                        </asp:DropDownList>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <div class='input-group date' id='datetimepicker5'>
+                                            <asp:TextBox runat="server" placeholder="-- Date Filter --" OnTextChanged="txtFileDateFilter_OnTextChanged" ID="txtFileDateFilter" CssClass="form-control" Style="margin-bottom: 0px;" />
+                                            <span class="input-group-addon">
+                                                <span class="glyphicon glyphicon-calendar"></span>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
 
-                                        <asp:TemplateField HeaderText="ID" SortExpression="ID">
-                                            <ItemTemplate>
-                                                <asp:Label runat="server"
-                                                    Text='<%# Eval("ID") %>'></asp:Label>
-                                            </ItemTemplate>
-                                        </asp:TemplateField>
-                                        <asp:TemplateField HeaderText="Name" SortExpression="F_Name">
-                                            <ItemTemplate>
-                                                <asp:LinkButton runat="server" ID="lnkDownload"
-                                                    CommandName="Download_File" CommandArgument='<%#Eval("F_Path") + "," + Eval("F_Ext") %>'
-                                                    Text='<%# Eval("F_Name") %>'></asp:LinkButton>
-                                            </ItemTemplate>
-                                        </asp:TemplateField>
+                            </div>
+                            <br />
+                            <div class="row">
 
-                                        <asp:TemplateField HeaderText="Vehicle" SortExpression="Vehicle_Name">
-                                            <ItemTemplate>
-                                                <asp:Label runat="server"
-                                                    Text='<%# Eval("Vehicle_Name") %>'></asp:Label>
-                                            </ItemTemplate>
-                                        </asp:TemplateField>
-                                        <asp:TemplateField HeaderText="Phone" SortExpression="Phone_Name">
-                                            <ItemTemplate>
-                                                <asp:Label runat="server"
-                                                    Text='<%# Eval("Phone_Name") %>'></asp:Label>
-                                            </ItemTemplate>
-                                        </asp:TemplateField>
-                                        <asp:TemplateField HeaderText="File Type" SortExpression="Type">
-                                            <ItemTemplate>
-                                                <asp:Label runat="server"
-                                                    Text='<%# Eval("Type") %>'></asp:Label>
-                                            </ItemTemplate>
-                                        </asp:TemplateField>
-                                        <asp:TemplateField HeaderText="Author 1" SortExpression="Author_1">
-                                            <ItemTemplate>
-                                                <asp:Label runat="server"
-                                                    Text='<%# Eval("Author_1") %>'></asp:Label>
-                                            </ItemTemplate>
-                                        </asp:TemplateField>
-                                        <asp:TemplateField HeaderText="Author 2" SortExpression="Author_2">
-                                            <ItemTemplate>
-                                                <asp:Label runat="server"
-                                                    Text='<%# Eval("Author_2") %>'></asp:Label>
-                                            </ItemTemplate>
-                                        </asp:TemplateField>
-                                        <asp:TemplateField HeaderText="Created" SortExpression="Date_Created">
-                                            <ItemTemplate>
-                                                <asp:Label runat="server"
-                                                    Text='<%# Eval("Date_Created") %>'></asp:Label>
-                                            </ItemTemplate>
-                                        </asp:TemplateField>
-                                        <asp:TemplateField HeaderText="Uploaded" SortExpression="Date_Inserted">
-                                            <ItemTemplate>
-                                                <asp:Label runat="server"
-                                                    Text='<%# Eval("Date_Inserted") %>'></asp:Label>
-                                            </ItemTemplate>
-                                        </asp:TemplateField>
-                                        <asp:TemplateField HeaderText="Updated" SortExpression="Date_Updated">
-                                            <ItemTemplate>
-                                                <asp:Label runat="server"
-                                                    Text='<%# Eval("Date_Updated") %>'></asp:Label>
-                                            </ItemTemplate>
-                                        </asp:TemplateField>
-                                        <asp:TemplateField HeaderText="Comment" SortExpression="Comment">
-                                            <ItemTemplate>
-                                                <asp:Label runat="server"
-                                                    Text='<%# Eval("Comment") %>'></asp:Label>
-                                            </ItemTemplate>
-                                        </asp:TemplateField>
+                                <asp:Panel ID="pnlFiles" runat="server">
+                                    <asp:GridView ID="dgvFiles" runat="server"
+                                        HeaderStyle-VerticalAlign="Middle"
+                                        HeaderStyle-HorizontalAlign="Center"
+                                        RowStyle-VerticalAlign="Middle"
+                                        RowStyle-HorizontalAlign="Center"
+                                        AllowPaging="true"
+                                        OnSorting="dgvFiles_OnSorting"
+                                        AllowSorting="true"
+                                        PageSize="30"
+                                        OnRowCommand="dgvFiles_OnRowCommand"
+                                        AutoGenerateColumns="False"
+                                        CssClass="table table-bordered table-responsive">
+                                        <Columns>
 
-                                    </Columns>
-                                </asp:GridView>
-                            </asp:Panel>
+                                            <asp:TemplateField HeaderText="ID" SortExpression="ID">
+                                                <ItemTemplate>
+                                                    <asp:Label runat="server"
+                                                        Text='<%# Eval("ID") %>'></asp:Label>
+                                                </ItemTemplate>
+                                            </asp:TemplateField>
+                                            <asp:TemplateField HeaderText="Name" SortExpression="F_Name">
+                                                <ItemTemplate>
+                                                    <asp:LinkButton runat="server" ID="lnkDownload"
+                                                        CommandName="Download_File" CommandArgument='<%#Eval("F_Path") + "," + Eval("F_Ext") %>'
+                                                        Text='<%# Eval("F_Name") %>'></asp:LinkButton>
+                                                </ItemTemplate>
+                                            </asp:TemplateField>
 
+                                            <asp:TemplateField HeaderText="Vehicle" SortExpression="Vehicle_Name">
+                                                <ItemTemplate>
+                                                    <asp:Label runat="server"
+                                                        Text='<%# Eval("Vehicle_Name") %>'></asp:Label>
+                                                </ItemTemplate>
+                                            </asp:TemplateField>
+                                            <asp:TemplateField HeaderText="Phone" SortExpression="Phone_Name">
+                                                <ItemTemplate>
+                                                    <asp:Label runat="server"
+                                                        Text='<%# Eval("Phone_Abv") %>'></asp:Label>
+                                                </ItemTemplate>
+                                            </asp:TemplateField>
+                                            <asp:TemplateField HeaderText="File Type" SortExpression="Type">
+                                                <ItemTemplate>
+                                                    <asp:Label runat="server"
+                                                        Text='<%# Eval("Type") %>'></asp:Label>
+                                                </ItemTemplate>
+                                            </asp:TemplateField>
+                                            <asp:TemplateField HeaderText="Author 1" SortExpression="Author_1">
+                                                <ItemTemplate>
+                                                    <asp:Label runat="server"
+                                                        Text='<%# Eval("Author_1") %>'></asp:Label>
+                                                </ItemTemplate>
+                                            </asp:TemplateField>
+                                            <asp:TemplateField HeaderText="Author 2" SortExpression="Author_2">
+                                                <ItemTemplate>
+                                                    <asp:Label runat="server"
+                                                        Text='<%# Eval("Author_2") %>'></asp:Label>
+                                                </ItemTemplate>
+                                            </asp:TemplateField>
+                                            <asp:TemplateField HeaderText="Created" SortExpression="Date_Created">
+                                                <ItemTemplate>
+                                                    <asp:Label runat="server"
+                                                        Text='<%# Eval("Date_Created") %>'></asp:Label>
+                                                </ItemTemplate>
+                                            </asp:TemplateField>
+                                            <asp:TemplateField HeaderText="Uploaded" SortExpression="Date_Inserted">
+                                                <ItemTemplate>
+                                                    <asp:Label runat="server"
+                                                        Text='<%# Eval("Date_Inserted") %>'></asp:Label>
+                                                </ItemTemplate>
+                                            </asp:TemplateField>
+                                            <asp:TemplateField HeaderText="Updated" SortExpression="Date_Updated">
+                                                <ItemTemplate>
+                                                    <asp:Label runat="server"
+                                                        Text='<%# Eval("Date_Updated") %>'></asp:Label>
+                                                </ItemTemplate>
+                                            </asp:TemplateField>
+                                            <asp:TemplateField HeaderText="Comment" SortExpression="Comment">
+                                                <ItemTemplate>
+                                                    <asp:Label runat="server"
+                                                        Text='<%# Eval("Comment") %>'></asp:Label>
+                                                </ItemTemplate>
+                                            </asp:TemplateField>
+
+                                        </Columns>
+                                    </asp:GridView>
+                                </asp:Panel>
+                            </div>
                         </ContentTemplate>
                         <Triggers>
                             <asp:AsyncPostBackTrigger ControlID="dgvFiles" EventName="RowCommand" />
@@ -1015,7 +1076,10 @@
 
 
     <script type="text/javascript">
-
+        $(document).ready(function () {
+            // bind your jQuery events here initially
+            bindEvents();
+        });
         Sys.WebForms.PageRequestManager.getInstance().add_endRequest(function (e, a) {
             bindEvents();
         });
@@ -1056,6 +1120,22 @@
                     y.value = x;
 
                 });
+            $('#datetimepicker4').datetimepicker({
+                format: 'MM/DD/YYYY'
+            });
+            $("#datetimepicker4").on("dp.change",
+                function (e) {
+                    __doPostBack('<%= txtReportFilterDate.ClientID %>', '');
+
+                });
+            $('#datetimepicker5').datetimepicker({
+                format: 'MM/DD/YYYY'
+            });
+            $("#datetimepicker5").on("dp.change",
+                function (e) {
+                    __doPostBack('<%= txtFileDateFilter.ClientID %>', '');
+
+                });
         }
 
     </script>
@@ -1074,9 +1154,6 @@
 
         });
 
-        $('a[data-toggle="tab"]').on('show.bs.tab', function (e) {
-
-        });
         var activeTab = localStorage.getItem('activeTab');
         if (activeTab) {
             $('#gaTabs a[href="' + activeTab + '"]').tab('show');

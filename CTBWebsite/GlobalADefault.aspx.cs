@@ -39,7 +39,9 @@ namespace CTBWebsite
 
                 dgvFiles.DataSource = LoadFiles();
                 dgvFiles.DataBind();
-                
+
+                LoadReportFilterDD();
+
                 LoadImages();
                 LoadTools();
                 objConn.Close();
@@ -74,7 +76,36 @@ namespace CTBWebsite
         }
         public DataTable LoadReports()
         {
-            DataTable dt = getDataTable("SELECT * FROM SelectReport() WHERE Active='1'", null, objConn);
+            DataTable dt = new DataTable();
+            SqlCommand cmd = new SqlCommand("GetFilteredReport");
+            cmd.CommandType = CommandType.StoredProcedure;
+
+            if (ViewState["VehicleName"] != null && ViewState["VehicleName"].ToString() != "-1")
+            {
+                cmd.Parameters.AddWithValue("@Vehicle_Name", ViewState["VehicleName"].ToString());
+            }
+            if (ViewState["PhoneName"] != null && ViewState["PhoneName"].ToString() != "-1")
+            {
+                cmd.Parameters.AddWithValue("@Phone_Name", ViewState["PhoneName"].ToString());
+            }
+            if (ViewState["EmployeeName"] != null && ViewState["EmployeeName"].ToString() != "-1")
+            {
+                cmd.Parameters.AddWithValue("@Emp_Name", ViewState["EmployeeName"].ToString());
+            }
+            if (ViewState["DateCreated"] != null && ViewState["DateCreated"].ToString() != "")
+            {
+                cmd.Parameters.AddWithValue("@Date", ViewState["DateCreated"].ToString());
+            }
+            cmd.Connection = objConn;
+            
+            SqlDataAdapter adp = new SqlDataAdapter();
+            adp.SelectCommand = cmd;
+            adp.Fill(dt);
+            if (dt.Rows.Count == 0)
+            {
+               // dt.Rows.Add();
+            }
+            // DataTable dt = getDataTable("GetFilteredReport", null, objConn);
             return dt;
 
          //   SqlCommand sql = new SqlCommand("SELECT * FROM SelectReport() WHERE Active='1'", objConn);
@@ -360,7 +391,7 @@ namespace CTBWebsite
                 ddlFilePhone.Items.Add(new ListItem(reader.GetString(1), reader.GetValue(0).ToString()));
             }
             reader.Close();
-            reader = getReader("SELECT * FROM Employees", null, objConn);
+            reader = getReader("SELECT * FROM Employees  WHERE Active='1'", null, objConn);
             while (reader.Read())
             {
                 string id = reader.GetValue(0).ToString();
@@ -380,6 +411,38 @@ namespace CTBWebsite
             mpeImages.Show();
             LoadImageDropdowns();
         }
+
+        public void LoadReportFilterDD()
+        {
+            ddlVehicleReportFilter.Items.Clear();
+            ddlVehicleReportFilter.Items.Add(new ListItem("-- Vehicle Filter --", "-1"));
+            SqlDataReader reader = getReader("SELECT * FROM Vehicles", null, objConn);
+            while (reader.Read())
+            {
+                ddlVehicleReportFilter.Items.Add(new ListItem(reader.GetString(1), reader.GetValue(0).ToString()));
+            }
+            reader.Close();
+
+            ddlPhoneReportFilter.Items.Clear();
+            ddlPhoneReportFilter.Items.Add(new ListItem("-- Phone Filter --", "-1"));
+            reader = getReader("SELECT * FROM Phones", null, objConn);
+            while (reader.Read())
+            {
+                ddlPhoneReportFilter.Items.Add(new ListItem(reader.GetString(1), reader.GetValue(0).ToString()));
+            }
+            reader.Close();
+
+            ddlEmployeeReportFilter.Items.Clear();
+            ddlEmployeeReportFilter.Items.Add(new ListItem("-- Author Filter --", "-1"));
+            reader = getReader("SELECT * FROM Employees  WHERE Active='1'", null, objConn);
+            while (reader.Read())
+            {
+                ddlEmployeeReportFilter.Items.Add(new ListItem(reader.GetString(1), reader.GetValue(0).ToString()));
+            }
+            reader.Close();
+            reader.Dispose();
+        }
+
         public void LoadImageDropdowns()
         {
             ddlImageVehicle.Items.Clear();
@@ -591,9 +654,73 @@ namespace CTBWebsite
             dgvReports.DataBind();
         }
 
+        protected void txtReportFilterDate_OnTextChanged(object sender, EventArgs e)
+        {
+            objConn = openDBConnection();
+            objConn.Open();
+            string selectedValue = txtReportFilterDate.Text;
+            ViewState["DateCreated"] = selectedValue;
+            dgvReports.DataSource = LoadReports();
+            dgvReports.DataBind();
+            objConn.Close();
+        }
+
         protected void ddlVehicleReportFilter_OnSelectedIndexChanged(object sender, EventArgs e)
         {
+            objConn = openDBConnection();
+            objConn.Open();
+            string selectedValue = ddlVehicleReportFilter.SelectedItem.Value;
+            ViewState["VehicleName"] = selectedValue;
+            dgvReports.DataSource = LoadReports();
+            dgvReports.DataBind();
+            objConn.Close();
+        }
+
+        protected void ddlPhoneReportFilter_OnSelectedIndexChanged(object sender, EventArgs e)
+        {
+            objConn = openDBConnection();
+            objConn.Open();
+            string selectedValue = ddlPhoneReportFilter.SelectedItem.Value;
+            ViewState["PhoneName"] = selectedValue;
+            dgvReports.DataSource = LoadReports();
+            dgvReports.DataBind();
+            objConn.Close();
+        }
+
+        protected void ddlEmployeeReportFilter_OnSelectedIndexChanged(object sender, EventArgs e)
+        {
+            objConn = openDBConnection();
+            objConn.Open();
+            string selectedValue = ddlEmployeeReportFilter.SelectedItem.Value;
+            ViewState["EmployeeName"] = selectedValue;
+            dgvReports.DataSource = LoadReports();
+            dgvReports.DataBind();
+            objConn.Close();
+        }
+
+        protected void ddlFileFilterType_OnSelectedIndexChanged(object sender, EventArgs e)
+        {
+           
+        }
+
+        protected void ddlFileVehicleFilter_OnSelectedIndexChanged(object sender, EventArgs e)
+        {
           
+        }
+
+        protected void ddlFilePhoneFilter_OnSelectedIndexChanged(object sender, EventArgs e)
+        {
+            
+        }
+
+        protected void ddlFileAuthorFilter_OnSelectedIndexChanged(object sender, EventArgs e)
+        {
+          
+        }
+
+        protected void txtFileDateFilter_OnTextChanged(object sender, EventArgs e)
+        {
+            
         }
     }
 }
