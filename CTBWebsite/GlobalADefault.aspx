@@ -751,7 +751,7 @@
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <div class='input-group date' id='datetimepicker1'>
-                                            <input id="txtReportDate" runat="server" runtype='text' placeholder="-- Select a Date --" style="margin-bottom: 0px;" class="form-control" />
+                                            <input id="txtReportDate" runat="server" runtype='text' placeholder="-- Date Report Completed --" style="margin-bottom: 0px;" class="form-control" />
                                             <span class="input-group-addon">
                                                 <span class="glyphicon glyphicon-calendar"></span>
                                             </span>
@@ -901,7 +901,7 @@
                                         <div class="col-md-6">
                                             <div class="form-group">
                                                 <div class='input-group date' id='datetimepicker2'>
-                                                    <input type='text' id="txtFileDate" runat="server" placeholder="-- Select a Date --" class="form-control" style="margin-bottom: 0px;" />
+                                                    <input type='text' id="txtFileDate" runat="server" placeholder="-- Date Test Completed --" class="form-control" style="margin-bottom: 0px;" />
                                                     <span class="input-group-addon">
                                                         <span class="glyphicon glyphicon-calendar"></span>
                                                     </span>
