@@ -138,6 +138,7 @@ namespace CTBWebsite
             ddlVehicles.Visible = true;
             ddlHoursVehicles.Visible = true;
             btnSubmitVehicles.Visible = true;
+
             leftButton.Visible = true;
             rightButton.Visible = true;
 
@@ -158,7 +159,7 @@ namespace CTBWebsite
                 }
                 Session["Date"] = selection;
                 objConn.Open();
-                SqlCommand cmd = new SqlCommand("select ID from Dates where Dates=@value1");
+                SqlCommand cmd = new SqlCommand("select ID from Dates where Dates=@value1", objConn);
                 cmd.Parameters.AddWithValue("@value1", selection);
                 SqlDataReader reader = cmd.ExecuteReader();
                 reader.Read();
@@ -220,21 +221,6 @@ namespace CTBWebsite
                 }
                 objConn.Close();
                 redirectSafely("~/Hours");
-            }
-            else
-            {
-                if ((bool)Session["showProjectHours"])
-                {
-                    pnlAddHours.Visible = !pnlAddHours.Visible;
-                }                
-                if ((bool)Session["showVehicleHours"])
-                {                  
-                     pnlVehicleHours.Visible = !pnlVehicleHours.Visible;
-                }
-               
-
-                dgvCars.Visible = !dgvCars.Visible;
-                dgvProject.Visible = !dgvProject.Visible;
             }
         }
 
@@ -375,7 +361,7 @@ namespace CTBWebsite
             lblUserHours.Text = "Your Hours: " + hoursWorked + "/40";
             if (hoursWorked == 40)
             {
-                pnlAddHours.Visible = false;
+                pnlAddHours.Style.Add("display", "none");
                 Session["showProjectHours"] = false;
             }
             else

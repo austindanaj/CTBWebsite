@@ -13,7 +13,7 @@ namespace CTBWebsite {
 		private readonly static string LOCALHOST_CONNECTION_STRING = "Data Source=(LocalDB)\\v13.0;Server = (localdb)\\MSSQLLocalDB;Database=Alps;";
 		private readonly static string DEPLOYMENT_CONNECTION_STRING = "Server=(local);Database=CTBwebsite;User Id=admin;Password=alnatest;";
 		public  readonly static string LOCAL_TO_SERVER_CONNECTION_STRING = "Data Source=ahfreya;Initial Catalog=CTBwebsite;Integrated Security=False;User ID=Admin;Password=alnatest;Connect Timeout=30;Encrypt=False;TrustServerCertificate=True;ApplicationIntent=ReadWrite;MultiSubnetFailover=False";
-        protected SqlConnection objConn;
+        public SqlConnection objConn { get; set; }
         private enum SqlTypes { DataTable, VoidQuery, DataReader };
 
         //Need to be deleted:
@@ -220,7 +220,7 @@ namespace CTBWebsite {
 
 			SqlDataAdapter objAdapter = new SqlDataAdapter();
 			DataSet objDataSet = new DataSet();
-			SqlCommand cmd = new SqlCommand(command);
+			SqlCommand cmd = new SqlCommand(command, objConn);
 			objAdapter.SelectCommand = cmd;
 			object[] o = { objAdapter, objDataSet };
 			objDataSet = (DataSet)sqlExecuter(o, SqlTypes.DataTable);
@@ -234,7 +234,7 @@ namespace CTBWebsite {
 
 			SqlDataAdapter objAdapter = new SqlDataAdapter();
 			DataSet objDataSet = new DataSet();
-			SqlCommand cmd = new SqlCommand(command);
+			SqlCommand cmd = new SqlCommand(command, objConn);
 			if (null != parameter)
 				cmd.Parameters.AddWithValue("@value1", parameter);
 			objAdapter.SelectCommand = cmd;
@@ -250,7 +250,7 @@ namespace CTBWebsite {
 
 			SqlDataAdapter objAdapter = new SqlDataAdapter();
 			DataSet objDataSet = new DataSet();
-			SqlCommand cmd = new SqlCommand(command);
+			SqlCommand cmd = new SqlCommand(command, objConn);
 			int i = 1;
 			foreach (object s in parameters) {
 				cmd.Parameters.AddWithValue("@value" + i, s);
@@ -271,7 +271,7 @@ namespace CTBWebsite {
             if (objConn.State == ConnectionState.Closed)
                 throw new Exception("You forgot to open the object connection. You have to leave it open until you're done with the data reader.");
 
-            SqlCommand cmd = new SqlCommand(query);
+            SqlCommand cmd = new SqlCommand(query, objConn);
 
             return (SqlDataReader)sqlExecuter(cmd, SqlTypes.DataReader); ;
         }
@@ -280,7 +280,7 @@ namespace CTBWebsite {
 			if (objConn.State == ConnectionState.Closed)
 				throw new Exception("You forgot to open the object connection. You have to leave it open until you're done with the data reader.");
 
-			SqlCommand cmd = new SqlCommand(query);
+			SqlCommand cmd = new SqlCommand(query, objConn);
 			if (parameters != null) {
 				cmd.Parameters.AddWithValue("@value1", parameters);
 			}
@@ -292,7 +292,7 @@ namespace CTBWebsite {
 			if (objConn.State == ConnectionState.Closed)
 				throw new Exception("You forgot to open the object connection. You have to leave it open until you're done with the data reader.");
 
-			SqlCommand cmd = new SqlCommand(query);
+			SqlCommand cmd = new SqlCommand(query, objConn);
 			int i = 1;
 			foreach (object o in parameters) {
 				cmd.Parameters.AddWithValue("@value" + i, o);

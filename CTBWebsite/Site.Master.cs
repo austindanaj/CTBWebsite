@@ -3,6 +3,7 @@ using System.Web;
 using System.Web.UI;
 using System.Data;
 using System.Data.SqlClient;
+using System.Drawing;
 using System.IO;
 using Date = System.DateTime;
 using System.Web.UI.HtmlControls;
@@ -48,6 +49,19 @@ namespace CTBWebsite
             if (Session["Vehicle"] == null)
                 Session["Vehicle"] = false;
 
+            if (Session["UserMessageText"] != null)
+            {
+                userMessage.Style.Add("display", "block");
+                txtUserMessage.Text = (string)Session["UserMessage"];
+                Session["UserMessage"] = null;
+                if (Session["UserMessageColor"] != null)
+                {
+                    userMessage.Style.Add("background", (string) Session["UserMessageColor"]);
+                }
+            }
+
+
+
 
             if (!IsPostBack)
             {
@@ -57,8 +71,10 @@ namespace CTBWebsite
                     Response.Cookies["userName"].Value = userName;
                     Response.Cookies["userName"].Expires = DateTime.Now.AddDays(10);
 
-                    objConn = new SqlConnection(SuperPage.LOCAL_TO_SERVER_CONNECTION_STRING);
-                    objConn.Open();
+                   // sql.objConn = new SqlConnection(SuperPage.LOCAL_TO_SERVER_CONNECTION_STRING);
+                    sql.openDBConnection();
+                    sql.objConn.Open();
+                  
 
                     SqlDataReader reader = sql.getReader("Select Alna_num, Name, Full_time, Vehicle from Employees where Employees.[Name]=@value1;", Server.HtmlEncode(Request.Cookies["userName"].Value));
                     reader.Read();
@@ -219,6 +235,9 @@ namespace CTBWebsite
                         break;
                     case "Issues":
                         redirectSafely("~/IssueList");
+                        break;
+                    case "Global A":
+                        redirectSafely("~/GlobalADefault");
                         break;
                 }
             }
