@@ -80,8 +80,6 @@ namespace CTBWebsite
 
             prgTOff.Style.Add("width", "" + (100 * Math.Round(projectHours[1], 2)) + "%");
             spanTOff.InnerText = (100 * Math.Round(projectHours[1], 2)) + "%";
-
-
         }
 
         private void populateDaysOffTable(SqlConnection objConn)

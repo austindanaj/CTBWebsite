@@ -7,7 +7,7 @@ using System.Web.UI;
 
 namespace CTBWebsite
 {
-    public partial class GlobalADefault : SuperPage
+    public partial class GlobalADefault : IOPage
     {
         public SortDirection direction {
             get {
@@ -479,27 +479,7 @@ namespace CTBWebsite
                 comment //Comment if the user created one
             };
 
-            executeVoidSQLQuery("exec Insert_Report @value1, @value2, @value3, @value4, @value5, @value6, @value7, @value8, @value9, @value11, @value12", id_buffer);
-            SqlDataReader reader = getReader("select top 1 ID, Name, Path from Report order by ID desc");
-            int id = reader.GetInt32(0);
-            string path = reader.GetString(1);
-            string filename = reader.GetString(2);
-
-            try
-            {
-                if (!Directory.Exists(path))
-                    Directory.CreateDirectory(path);
-
-                using (BinaryWriter writer = new BinaryWriter(File.Open(path + filename, FileMode.Create)))
-                {
-                    writer.Write(reportUpload.FileBytes);
-                }
-            }
-            catch (Exception ex)
-            {
-                writeStackTrace("Error writing file", ex);
-                executeVoidSQLQuery("delete from Report where ID=@value1", id);
-            }
+            write(IOPage.Tables.Report, id_buffer, reportUpload.FileBytes);
         }
         protected void CreateReport_OnClick(object sender, EventArgs e)
         {
@@ -584,27 +564,7 @@ namespace CTBWebsite
                 comment //Comment if the user created one
             };
 
-            executeVoidSQLQuery("exec Insert_File @value1, @value2, @value3, @value4, @value5, @value6, @value7, @value8", id_buffer);
-            SqlDataReader reader = getReader("select top 1 ID, Name, Path from GA_File order by ID desc");
-            int id = reader.GetInt32(0);
-            string path = reader.GetString(1);
-            string filename = reader.GetString(2);
-
-            try
-            {
-                if (!Directory.Exists(path))
-                    Directory.CreateDirectory(path);
-
-                using (BinaryWriter writer = new BinaryWriter(File.Open(path + filename, FileMode.Create)))
-                {
-                    writer.Write(reportUpload.FileBytes);
-                }
-            }
-            catch (Exception ex)
-            {
-                writeStackTrace("Error writing file", ex);
-                executeVoidSQLQuery("delete from Report where ID=@value1", id);
-            }
+            write(Tables.File, reportUpload.FileBytes);
         }
         protected void UploadFile_OnClick(object sender, EventArgs e)
         {
