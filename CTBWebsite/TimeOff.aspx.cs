@@ -19,7 +19,7 @@ namespace CTBWebsite
                 return;
             }
 
-            objConn = openDBConnection();
+            openDBConnection();
 
             if (!IsPostBack)
             {
@@ -36,7 +36,7 @@ namespace CTBWebsite
         private void init()
         {
             objConn.Open();
-            SqlDataReader reader = getReader("select ID, Start, TimeOff.[End] from TimeOff where Alna_num=@value1 ORDER BY ID desc", Session["Alna_num"], objConn);
+            SqlDataReader reader = getReader("select ID, Start, TimeOff.[End] from TimeOff where Alna_num=@value1 ORDER BY ID desc", Session["Alna_num"]);
             if (reader == null)
             {
                 throwJSAlert("Failed to grab data: SQL error");
@@ -74,7 +74,7 @@ namespace CTBWebsite
             gridview.Columns.Add("Thursday", typeof(string));
             gridview.Columns.Add("Friday", typeof(string));
 
-            initDate(objConn);
+            initDate();
 
             int i;
             Date mondayOfCurrentWeek = (Date)Session["Date"];
@@ -82,8 +82,8 @@ namespace CTBWebsite
             for (i = 0; i <= 4; i++)
                 weekdays[i] = mondayOfCurrentWeek.AddDays(i);
 
-            DataTable employees = getDataTable("select Alna_num, Name from Employees where Active=@value1 order by Alna_num", true, objConn);
-            DataTable timeOff = getDataTable("select Alna_num, Start, TimeOff.[End], Business from TimeOff order by Alna_num", null, objConn);
+            DataTable employees = getDataTable("select Alna_num, Name from Employees where Active=@value1 order by Alna_num", true);
+            DataTable timeOff = getDataTable("select Alna_num, Start, TimeOff.[End], Business from TimeOff order by Alna_num");
 
             if (employees == null | timeOff == null)
             {
@@ -140,7 +140,7 @@ namespace CTBWebsite
 
         private bool doesntConflict(SqlConnection o, Date start, Date end)
         {
-            SqlDataReader reader = getReader("Select TimeOff.[Start], TimeOff.[End] from TimeOff where Alna_num=@value1", Session["Alna_num"], objConn);
+            SqlDataReader reader = getReader("Select TimeOff.[Start], TimeOff.[End] from TimeOff where Alna_num=@value1", Session["Alna_num"]);
             if (reader == null) return false;
             if (!reader.HasRows)
             {
@@ -203,7 +203,7 @@ namespace CTBWebsite
             }
 
             object[] o = { Session["Alna_num"], start, end, chkBusinessTrip.Checked };
-            executeVoidSQLQuery("INSERT INTO TimeOff (Alna_num, TimeOff.[Start], TimeOff.[End], Business) VALUES (@value1, @value2, @value3, @value4);", o, objConn);
+            executeVoidSQLQuery("INSERT INTO TimeOff (Alna_num, TimeOff.[Start], TimeOff.[End], Business) VALUES (@value1, @value2, @value3, @value4);", o);
 
             objConn.Close();
             Session["success?"] = true;
@@ -215,7 +215,7 @@ namespace CTBWebsite
             string s = ddlTimeTakenOff.SelectedValue;
             if (string.IsNullOrEmpty(s))
                 return;
-            executeVoidSQLQuery("DELETE FROM TimeOff WHERE ID=@value1", s.Substring(3, s.IndexOf(":") - 3), objConn);
+            executeVoidSQLQuery("DELETE FROM TimeOff WHERE ID=@value1", s.Substring(3, s.IndexOf(":") - 3));
             ddlTimeTakenOff.Items.Remove(s);
             throwJSAlert("Your time off for " + s + " has been successfully removed");
         }

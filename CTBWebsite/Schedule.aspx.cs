@@ -10,8 +10,6 @@ namespace CTBWebsite
 {
     public partial class Schedule : SchedulePage
     {
-        SqlConnection objConn;
-
         protected void Page_Load(object sender, EventArgs e)
         {
            if (Session["Alna_num"] == null) {
@@ -19,11 +17,11 @@ namespace CTBWebsite
 				return;
 			}
 
-            objConn = openDBConnection();
+            openDBConnection();
             if (!IsPostBack)
             {
                 objConn.Open();
-                populateInternSchedules(objConn, dgvSchedule, ddlSelectScheduleDay);
+                populateInternSchedules(dgvSchedule, ddlSelectScheduleDay);
                 populateScheduledHoursDdl(objConn);
                 objConn.Close();
             }
@@ -34,7 +32,7 @@ namespace CTBWebsite
             ddlScheduledHours.Items.Clear();
 
             object[] o = { Session["Alna_num"], Session["weekday"] };
-            SqlDataReader reader = getReader("select ID, TimeStart, TimeEnd from Schedule where Alna_num=@value1 and DayOfWeek=@value2", o, objConn);
+            SqlDataReader reader = getReader("select ID, TimeStart, TimeEnd from Schedule where Alna_num=@value1 and DayOfWeek=@value2", o);
             if (!reader.HasRows)            {
                
                 reader.Close();
@@ -56,9 +54,9 @@ namespace CTBWebsite
         protected void changeScheduleDay(object sender, EventArgs e)
         {
             Session["weekday"] = ddlSelectScheduleDay.SelectedIndex + 1;
-            SqlConnection objConn = openDBConnection();
+            
             objConn.Open();
-            populateInternSchedules(objConn, dgvSchedule, ddlSelectScheduleDay);
+            populateInternSchedules(dgvSchedule, ddlSelectScheduleDay);
             populateScheduledHoursDdl(objConn);
             objConn.Close();
         }
@@ -140,7 +138,7 @@ namespace CTBWebsite
 
                 objConn.Open();
                 object[] obj = { Session["Alna_num"], ddlDay.SelectedIndex + 1 };
-                SqlDataReader reader = getReader("select TimeStart, TimeEnd from Schedule where Alna_num=@value1 and DayOfWeek=@value2", obj, objConn);
+                SqlDataReader reader = getReader("select TimeStart, TimeEnd from Schedule where Alna_num=@value1 and DayOfWeek=@value2", obj);
                 while (reader.Read())
                 {
                     int compareStart = reader.GetInt16(0), compareEnd = reader.GetInt16(1);
@@ -155,7 +153,7 @@ namespace CTBWebsite
                 reader.Close();
 
                 obj = new object[] { Session["Alna_num"], start, end, ddlDay.SelectedIndex + 1 };
-                executeVoidSQLQuery("insert into Schedule (Alna_num, TimeStart, TimeEnd, DayOfWeek) values (@value1, @value2, @value3, @value4)", obj, objConn);
+                executeVoidSQLQuery("insert into Schedule (Alna_num, TimeStart, TimeEnd, DayOfWeek) values (@value1, @value2, @value3, @value4)", obj);
                 throwJSAlert("Successfully added new schedule entry");                
                 redirectSafely("~/Schedule");
             }
@@ -168,8 +166,8 @@ namespace CTBWebsite
                     return;
                 }
                 objConn.Open();
-                executeVoidSQLQuery("delete from Schedule where ID=@value1", id, objConn);
-                populateInternSchedules(objConn, dgvSchedule, ddlSelectScheduleDay);
+                executeVoidSQLQuery("delete from Schedule where ID=@value1", id);
+                populateInternSchedules(dgvSchedule, ddlSelectScheduleDay);
                 populateScheduledHoursDdl(objConn);
             }
         }
