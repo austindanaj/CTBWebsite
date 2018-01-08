@@ -3,6 +3,7 @@ using System.Web;
 using System.Web.UI;
 using System.Data;
 using System.Data.SqlClient;
+using System.Drawing;
 using System.IO;
 using Date = System.DateTime;
 using System.Web.UI.HtmlControls;
@@ -48,12 +49,17 @@ namespace CTBWebsite
             if (Session["Vehicle"] == null)
                 Session["Vehicle"] = false;
 
-            if (Session["UserMessage"] != null)
+            if (Session["UserMessageText"] != null)
             {
                 userMessage.Style.Add("display", "block");
                 txtUserMessage.Text = (string)Session["UserMessage"];
                 Session["UserMessage"] = null;
+                if (Session["UserMessageColor"] != null)
+                {
+                    userMessage.Style.Add("background", (string) Session["UserMessageColor"]);
+                }
             }
+
 
 
 
