@@ -13,6 +13,33 @@ namespace CTBWebsite {
     public partial class SiteMaster {
         
         /// <summary>
+        /// userMessage control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlGenericControl userMessage;
+        
+        /// <summary>
+        /// txtErrorMessage control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label txtErrorMessage;
+        
+        /// <summary>
+        /// clearClicked control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlGenericControl clearClicked;
+        
+        /// <summary>
         /// hoursPage control.
         /// </summary>
         /// <remarks>
@@ -38,6 +65,15 @@ namespace CTBWebsite {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.HtmlControls.HtmlGenericControl btnProjects;
+        
+        /// <summary>
+        /// gaPage control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlAnchor gaPage;
         
         /// <summary>
         /// A1 control.

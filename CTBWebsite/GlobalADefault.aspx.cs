@@ -109,9 +109,12 @@ namespace CTBWebsite
             SqlDataAdapter adp = new SqlDataAdapter();
             adp.SelectCommand = cmd;
             adp.Fill(dt);
-            if (dt.Rows.Count == 0)
+            dt.Columns.Add("FormDate", typeof(string));
+            for (int i = 0; i < dt.Rows.Count; i++)
             {
-               // dt.Rows.Add();
+                DateTime date = (DateTime)dt.Rows[i]["Date_Created"];
+                string format = "MMM d, yyyy";
+                dt.Rows[i]["FormDate"] = date.ToString(format);
             }
             // DataTable dt = getDataTable("GetFilteredReport", null, objConn);
             return dt;
@@ -298,12 +301,12 @@ namespace CTBWebsite
             ds.Tables[0].Columns.Add("IconType", typeof(string));
             for (int i = 0; i < ds.Tables[0].Rows.Count; i++)
             {
-                DateTime date = (DateTime)ds.Tables[0].Rows[i]["Date"];
+                DateTime date = (DateTime)ds.Tables[0].Rows[i]["Date_updated"];
                 string format = "MMM d, yyyy";
                 ds.Tables[0].Rows[i]["FormDate"] = date.ToString(format);
                 string type = (string)ds.Tables[0].Rows[i]["ContentType"];
                 ds.Tables[0].Rows[i]["IconType"] = GetImageIcon(type);
-                ds.Tables[0].Rows[i]["Description"] = ds.Tables[0].Rows[i]["Description"].ToString().Replace("\r\n", Environment.NewLine);
+                ds.Tables[0].Rows[i]["Comment"] = ds.Tables[0].Rows[i]["Description"].ToString().Replace("\r\n", Environment.NewLine);
             }
             lstTools.DataSource = ds;
             lstTools.DataBind();
@@ -331,7 +334,7 @@ namespace CTBWebsite
             {
                 return "pdf_icon.png";
             }
-            else if (type.Contains("apk"))
+            else if (type.Contains("android"))
             {
                 return "apk_icon.png";
             }
@@ -357,18 +360,16 @@ namespace CTBWebsite
             SqlConnection objConn = openDBConnection();
             objConn.Open();
 
-            object file, filename = DBNull.Value, contentType = DBNull.Value;
+            object filename = DBNull.Value, contentType = DBNull.Value;
 
-            using (var binReader = new BinaryReader(toolUpload.FileContent))
-            {
-                file = binReader.ReadBytes((int)toolUpload.FileContent.Length);
-            }
             filename = toolUpload.FileName;
             contentType = toolUpload.PostedFile.ContentType;
             object[] o;
-            o = new [] { txtFileName.Text, txtFileDescription.Text, txtVersion.Text, DateTime.Now, file, filename, contentType, Session["Alna_num"]};
-            executeVoidSQLQuery("INSERT INTO Tools (Name, Description, Version, Date, Attachment, FileName, ContentType, EmployeeID) values" +
-                                                      "(@value1, @value2, @value3, @value4, @value5, @value6, @value7, @value8)", o, objConn);
+            /*
+            o = new [] { txtFileName.Text, txtFileDescription.Text, txtVersion.Text, DateTime.Now, Session["Alna_num"], filename, contentType, Session["Alna_num"]};
+            executeVoidSQLQuery("INSERT INTO Tools (Name, Comment, Version, Date_updated, Alna_num, Path, Extension) values" +
+                                                      "(@value1, @value2, @value3, @value4, @value5, @value6, @value7)", o, objConn);
+                                                      */
 
         }
 
@@ -433,13 +434,13 @@ namespace CTBWebsite
 
             SqlConnection objConn = openDBConnection();
             objConn.Open();
-            SqlDataReader reader = getReader("SELECT * FROM Vehicles ORDER BY Name ASC", null, objConn);
+            SqlDataReader reader = getReader("SELECT * FROM Vehicles  WHERE Active='1' ORDER BY Name ASC", null, objConn);
             while (reader.Read())
             {
                 ddlVehicles.Items.Add(new ListItem(reader.GetString(1), reader.GetValue(0).ToString()));
             }
             reader.Close();
-            reader = getReader("SELECT * FROM Phones ORDER BY Name ASC", null, objConn);
+            reader = getReader("SELECT * FROM Phones  WHERE Active='1' ORDER BY Name ASC", null, objConn);
             while (reader.Read())
             {
                 ddlPhones.Items.Add(new ListItem(reader.GetString(1), reader.GetValue(0).ToString()));
@@ -480,13 +481,13 @@ namespace CTBWebsite
 
             SqlConnection objConn = openDBConnection();
             objConn.Open();
-            SqlDataReader reader = getReader("SELECT * FROM Vehicles ORDER BY Name ASC", null, objConn);
+            SqlDataReader reader = getReader("SELECT * FROM Vehicles  WHERE Active='1' ORDER BY Name ASC", null, objConn);
             while (reader.Read())
             {
                 ddlFileVehicle.Items.Add(new ListItem(reader.GetString(1), reader.GetValue(0).ToString()));
             }
             reader.Close();
-            reader = getReader("SELECT * FROM Phones ORDER BY Name ASC", null, objConn);
+            reader = getReader("SELECT * FROM Phones  WHERE Active='1' ORDER BY Name ASC", null, objConn);
             while (reader.Read())
             {
                 ddlFilePhone.Items.Add(new ListItem(reader.GetString(1), reader.GetValue(0).ToString()));
@@ -521,7 +522,7 @@ namespace CTBWebsite
             ddlVehicleReportFilter.Items.Add(new ListItem("-- Vehicle Filter --", "-1"));
             ddlFileVehicleFilter.Items.Add(new ListItem("-- Vehicle Filter --", "-1"));
             ddlImageVehicleFilter.Items.Add(new ListItem("-- Vehicle Filter --", "-1"));
-            SqlDataReader reader = getReader("SELECT * FROM Vehicles ORDER BY Name ASC", null, objConn);
+            SqlDataReader reader = getReader("SELECT * FROM Vehicles WHERE Active='1' ORDER BY Name ASC", null, objConn);
             string id;
             string name;
             while (reader.Read())
@@ -538,7 +539,7 @@ namespace CTBWebsite
             ddlFilePhoneFilter.Items.Clear();
             ddlPhoneReportFilter.Items.Add(new ListItem("-- Phone Filter --", "-1"));
             ddlFilePhoneFilter.Items.Add(new ListItem("-- Phone Filter --", "-1"));
-            reader = getReader("SELECT * FROM Phones ORDER BY Name ASC", null, objConn);
+            reader = getReader("SELECT * FROM Phones WHERE Active='1' ORDER BY Name ASC", null, objConn);
             while (reader.Read())
             {
                 id = reader.GetValue(0).ToString();
@@ -574,7 +575,7 @@ namespace CTBWebsite
 
             SqlConnection objConn = openDBConnection();
             objConn.Open();
-            SqlDataReader reader = getReader("SELECT * FROM Vehicles ORDER BY Name ASC", null, objConn);
+            SqlDataReader reader = getReader("SELECT * FROM Vehicles  WHERE Active='1' ORDER BY Name ASC", null, objConn);
             while (reader.Read())
             {
                 ddlImageVehicle.Items.Add(new ListItem(reader.GetString(1), reader.GetValue(0).ToString()));

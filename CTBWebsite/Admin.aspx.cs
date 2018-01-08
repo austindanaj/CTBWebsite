@@ -8,6 +8,7 @@ using System.Data.Sql;
 using System.Text.RegularExpressions;
 
 using System.Data.SqlClient;
+using System.IO;
 
 namespace CTBWebsite
 {
@@ -106,9 +107,24 @@ namespace CTBWebsite
 
             executeVoidSQLQuery("INSERT INTO Vehicles (Name, Abbreviation) VALUES (@value1, @value2);", new object[] { text.Replace(" ", "_"), txtCarAbbreviation.Text }, objConn);
 
+          //  CreateDirectoryStructure("//AHMARVIN/Engineering/Core EE/CTB/GM_BLE_PEPS_measurement result/DONT MOVE THIS FOLDER/GAFMS/" + text);
+            
+
+
+
+
+
+
             Session["success?"] = true;
             redirectSafely("~/Admin");
         }
+
+        /*
+        private void CreateDirectoryStructure(string path)
+        {
+            Directory.CreateDirectory(path);
+        }
+        */
 
         protected void remove(object sender, EventArgs e)
         {

@@ -219,6 +219,9 @@ namespace CTBWebsite
                     case "Issues":
                         redirectSafely("~/IssueList");
                         break;
+                    case "Global A":
+                        redirectSafely("~/GlobalADefault");
+                        break;
                 }
             }
         }

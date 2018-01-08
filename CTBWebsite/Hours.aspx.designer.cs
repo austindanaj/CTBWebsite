@@ -49,6 +49,15 @@ namespace CTBWebsite {
         protected global::System.Web.UI.WebControls.CheckBox chkInactive;
         
         /// <summary>
+        /// udpHours control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.UpdatePanel udpHours;
+        
+        /// <summary>
         /// pnlAddHours control.
         /// </summary>
         /// <remarks>
@@ -227,6 +236,15 @@ namespace CTBWebsite {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.HtmlControls.HtmlAnchor rightButton;
+        
+        /// <summary>
+        /// udpTables control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.UpdatePanel udpTables;
         
         /// <summary>
         /// dgvProject control.

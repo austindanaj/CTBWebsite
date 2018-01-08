@@ -74,6 +74,12 @@
         <script type="text/javascript" src="Scripts/bootstrap.min.js"></script>
         <script type="text/javascript" src="Scripts/bootstrap-datetimepicker.js"></script>
         <script type="text/javascript" src="Scripts/bootstrap-datetimepicker.min.js"></script>
+
+        <div class="userMessage" id="userMessage" runat="server" style="display: block">
+            <asp:Label runat="server" CssClass="userMessageText" ID="txtErrorMessage" Text="404 Error: Please see admin"></asp:Label>
+            <span id="clearClicked" onclick="CloseMessage()" runat="server" class="closeNotification">&times;</span>
+        </div>
+
         <header id="header">
             <nav class="navbar navbar-inverse" role="banner">
                 <div class="container">
@@ -97,7 +103,7 @@
                             <li id="btnProjects" runat="server" visible="true" class="dropdown">
                                 <a class="dropdown-toggle" data-toggle="dropdown">Projects<i class="fa fa-angle-down"></i></a>
                                 <ul class="dropdown-menu">
-                                    <li><a href="GlobalADefault.aspx">Global A</a></li>
+                                    <li><a runat="server" id="gaPage" onserverclick="Is_SignedIn">Global A</a></li>
                                     <!--   <li><a href="Admin.aspx">Admin</a></li>
                                     <li><a id="A1" runat="server" onserverclick="Sign_Out">Sign Out</a></li>
                                      -->
@@ -215,6 +221,11 @@
                     return false;
                 })
             });
+
+            function CloseMessage() {
+                var message = document.getElementById('<%: userMessage.ClientID %>');
+                message.style.display = 'none';
+            }
         </script>
 
         <!-- /top-link-block -->

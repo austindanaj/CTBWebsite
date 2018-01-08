@@ -164,6 +164,12 @@
                                                         Text='<%# Eval("ID") %>'></asp:Label>
                                                 </ItemTemplate>
                                             </asp:TemplateField>
+                                            <asp:TemplateField HeaderText="ID" SortExpression="ID">
+                                                <ItemTemplate>
+                                                    <asp:Label runat="server"
+                                                               Text='<%# Eval("ID") %>'></asp:Label>
+                                                </ItemTemplate>
+                                            </asp:TemplateField>
                                             <asp:TemplateField HeaderText="Report" SortExpression="Report_Name">
                                                 <ItemTemplate>
                                                     <asp:LinkButton runat="server" AutoPostBack="true" ID="lnkReportFile"
@@ -180,7 +186,7 @@
                                             <asp:TemplateField HeaderText="Phone" SortExpression="Phone_Name">
                                                 <ItemTemplate>
                                                     <asp:Label runat="server"
-                                                        Text='<%# Eval("Phone_Abv") %>'></asp:Label>
+                                                        Text='<%# Eval("Phone_Name") %>'></asp:Label>
                                                 </ItemTemplate>
                                             </asp:TemplateField>
                                             <asp:TemplateField HeaderText="Calibration" SortExpression="Calibration_Name">
@@ -233,7 +239,7 @@
                                             <asp:TemplateField HeaderText="Created" SortExpression="Date_Created">
                                                 <ItemTemplate>
                                                     <asp:Label runat="server"
-                                                        Text='<%# Eval("Date_Created") %>'></asp:Label>
+                                                        Text='<%# Eval("FormDate") %>'></asp:Label>
                                                 </ItemTemplate>
                                             </asp:TemplateField>
                                             <asp:TemplateField HeaderText="Uploaded" SortExpression="Date_Inserted">
@@ -347,7 +353,7 @@
                                             <asp:TemplateField HeaderText="Phone" SortExpression="Phone_Name">
                                                 <ItemTemplate>
                                                     <asp:Label runat="server"
-                                                        Text='<%# Eval("Phone_Abv") %>'></asp:Label>
+                                                        Text='<%# Eval("Phone_Name") %>'></asp:Label>
                                                 </ItemTemplate>
                                             </asp:TemplateField>
                                             <asp:TemplateField HeaderText="File Type" SortExpression="Type">
@@ -706,7 +712,7 @@
                                         <asp:RequiredFieldValidator ID="RequiredFieldValidator6" ForeColor="Red"
                                             ControlToValidate="ddlAuthor1" InitialValue="-1"
                                             ValidationGroup="ReportGroup"
-                                            ErrorMessage="Select a name."
+                                            ErrorMessage="Select a Name."
                                             runat="Server">
                                         </asp:RequiredFieldValidator>
                                     </div>
@@ -731,6 +737,12 @@
                                             <asp:ListItem Text="-- Select Author 2 --" Value="-2" />
                                             <asp:ListItem Text="N/A" Value="-1" />
                                         </asp:DropDownList>
+                                        <asp:RequiredFieldValidator ID="RequiredFieldValidator23" ForeColor="Red"
+                                                                    ControlToValidate="ddlAuthor2" InitialValue="-2"
+                                                                    ValidationGroup="ReportGroup"
+                                                                    ErrorMessage="Select a Name."
+                                                                    runat="Server">
+                                        </asp:RequiredFieldValidator>
                                     </div>
                                 </div>
                                 <div class="col-md-6">
@@ -823,10 +835,10 @@
                                         <div class="col-md-6">
                                             <div class="form-group">
                                                 <asp:DropDownList ID="ddlFileVehicle" runat="server" ValidationGroup="UploadGroup" CssClass="form-control">
-                                                    <asp:ListItem Text="-- Select a Vehicle --" />
+                                                    <asp:ListItem Text="-- Select a Vehicle --" Value="-1" />
                                                 </asp:DropDownList>
                                                 <asp:RequiredFieldValidator ID="RequiredFieldValidator3" ForeColor="Red"
-                                                    ControlToValidate="ddlFileVehicle" InitialValue="-- Select a Vehicle --"
+                                                    ControlToValidate="ddlFileVehicle" InitialValue="-1"
                                                     ValidationGroup="UploadGroup"
                                                     ErrorMessage="Select a vehicle."
                                                     runat="Server">
@@ -837,10 +849,10 @@
 
                                             <div class="form-group">
                                                 <asp:DropDownList ID="ddlFileAuthor1" runat="server" ValidationGroup="UploadGroup" CssClass="form-control">
-                                                    <asp:ListItem Text="-- Select Author 1 --" />
+                                                    <asp:ListItem Text="-- Select Author 1 --" Value="-1" />
                                                 </asp:DropDownList>
                                                 <asp:RequiredFieldValidator ID="RequiredFieldValidator1" ForeColor="Red"
-                                                    ControlToValidate="ddlFileAuthor1" InitialValue="-- Select Author 1 --"
+                                                    ControlToValidate="ddlFileAuthor1" InitialValue="-1"
                                                     ValidationGroup="UploadGroup"
                                                     ErrorMessage="Select an Author."
                                                     runat="Server">
@@ -856,10 +868,10 @@
 
                                             <div class="form-group">
                                                 <asp:DropDownList ID="ddlFilePhone" runat="server" ValidationGroup="UploadGroup" CssClass="form-control">
-                                                    <asp:ListItem Text="-- Select a Phone --" />
+                                                    <asp:ListItem Text="-- Select a Phone --" Value="-1" />
                                                 </asp:DropDownList>
-                                                <asp:RequiredFieldValidator ID="RequiredFieldValidator4" ForeColor="Red"
-                                                    ControlToValidate="ddlFilePhone" InitialValue="-- Select a Phone --"
+                                                <asp:RequiredFieldValidator ID="RequiredFieldValidator4" ForeColor="Red" 
+                                                    ControlToValidate="ddlFilePhone" InitialValue="-1"
                                                     ValidationGroup="UploadGroup"
                                                     ErrorMessage="Select a Phone."
                                                     runat="Server">
@@ -869,8 +881,15 @@
                                         <div class="col-md-6">
                                             <div class="form-group">
                                                 <asp:DropDownList ID="ddlFileAuthor2" runat="server" ValidationGroup="UploadGroup" CssClass="form-control">
-                                                    <asp:ListItem Text="-- Select Author 2 --" />
+                                                    <asp:ListItem Text="-- Select Author 2 --" Value="-2" />
+                                                    <asp:ListItem Text="N/A" Value="-1" />
                                                 </asp:DropDownList>
+                                                <asp:RequiredFieldValidator ID="RequiredFieldValidator24" ForeColor="Red" 
+                                                                            ControlToValidate="ddlFileAuthor2" InitialValue="-2"
+                                                                            ValidationGroup="UploadGroup"
+                                                                            ErrorMessage="Select a Name."
+                                                                            runat="Server">
+                                                </asp:RequiredFieldValidator>
                                             </div>
                                         </div>
                                     </div>
@@ -888,7 +907,7 @@
                                                     <asp:ListItem Text="TD4" Value="4" />
                                                 </asp:DropDownList>
                                                 <asp:RequiredFieldValidator ID="RequiredFieldValidator13" ForeColor="Red"
-                                                    ControlToValidate="ddlFileType" InitialValue="-- Select a File Type --"
+                                                    ControlToValidate="ddlFileType" InitialValue="-1"
                                                     ValidationGroup="UploadGroup"
                                                     ErrorMessage="Select a File Type."
                                                     runat="Server">
@@ -966,10 +985,10 @@
                                 <div class="row" style="padding-right: 15px; padding-left: 15px;">
                                     <div class="form-group">
                                         <asp:DropDownList ID="ddlImageVehicle" runat="server" ValidationGroup="ImageGroup" CssClass="form-control">
-                                            <asp:ListItem Text="-- Select a Vehicle --" />
+                                            <asp:ListItem Text="-- Select a Vehicle --" Value="-1" />
                                         </asp:DropDownList>
                                         <asp:RequiredFieldValidator ID="RequiredFieldValidator16" ForeColor="Red"
-                                            ControlToValidate="ddlImageVehicle" InitialValue="-- Select a Vehicle --"
+                                            ControlToValidate="ddlImageVehicle" InitialValue="-1"
                                             ValidationGroup="ImageGroup"
                                             ErrorMessage="Select a vehicle."
                                             runat="Server">
@@ -1136,7 +1155,8 @@
 
         function bindEvents() {
             $('#datetimepicker1').datetimepicker({
-                format: 'MM/DD/YYYY'
+                format: 'MM/DD/YYYY',
+                useCurrent: false
             });
             $("#datetimepicker1").on("dp.change",
                 function (e) {
@@ -1147,7 +1167,9 @@
 
                 });
             $('#datetimepicker2').datetimepicker({
-                format: 'MM/DD/YYYY'
+                format: 'MM/DD/YYYY',
+                useCurrent: false
+  
             });
             $("#datetimepicker2").on("dp.change",
                 function (e) {
@@ -1159,7 +1181,8 @@
 
                 });
             $('#datetimepicker3').datetimepicker({
-                format: 'MM/DD/YYYY'
+                format: 'MM/DD/YYYY',
+                useCurrent: false
             });
             $("#datetimepicker3").on("dp.change",
                 function (e) {
@@ -1171,7 +1194,8 @@
 
                 });
             $('#datetimepicker4').datetimepicker({
-                format: 'MM/DD/YYYY'
+                format: 'MM/DD/YYYY',
+                useCurrent: false
             });
             $("#datetimepicker4").on("dp.change",
                 function (e) {
@@ -1179,7 +1203,8 @@
 
                 });
             $('#datetimepicker5').datetimepicker({
-                format: 'MM/DD/YYYY'
+                format: 'MM/DD/YYYY',
+                useCurrent: false
             });
             $("#datetimepicker5").on("dp.change",
                 function (e) {
@@ -1187,7 +1212,8 @@
 
                 });
             $('#datetimepicker6').datetimepicker({
-                format: 'MM/DD/YYYY'
+                format: 'MM/DD/YYYY',
+                useCurrent: false
             });
             $("#datetimepicker6").on("dp.change",
                 function (e) {

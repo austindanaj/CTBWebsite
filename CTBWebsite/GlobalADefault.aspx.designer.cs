@@ -508,6 +508,15 @@ namespace CTBWebsite {
         protected global::System.Web.UI.WebControls.DropDownList ddlAuthor2;
         
         /// <summary>
+        /// RequiredFieldValidator23 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.RequiredFieldValidator RequiredFieldValidator23;
+        
+        /// <summary>
         /// ddlTD3 control.
         /// </summary>
         /// <remarks>
@@ -677,6 +686,15 @@ namespace CTBWebsite {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.DropDownList ddlFileAuthor2;
+        
+        /// <summary>
+        /// RequiredFieldValidator24 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.RequiredFieldValidator RequiredFieldValidator24;
         
         /// <summary>
         /// ddlFileType control.
