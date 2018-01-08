@@ -75,8 +75,8 @@
         <script type="text/javascript" src="Scripts/bootstrap-datetimepicker.js"></script>
         <script type="text/javascript" src="Scripts/bootstrap-datetimepicker.min.js"></script>
 
-        <div class="userMessage" id="userMessage" runat="server" style="display: block">
-            <asp:Label runat="server" CssClass="userMessageText" ID="txtErrorMessage" Text="404 Error: Please see admin"></asp:Label>
+        <div class="userMessage" id="userMessage" runat="server" style="display: none">
+            <asp:Label runat="server" CssClass="userMessageText" ID="txtUserMessage" Text="404 Error: Please see admin"></asp:Label>
             <span id="clearClicked" onclick="CloseMessage()" runat="server" class="closeNotification">&times;</span>
         </div>
 

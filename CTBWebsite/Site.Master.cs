@@ -48,6 +48,14 @@ namespace CTBWebsite
             if (Session["Vehicle"] == null)
                 Session["Vehicle"] = false;
 
+            if (Session["UserMessage"] != null)
+            {
+                userMessage.Style.Add("display", "block");
+                txtUserMessage.Text = (string)Session["UserMessage"];
+                Session["UserMessage"] = null;
+            }
+
+
 
             if (!IsPostBack)
             {
@@ -57,8 +65,10 @@ namespace CTBWebsite
                     Response.Cookies["userName"].Value = userName;
                     Response.Cookies["userName"].Expires = DateTime.Now.AddDays(10);
 
-                    objConn = new SqlConnection(SuperPage.LOCAL_TO_SERVER_CONNECTION_STRING);
-                    objConn.Open();
+                   // sql.objConn = new SqlConnection(SuperPage.LOCAL_TO_SERVER_CONNECTION_STRING);
+                    sql.openDBConnection();
+                    sql.objConn.Open();
+                  
 
                     SqlDataReader reader = sql.getReader("Select Alna_num, Name, Full_time, Vehicle from Employees where Employees.[Name]=@value1;", Server.HtmlEncode(Request.Cookies["userName"].Value));
                     reader.Read();

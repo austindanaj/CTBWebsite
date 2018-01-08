@@ -159,7 +159,7 @@ namespace CTBWebsite
                 }
                 Session["Date"] = selection;
                 objConn.Open();
-                SqlCommand cmd = new SqlCommand("select ID from Dates where Dates=@value1");
+                SqlCommand cmd = new SqlCommand("select ID from Dates where Dates=@value1", objConn);
                 cmd.Parameters.AddWithValue("@value1", selection);
                 SqlDataReader reader = cmd.ExecuteReader();
                 reader.Read();

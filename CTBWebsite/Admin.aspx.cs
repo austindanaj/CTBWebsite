@@ -14,7 +14,7 @@ namespace CTBWebsite
 {
     public partial class Admin : SuperPage
     {
-        SqlConnection objConn;
+        //SqlConnection objConn;
 
         protected void Page_Load(object sender, EventArgs e)
         {

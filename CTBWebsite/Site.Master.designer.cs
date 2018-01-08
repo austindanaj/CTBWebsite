@@ -22,13 +22,13 @@ namespace CTBWebsite {
         protected global::System.Web.UI.HtmlControls.HtmlGenericControl userMessage;
         
         /// <summary>
-        /// txtErrorMessage control.
+        /// txtUserMessage control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label txtErrorMessage;
+        protected global::System.Web.UI.WebControls.Label txtUserMessage;
         
         /// <summary>
         /// clearClicked control.

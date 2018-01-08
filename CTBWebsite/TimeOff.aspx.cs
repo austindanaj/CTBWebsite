@@ -9,7 +9,7 @@ namespace CTBWebsite
     public partial class TimeOff : SuperPage
     {
         private enum DATE_VALID { OUT_OF_ORDER, VALID, INVALID };
-        SqlConnection objConn;
+   //     SqlConnection objConn;
 
         protected void Page_Load(object sender, EventArgs e)
         {
@@ -35,6 +35,7 @@ namespace CTBWebsite
         }
         private void init()
         {
+
             objConn.Open();
             SqlDataReader reader = getReader("select ID, Start, TimeOff.[End] from TimeOff where Alna_num=@value1 ORDER BY ID desc", Session["Alna_num"]);
             if (reader == null)
