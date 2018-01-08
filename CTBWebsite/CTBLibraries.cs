@@ -13,9 +13,33 @@ namespace CTBWebsite {
 		private readonly static string LOCALHOST_CONNECTION_STRING = "Data Source=(LocalDB)\\v13.0;Server = (localdb)\\MSSQLLocalDB;Database=Alps;";
 		private readonly static string DEPLOYMENT_CONNECTION_STRING = "Server=(local);Database=CTBwebsite;User Id=admin;Password=alnatest;";
 		public  readonly static string LOCAL_TO_SERVER_CONNECTION_STRING = "Data Source=ahfreya;Initial Catalog=CTBwebsite;Integrated Security=False;User ID=Admin;Password=alnatest;Connect Timeout=30;Encrypt=False;TrustServerCertificate=True;ApplicationIntent=ReadWrite;MultiSubnetFailover=False";
-		private enum SqlTypes { DataTable, VoidQuery, DataReader };
+        protected SqlConnection objConn;
+        private enum SqlTypes { DataTable, VoidQuery, DataReader };
 
-		protected void writeStackTrace(string s, Exception ex) {
+        //Need to be deleted:
+        public void successDialog(System.Web.UI.WebControls.TextBox txtSuccessBox)
+        {
+            if (Session["success?"] != null)
+                txtSuccessBox.Visible = (bool)Session["success?"];
+            Session["success?"] = false;
+        }
+
+        public void throwJSAlert(string s)
+        {
+            try
+            {
+                Response.Write("<script>alert('" + s + "');</script>");
+            }
+            catch (System.Web.HttpException h)
+            {
+                writeStackTrace("http exception throwingJs alert", h);
+            }
+        }
+
+        //==========================================================
+        // Basic functionality
+        //==========================================================
+        public void writeStackTrace(string s, Exception ex) {
 			if (!File.Exists(@"" + Server.MapPath("~/Debug/StackTrace.txt"))) {
 				File.Create(@"" + Server.MapPath("~/Debug/StackTrace.txt"));
 			}
@@ -25,23 +49,67 @@ namespace CTBWebsite {
 			}
 		}
 
-		protected SqlConnection openDBConnection() {
-			//return new SqlConnection(LOCALHOST_CONNECTION_STRING);
-			//return new SqlConnection(DEPLOYMENT_CONNECTION_STRING);
-			return new SqlConnection(LOCAL_TO_SERVER_CONNECTION_STRING);
+		public void openDBConnection() {
+			//this.objConn = new SqlConnection(LOCALHOST_CONNECTION_STRING);
+			//this.objConn = new SqlConnection(DEPLOYMENT_CONNECTION_STRING);
+			this.objConn = new SqlConnection(LOCAL_TO_SERVER_CONNECTION_STRING);
 		}
 
-		protected void throwJSAlert(string s) {
-			try {
-				Response.Write("<script>alert('" + s + "');</script>");
-			}
-			catch (System.Web.HttpException h) {
-				writeStackTrace("http exception throwingJs alert", h);
-			}
-		}
+        public void redirectSafely(string path)
+        {
+            try
+            {
+                Response.Redirect(Request.RawUrl, false);
+            }
+            catch (Exception e)
+            {
+                writeStackTrace("problem redirecting", e);
+            }
+        }
 
-		//This code handles all sql related exceptions
-		private object sqlExecuter(object o, SqlTypes type) {
+        public void initDate()
+        {
+            bool state = objConn.State == ConnectionState.Closed;
+            if (state)
+                objConn.Open();
+
+            SqlDataReader reader = getReader("select top 1 Dates, ID from Dates order by ID DESC;");
+            if (reader == null) return;
+            reader.Read();
+            Date date = (Date)reader.GetValue(0);
+            int id = (int)reader.GetValue(1);
+            reader.Close();
+            if (Date.Today > date.AddDays(6))
+            {
+                date = date.AddDays(7);
+                while (Date.Today > date.AddDays(6))
+                    date = date.AddDays(7);
+
+                string sqlDateString = date.Year + "-" + date.Month + "-" + date.Day;
+                executeVoidSQLQuery("insert into Dates (Dates.[Dates]) values (@value1)", sqlDateString);
+                reader = getReader("select top 1 ID, Dates from Dates order by ID desc");
+
+                if (reader == null) return;
+
+                reader.Read();
+                Session["Date_ID"] = (int)reader.GetValue(0);
+                Session["Date"] = (Date)reader.GetValue(1);
+                reader.Close();
+            }
+            else
+            {
+                Session["Date"] = date;
+                Session["Date_ID"] = id;
+            }
+
+            if (state)
+                objConn.Close();
+        }
+
+        //==========================================================
+        // Master executer of all SQL code; handles all exceptions
+        //==========================================================
+        private object sqlExecuter(object o, SqlTypes type) {
 			try {
 				switch (type) {
 					case SqlTypes.DataReader:
@@ -95,12 +163,46 @@ namespace CTBWebsite {
 			return null;
 		}
 
-		protected void executeVoidSQLQuery(string command, object[] parameters, SqlConnection conn) {
-			bool state = conn.State == ConnectionState.Closed;
-			if (state)
-				conn.Open();
+        //==========================================================
+        // Execute a query with no return value
+        //==========================================================
+        public void executeVoidSQLQuery(string command)
+        {
+            bool state = this.objConn.State == ConnectionState.Closed;
+            if (state)
+                this.objConn.Open();
 
-			SqlCommand objCmd = new SqlCommand(command, conn);
+            SqlCommand objCmd = new SqlCommand(command, this.objConn);
+            sqlExecuter(objCmd, SqlTypes.VoidQuery);
+
+            if (state)
+                this.objConn.Close();
+        }
+
+        public void executeVoidSQLQuery(string command, object parameter)
+        {
+            bool state = this.objConn.State == ConnectionState.Closed;
+            if (state)
+                this.objConn.Open();
+
+            SqlCommand objCmd = new SqlCommand(command, this.objConn);
+
+            if (null != parameter)
+            {
+                objCmd.Parameters.AddWithValue("@value1", parameter);
+            }
+            sqlExecuter(objCmd, SqlTypes.VoidQuery);
+
+            if (state)
+                this.objConn.Close();
+        }
+
+        public void executeVoidSQLQuery(string command, object[] parameters) {
+			bool state = this.objConn.State == ConnectionState.Closed;
+			if (state)
+				this.objConn.Open();
+
+			SqlCommand objCmd = new SqlCommand(command, this.objConn);
 
 			int i = 1;
 			foreach (object s in parameters) {
@@ -109,47 +211,33 @@ namespace CTBWebsite {
 			}
 			sqlExecuter(objCmd, SqlTypes.VoidQuery);
 			if (state)
-				conn.Close();
+				this.objConn.Close();
 		}
 
-		protected void executeVoidSQLQuery(string command, object parameter, SqlConnection conn) {
-			bool state = conn.State == ConnectionState.Closed;
-			if (state)
-				conn.Open();
-
-			SqlCommand objCmd = new SqlCommand(command, conn);
-
-			if (null != parameter) {
-				objCmd.Parameters.AddWithValue("@value1", parameter);
-			}
-			sqlExecuter(objCmd, SqlTypes.VoidQuery);
-
-			if (state)
-				conn.Close();
-		}
-
-		protected void successDialog(System.Web.UI.WebControls.TextBox txtSuccessBox) {
-			if (Session["success?"] != null)
-				txtSuccessBox.Visible = (bool)Session["success?"];
-			Session["success?"] = false;
-		}
-
-		protected void redirectSafely(string path) {
-			try {
-                Response.Redirect(Request.RawUrl, false);
-            }
-			catch (Exception e) {
-				writeStackTrace("problem redirecting", e);
-			}
-		}
-
-		protected DataTable getDataTable(string command, object parameter, SqlConnection objConn) {
+        //==========================================================
+        // Return datatable
+        //==========================================================
+        public DataTable getDataTable(string command) {
 			if (objConn.State == ConnectionState.Closed)
 				throw new Exception("You forgot to open the object connection. You have to leave it open until you're done with the data reader.");
 
 			SqlDataAdapter objAdapter = new SqlDataAdapter();
 			DataSet objDataSet = new DataSet();
-			SqlCommand cmd = new SqlCommand(command, objConn);
+			SqlCommand cmd = new SqlCommand(command);
+			objAdapter.SelectCommand = cmd;
+			object[] o = { objAdapter, objDataSet };
+			objDataSet = (DataSet)sqlExecuter(o, SqlTypes.DataTable);
+
+			return objDataSet == null ? null : objDataSet.Tables[0];
+		}
+
+        public DataTable getDataTable(string command, object parameter) {
+			if (this.objConn.State == ConnectionState.Closed)
+				throw new Exception("You forgot to open the object connection. You have to leave it open until you're done with the data reader.");
+
+			SqlDataAdapter objAdapter = new SqlDataAdapter();
+			DataSet objDataSet = new DataSet();
+			SqlCommand cmd = new SqlCommand(command);
 			if (null != parameter)
 				cmd.Parameters.AddWithValue("@value1", parameter);
 			objAdapter.SelectCommand = cmd;
@@ -159,16 +247,13 @@ namespace CTBWebsite {
 			return objDataSet == null ? null : objDataSet.Tables[0];
 		}
 
-		protected DataTable getDataTable(string command, object[] parameters, SqlConnection objConn) {
-			if (parameters == null)
-				return getDataTable(command, (object)null, objConn);
-
+		public DataTable getDataTable(string command, object[] parameters) {
 			if (objConn.State == ConnectionState.Closed)
 				throw new Exception("You forgot to open the object connection. You have to leave it open until you're done with the data reader.");
 
 			SqlDataAdapter objAdapter = new SqlDataAdapter();
 			DataSet objDataSet = new DataSet();
-			SqlCommand cmd = new SqlCommand(command, objConn);
+			SqlCommand cmd = new SqlCommand(command);
 			int i = 1;
 			foreach (object s in parameters) {
 				cmd.Parameters.AddWithValue("@value" + i, s);
@@ -181,11 +266,24 @@ namespace CTBWebsite {
 			return objDataSet == null ? null : objDataSet.Tables[0];
 		}
 
-		protected SqlDataReader getReader(string query, object parameters, SqlConnection objConn) {
+        //==========================================================
+        // Returns data reader
+        //==========================================================
+        public SqlDataReader getReader(string query)
+        {
+            if (objConn.State == ConnectionState.Closed)
+                throw new Exception("You forgot to open the object connection. You have to leave it open until you're done with the data reader.");
+
+            SqlCommand cmd = new SqlCommand(query);
+
+            return (SqlDataReader)sqlExecuter(cmd, SqlTypes.DataReader); ;
+        }
+
+        public SqlDataReader getReader(string query, object parameters) {
 			if (objConn.State == ConnectionState.Closed)
 				throw new Exception("You forgot to open the object connection. You have to leave it open until you're done with the data reader.");
 
-			SqlCommand cmd = new SqlCommand(query, objConn);
+			SqlCommand cmd = new SqlCommand(query);
 			if (parameters != null) {
 				cmd.Parameters.AddWithValue("@value1", parameters);
 			}
@@ -193,14 +291,11 @@ namespace CTBWebsite {
 			return (SqlDataReader)sqlExecuter(cmd, SqlTypes.DataReader); ;
 		}
 
-		protected SqlDataReader getReader(string query, object[] parameters, SqlConnection objConn) {
-			if (parameters == null)
-				return getReader(query, (object)parameters, objConn);
-
+		public SqlDataReader getReader(string query, object[] parameters) {
 			if (objConn.State == ConnectionState.Closed)
 				throw new Exception("You forgot to open the object connection. You have to leave it open until you're done with the data reader.");
 
-			SqlCommand cmd = new SqlCommand(query, objConn);
+			SqlCommand cmd = new SqlCommand(query);
 			int i = 1;
 			foreach (object o in parameters) {
 				cmd.Parameters.AddWithValue("@value" + i, o);
@@ -209,47 +304,9 @@ namespace CTBWebsite {
 
 			return (SqlDataReader)sqlExecuter(cmd, SqlTypes.DataReader);
 		}
-
-		protected void initDate(SqlConnection objConn) {
-			bool state = objConn.State == ConnectionState.Closed;
-			if (state)
-				objConn.Open();
-
-			SqlDataReader reader = getReader("select top 1 Dates, ID from Dates order by ID DESC;", null, objConn);
-			if (reader == null) return;
-			reader.Read();
-			Date date = (Date)reader.GetValue(0);
-			int id = (int)reader.GetValue(1);
-			reader.Close();
-			if (Date.Today > date.AddDays(6)) {
-				date = date.AddDays(7);
-				while (Date.Today > date.AddDays(6))
-					date = date.AddDays(7);
-
-				string sqlDateString = date.Year + "-" + date.Month + "-" + date.Day;
-				executeVoidSQLQuery("insert into Dates (Dates.[Dates]) values (@value1)", sqlDateString, objConn);
-				reader = getReader("select top 1 ID, Dates from Dates order by ID desc", null, objConn);
-
-				if (reader == null) return;
-
-				reader.Read();
-				Session["Date_ID"] = (int)reader.GetValue(0);
-				Session["Date"] = (Date)reader.GetValue(1);
-				reader.Close();
-			}
-			else {
-				Session["Date"] = date;
-				Session["Date_ID"] = id;
-			}
-
-			if (state)
-				objConn.Close();
-		}
 	}
 
 	public class HoursPage : SuperPage {
-		SqlConnection objConn;
-
 		public DataTable getProjectHours(object date, bool includeFullTimers, bool isActive) {
 			return getFormattedDataTable(date, includeFullTimers, true, isActive);
 		}
@@ -352,7 +409,8 @@ namespace CTBWebsite {
 			}
 
 
-			objConn = objConn == null ? openDBConnection() : objConn;
+			if (objConn.State == ConnectionState.Closed)
+                openDBConnection();
 			bool state = objConn.State == ConnectionState.Closed;
 			if (state) objConn.Open();
 			DataTable employeesData;
@@ -360,26 +418,26 @@ namespace CTBWebsite {
 
 			if (isActive) {
 				if (isProjectHours) {
-					modelData = getDataTable("select Project_ID, Abbreviation from Projects where Active=@value1 order by Projects.PriorityOrder", true, objConn);
-					employeesData = getDataTable("select Alna_num, Name, Full_time from Employees where Active=@value1 Order By Name", true, objConn);
+					modelData = getDataTable("select Project_ID, Abbreviation from Projects where Active=@value1 order by Projects.PriorityOrder", true);
+					employeesData = getDataTable("select Alna_num, Name, Full_time from Employees where Active=@value1 Order By Name", true);
 				}
 				else {
-					employeesData = getDataTable("select Alna_num, Name, Full_time from Employees where Active=@value1 and Vehicle=@value1 Order By Name", true, objConn);
-					modelData = getDataTable("select ID, Abbreviation from Vehicles where Active=@value1", true, objConn);
+					employeesData = getDataTable("select Alna_num, Name, Full_time from Employees where Active=@value1 and Vehicle=@value1 Order By Name", true);
+					modelData = getDataTable("select ID, Abbreviation from Vehicles where Active=@value1", true);
 				}
 			}
 			else {
 				if (isProjectHours) {
-					modelData = getDataTable("select Project_ID, Abbreviation from Projects order by Projects.PriorityOrder", null, objConn);
-					employeesData = getDataTable("select Alna_num, Name, Full_time from Employees Order By Name", null, objConn);
+					modelData = getDataTable("select Project_ID, Abbreviation from Projects order by Projects.PriorityOrder");
+					employeesData = getDataTable("select Alna_num, Name, Full_time from Employees Order By Name");
 				}
 				else {
-					modelData = getDataTable("select ID, Abbreviation from Vehicles", null, objConn);
-					employeesData = getDataTable("select Alna_num, Name, Full_time from Employees where Vehicle=@value1 Order By Name", true, objConn);
+					modelData = getDataTable("select ID, Abbreviation from Vehicles");
+					employeesData = getDataTable("select Alna_num, Name, Full_time from Employees where Vehicle=@value1 Order By Name", true);
 				}
 			}
 
-			DataTable hoursData = getDataTable("select Alna_num, " + innerID + ", Hours_worked from " + hoursTable + " where Date_ID=" + constraint, date, objConn);
+			DataTable hoursData = getDataTable("select Alna_num, " + innerID + ", Hours_worked from " + hoursTable + " where Date_ID=" + constraint, date);
 			if (state) objConn.Close();
 
 			if (null == employeesData || null == modelData || null == hoursData)
@@ -436,7 +494,7 @@ namespace CTBWebsite {
 	}
 
 	public class SchedulePage : SuperPage {
-		protected void populateInternSchedules(SqlConnection objConn, GridView gridView, DropDownList ddl) {
+		protected void populateInternSchedules(GridView gridView, DropDownList ddl) {
 			/* This function is responsible for populating the schedule tables. It's rather complicated and needs to be fast, so I will break it down here because
 			 * commenting in-line will just be confusing. (Runtime: Omicron(n^3), Omega(n^2))
 			 * 
@@ -493,7 +551,7 @@ namespace CTBWebsite {
 			//1. First get Alna nums and names
 			List<int> temp_alna_nums = new List<int>();
 			List<string> temp_names = new List<string>();
-			SqlDataReader reader = getReader("select Alna_num, Name from Employees where Active=@value1 and Full_time!=@value1 order by Alna_num asc", true, objConn);
+			SqlDataReader reader = getReader("select Alna_num, Name from Employees where Active=@value1 and Full_time!=@value1 order by Alna_num asc", true);
 			while (reader.Read()) {
 				temp_alna_nums.Add(reader.GetInt32(0));
 				temp_names.Add(reader.GetString(1));
@@ -506,7 +564,7 @@ namespace CTBWebsite {
 			temp_alna_nums = new List<int>();
 			List<int> temp_timestart_list = new List<int>();
 			List<int> temp_timeend_list = new List<int>();
-			reader = getReader("select Alna_num, TimeStart, TimeEnd from Schedule where DayOfWeek=@value1 order by Alna_num asc", Session["weekday"], objConn);
+			reader = getReader("select Alna_num, TimeStart, TimeEnd from Schedule where DayOfWeek=@value1 order by Alna_num asc", Session["weekday"]);
 			while (reader.Read()) {
 				temp_alna_nums.Add(reader.GetInt32(0));
 				temp_timestart_list.Add(reader.GetInt16(1));

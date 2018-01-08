@@ -23,7 +23,7 @@ namespace CTBWebsite
                 redirectSafely("~/Default");
                 return;
             }
-            objConn = openDBConnection();
+            openDBConnection();
 
             if (!IsPostBack)
             {
@@ -55,7 +55,7 @@ namespace CTBWebsite
 
             object[] o = { alna, txtName.Text, !chkPartTime.Checked, chkUseVehicle.Checked | chkPartTime.Checked };
 
-            executeVoidSQLQuery("INSERT INTO Employees (Alna_num, Name, Full_Time, Vehicle) VALUES (@value1, @value2, @value3, @value4);", o, objConn);
+            executeVoidSQLQuery("INSERT INTO Employees (Alna_num, Name, Full_Time, Vehicle) VALUES (@value1, @value2, @value3, @value4);", o);
             Session["success?"] = true;
             redirectSafely("~/Admin");
         }
@@ -90,7 +90,7 @@ namespace CTBWebsite
             }
 
             object[] parameters = { text.Replace(" ", "_"), projectCategory, txtAbbreviation.Text };
-            executeVoidSQLQuery("INSERT INTO Projects (Name, Category, Abbreviation) VALUES (@value1, @value2, @value3);", parameters, objConn);
+            executeVoidSQLQuery("INSERT INTO Projects (Name, Category, Abbreviation) VALUES (@value1, @value2, @value3);", parameters);
 
             Session["success?"] = true;
             redirectSafely("~/Admin");
@@ -105,7 +105,7 @@ namespace CTBWebsite
                 return;
             }
 
-            executeVoidSQLQuery("INSERT INTO Vehicles (Name, Abbreviation) VALUES (@value1, @value2);", new object[] { text.Replace(" ", "_"), txtCarAbbreviation.Text }, objConn);
+            executeVoidSQLQuery("INSERT INTO Vehicles (Name, Abbreviation) VALUES (@value1, @value2);", new object[] { text.Replace(" ", "_"), txtCarAbbreviation.Text });
 
           //  CreateDirectoryStructure("//AHMARVIN/Engineering/Core EE/CTB/GM_BLE_PEPS_measurement result/DONT MOVE THIS FOLDER/GAFMS/" + text);
             
@@ -163,7 +163,7 @@ namespace CTBWebsite
                 return;
             }
             object[] args = { false, id };
-            executeVoidSQLQuery(command, args, objConn);
+            executeVoidSQLQuery(command, args);
             Session["success?"] = true;
             redirectSafely("~/Admin");
         }
@@ -178,7 +178,7 @@ namespace CTBWebsite
             Lambda populate = new Lambda(delegate (object o) {
                 object[] args = (object[])o;
                 GridView g = (GridView)args[1];
-                g.DataSource = getDataTable((string)args[0], true, objConn);
+                g.DataSource = getDataTable((string)args[0], true);
                 g.DataBind();
             });
 

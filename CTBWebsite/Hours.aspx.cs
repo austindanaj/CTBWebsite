@@ -9,7 +9,6 @@ namespace CTBWebsite
 {
     public partial class Hours : HoursPage
     {
-        private SqlConnection objConn;
         private DataTable projectData, projectHoursData, vehicleHoursData, vehiclesData, datesData;
 
         protected void Page_Load(object sender, EventArgs e)
@@ -21,12 +20,12 @@ namespace CTBWebsite
 			}
             
 
-            objConn = openDBConnection();
+            openDBConnection();
 
             if (!IsPostBack)
             {
                 if (Session["Date"] == null)
-                    initDate(objConn);
+                    initDate();
                 if (Session["Active"] == null)
                     Session["Active"] = true;
                 if (Session["SelectedDate"] == null)
@@ -51,19 +50,19 @@ namespace CTBWebsite
 
             if ((bool)Session["Active"])
             {
-                projectData = getDataTable("select Project_ID, Name, Category from Projects where Active=@value1 order by Projects.PriorityOrder", true, objConn);
-                vehiclesData = getDataTable("select ID, Name from Vehicles where Active=@value1", true, objConn);
+                projectData = getDataTable("select Project_ID, Name, Category from Projects where Active=@value1 order by Projects.PriorityOrder", true);
+                vehiclesData = getDataTable("select ID, Name from Vehicles where Active=@value1", true);
             }
             else
             {
-                projectData = getDataTable("select Project_ID, Name, Category from Projects order by Projects.PriorityOrder", null, objConn);
-                vehiclesData = getDataTable("select ID, Name from Vehicles;", null, objConn);
+                projectData = getDataTable("select Project_ID, Name, Category from Projects order by Projects.PriorityOrder");
+                vehiclesData = getDataTable("select ID, Name from Vehicles;");
             }
 
             //Everything else
-            projectHoursData = getDataTable("select ID, Alna_num, Proj_ID, Hours_worked from ProjectHours where Date_ID=@value1", Session["Date_ID"], objConn);
-            vehicleHoursData = getDataTable("select ID, Alna_num, Vehicle_ID, Hours_worked from VehicleHours where Date_ID=@value1", Session["Date_ID"], objConn);
-            datesData = getDataTable("select Dates from Dates order by Dates desc", null, objConn);
+            projectHoursData = getDataTable("select ID, Alna_num, Proj_ID, Hours_worked from ProjectHours where Date_ID=@value1", Session["Date_ID"]);
+            vehicleHoursData = getDataTable("select ID, Alna_num, Vehicle_ID, Hours_worked from VehicleHours where Date_ID=@value1", Session["Date_ID"]);
+            datesData = getDataTable("select Dates from Dates order by Dates desc");
             objConn.Close();
 
             if (projectData == null || vehiclesData == null || projectHoursData == null || vehicleHoursData == null || datesData == null)
@@ -160,7 +159,7 @@ namespace CTBWebsite
                 }
                 Session["Date"] = selection;
                 objConn.Open();
-                SqlCommand cmd = new SqlCommand("select ID from Dates where Dates=@value1", objConn);
+                SqlCommand cmd = new SqlCommand("select ID from Dates where Dates=@value1");
                 cmd.Parameters.AddWithValue("@value1", selection);
                 SqlDataReader reader = cmd.ExecuteReader();
                 reader.Read();
@@ -212,13 +211,13 @@ namespace CTBWebsite
                     o = new object[] { id, "BLE_Key_Pass_Global_A_Testing", Session["Alna_num"], Session["Date_ID"] };
 
                     if (!(bool)Session["Full_time"])
-                        executeVoidSQLQuery("update ProjectHours set Hours_worked=Hours_worked-(select Hours_worked from VehicleHours where ID=@value1) where Proj_ID=(select Project_ID from Projects where Name=@value2) and Alna_num=@value3 and Date_ID=@value4", o, objConn);
-                    executeVoidSQLQuery("delete from VehicleHours where ID=@value1", id, objConn);
+                        executeVoidSQLQuery("update ProjectHours set Hours_worked=Hours_worked-(select Hours_worked from VehicleHours where ID=@value1) where Proj_ID=(select Project_ID from Projects where Name=@value2) and Alna_num=@value3 and Date_ID=@value4", o);
+                    executeVoidSQLQuery("delete from VehicleHours where ID=@value1", id);
                 }
                 else
                 {
                     o = new object[] { Session["Alna_num"], id };
-                    executeVoidSQLQuery("delete from " + table + " where Alna_num=@value1 and ID=@value2", o, objConn);
+                    executeVoidSQLQuery("delete from " + table + " where Alna_num=@value1 and ID=@value2", o);
                 }
                 objConn.Close();
                 redirectSafely("~/Hours");
@@ -254,7 +253,7 @@ namespace CTBWebsite
             {
                 objConn.Open();
                 object[] o = { Session["Alna_num"], projectOrVehicle, Session["Date_ID"] };
-                SqlDataReader reader = getReader(readerQuery, o, objConn);
+                SqlDataReader reader = getReader(readerQuery, o);
                 if (reader == null) return false;
 
                 if (reader.HasRows)
@@ -263,7 +262,7 @@ namespace CTBWebsite
                     int hoursWorked = reader.GetInt32(1);
                     int otherRecordID = reader.GetInt32(0);
                     reader.Close();
-                    executeVoidSQLQuery("delete from " + table + " where ID=@value1", otherRecordID, objConn);
+                    executeVoidSQLQuery("delete from " + table + " where ID=@value1", otherRecordID);
                     hours += hoursWorked;
                 }
                 else
@@ -272,11 +271,11 @@ namespace CTBWebsite
                 }
 
                 o = new object[] { o[0], projectOrVehicle, hours, o[2] };
-                executeVoidSQLQuery(insertionQuery, o, objConn);
+                executeVoidSQLQuery(insertionQuery, o);
                 if (!(bool)Session["Full_time"] & !isProject)
                 {
                     o[1] = "BLE_Key_Pass_Global_A_Testing";
-                    executeVoidSQLQuery("insert into ProjectHours values(@value1, (select Project_ID from Projects where Name=@value2), @value3, @value4)", o, objConn);
+                    executeVoidSQLQuery("insert into ProjectHours values(@value1, (select Project_ID from Projects where Name=@value2), @value3, @value4)", o);
                 }
                 objConn.Close();
             }

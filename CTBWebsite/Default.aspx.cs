@@ -4,7 +4,6 @@ using System.Data;
 using System.IO;
 using Date = System.DateTime;
 using System.Web;
-using System.Web.UI.DataVisualization.Charting;
 using System.Web.UI.WebControls;
 
 namespace CTBWebsite
@@ -16,9 +15,9 @@ namespace CTBWebsite
         {
             if (!IsPostBack)
             {
-                SqlConnection objConn = openDBConnection();
+                openDBConnection();
                 objConn.Open();
-                SqlDataReader reader = getReader("select Dates from Dates order by Dates desc", null, objConn);
+                SqlDataReader reader = getReader("select Dates from Dates order by Dates desc");
                 if (reader == null)
                 {
                     throwJSAlert("Can't connect to DB; contact admin");
@@ -29,7 +28,7 @@ namespace CTBWebsite
                 reader.Close();
                 populatePieChart(objConn);
                 populateDaysOffTable(objConn);
-                populateInternSchedules(objConn, dgvSchedule, ddlSelectScheduleDay);
+                populateInternSchedules(dgvSchedule, ddlSelectScheduleDay);
                 objConn.Close();
             }
         }
@@ -41,7 +40,7 @@ namespace CTBWebsite
         //----------------------------------------------------------------
         private void populatePieChart(SqlConnection objConn)
         {
-            SqlDataReader reader = getReader("select p1.[Hours_worked], p2.Category from ProjectHours p1 inner join Projects p2 on p2.Project_ID=p1.Proj_ID where p1.Date_ID=(select top 1 ID from Dates order by Dates desc);", null, objConn);
+            SqlDataReader reader = getReader("select p1.[Hours_worked], p2.Category from ProjectHours p1 inner join Projects p2 on p2.Project_ID=p1.Proj_ID where p1.Date_ID=(select top 1 ID from Dates order by Dates desc);");
             if (!reader.HasRows)
             {
 
@@ -87,7 +86,7 @@ namespace CTBWebsite
 
         private void populateDaysOffTable(SqlConnection objConn)
         {
-            dgvOffThisWeek.DataSource = getDataTable("select e.Name as 'Name' from Employees e where e.Alna_num in (select Alna_num from TimeOff where TimeOff.[Start] >= (select top 1 Dates from Dates order by Dates desc) and TimeOff.[End] <=  (select dateadd(dd, 4, (select top 1 Dates from Dates order by Dates desc)) as NewDate));", null, objConn);
+            dgvOffThisWeek.DataSource = getDataTable("select e.Name as 'Name' from Employees e where e.Alna_num in (select Alna_num from TimeOff where TimeOff.[Start] >= (select top 1 Dates from Dates order by Dates desc) and TimeOff.[End] <=  (select dateadd(dd, 4, (select top 1 Dates from Dates order by Dates desc)) as NewDate));");
             dgvOffThisWeek.DataBind();
         }
 
@@ -172,9 +171,9 @@ namespace CTBWebsite
         protected void changeScheduleDay(object sender, EventArgs e)
         {
             Session["weekday"] = ddlSelectScheduleDay.SelectedIndex + 1;
-            SqlConnection objConn = openDBConnection();
+            
             objConn.Open();
-            populateInternSchedules(objConn, dgvSchedule, ddlSelectScheduleDay);
+            populateInternSchedules(dgvSchedule, ddlSelectScheduleDay);
             objConn.Close();
         }
 

@@ -111,8 +111,6 @@
                     <!-- Report Tabs -->
                     <asp:UpdatePanel runat="server" ID="udpReport" ChildrenAsTriggers="True">
                         <ContentTemplate>
-
-
                             <div class="row">
                                 <div class="container">
                                     <div class="col-md-3">

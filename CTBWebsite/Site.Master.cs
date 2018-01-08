@@ -11,15 +11,16 @@ namespace CTBWebsite
 {
     public partial class SiteMaster : MasterPage
     {
-
         private enum SqlTypes { DataTable, VoidQuery, DataReader };
+        private SuperPage sql;
         SqlConnection objConn;
+
         protected void Page_Load(object sender, EventArgs e)
         {
+            sql = new SuperPage();
             if (Session["loginStatus"] == null)
             {
                 Session["loginStatus"] = "Sign In";
-
             }
             else if ((string)Session["loginStatus"] == "Sign In")
             {
@@ -59,7 +60,7 @@ namespace CTBWebsite
                     objConn = new SqlConnection(SuperPage.LOCAL_TO_SERVER_CONNECTION_STRING);
                     objConn.Open();
 
-                    SqlDataReader reader = getReader("Select Alna_num, Name, Full_time, Vehicle from Employees where Employees.[Name]=@value1;", Server.HtmlEncode(Request.Cookies["userName"].Value), objConn);
+                    SqlDataReader reader = sql.getReader("Select Alna_num, Name, Full_time, Vehicle from Employees where Employees.[Name]=@value1;", Server.HtmlEncode(Request.Cookies["userName"].Value));
                     reader.Read();
                     Session["Alna_num"] = reader.GetValue(0);
                     Session["Name"] = reader.GetValue(1);
@@ -80,7 +81,7 @@ namespace CTBWebsite
 
             objConn = new SqlConnection(SuperPage.LOCAL_TO_SERVER_CONNECTION_STRING);
             objConn.Open();
-            SqlDataReader reader = getReader("SELECT Name FROM Employees where Active=@value1 Order By Name;", true, objConn);
+            SqlDataReader reader = sql.getReader("SELECT Name FROM Employees where Active=@value1 Order By Name;", true);
 
             while (reader.Read())
             {
@@ -92,7 +93,7 @@ namespace CTBWebsite
             if (objConn.State == ConnectionState.Closed)
                 throw new Exception("You forgot to open the object connection. You have to leave it open until you're done with the data reader.");
 
-            SqlCommand cmd = new SqlCommand(query, objConn);
+            SqlCommand cmd = new SqlCommand(query);
             if (parameters != null)
             {
                 cmd.Parameters.AddWithValue("@value1", parameters);
@@ -103,12 +104,12 @@ namespace CTBWebsite
         private SqlDataReader getReader(string query, object[] parameters, SqlConnection objConn)
         {
             if (parameters == null)
-                return getReader(query, (object)parameters, objConn);
+                return sql.getReader(query, (object)parameters);
 
             if (objConn.State == ConnectionState.Closed)
                 throw new Exception("You forgot to open the object connection. You have to leave it open until you're done with the data reader.");
 
-            SqlCommand cmd = new SqlCommand(query, objConn);
+            SqlCommand cmd = new SqlCommand(query);
             int i = 1;
             foreach (object o in parameters)
             {
@@ -249,7 +250,7 @@ namespace CTBWebsite
                 objConn.Open();
 
                 object[] o = { inputUsername.Value, inputPassword.Value };
-                SqlDataReader reader = getReader("SELECT User, Admin FROM Accounts WHERE Accounts.[User]=@value1 and Accounts.[Pass]=@value2", o, objConn);
+                SqlDataReader reader = sql.getReader("SELECT User, Admin FROM Accounts WHERE Accounts.[User]=@value1 and Accounts.[Pass]=@value2", o);
                 if (reader == null)
                 {
                     throwJSAlert("Error accessing data");
@@ -265,7 +266,7 @@ namespace CTBWebsite
                 Session["Admin"] = reader.GetBoolean(1);
                 reader.Close();
 
-                reader = getReader("Select Alna_num, Name, Full_time, Vehicle from Employees where Employees.[Name]=@value1;", ddl.Text, objConn);
+                reader = sql.getReader("Select Alna_num, Name, Full_time, Vehicle from Employees where Employees.[Name]=@value1;", ddl.Text);
                 reader.Read();
                 Session["Alna_num"] = reader.GetValue(0);
                 Session["Name"] = reader.GetValue(1);
