@@ -125,6 +125,7 @@ namespace CTBWebsite {
 				}
 			}
 			catch (ObjectDisposedException e) {
+
 				writeStackTrace("either the object you're using is closed or something insane happened like a race condition", e);
 			}
 			catch (InvalidOperationException e) {
@@ -218,8 +219,12 @@ namespace CTBWebsite {
         // Return datatable
         //==========================================================
         public DataTable getDataTable(string command) {
-			if (objConn.State == ConnectionState.Closed)
-				throw new Exception("You forgot to open the object connection. You have to leave it open until you're done with the data reader.");
+            if (objConn.State == ConnectionState.Closed)
+            {
+                Session["UserMessageText"] = "SQL Error: Object connectino is closed";
+
+            }
+				//throw new Exception("You forgot to open the object connection. You have to leave it open until you're done with the data reader.");
 
 			SqlDataAdapter objAdapter = new SqlDataAdapter();
 			DataSet objDataSet = new DataSet();

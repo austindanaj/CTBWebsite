@@ -555,7 +555,7 @@
                                             </span>
                                             <pre style="height: 100px; overflow: auto; text-align: left; border: transparent; white-space: pre-line; background: gainsboro">
                                                 <asp:Label runat="server" Text='Release Notes:'></asp:Label>
-                                                <asp:Label runat="server" Text='<%#:Eval("Description")%>'></asp:Label>
+                                                <asp:Label runat="server" Text='<%#:Eval("Comment")%>'></asp:Label>
                                                </pre>
                                             <br />
                                         </div>
@@ -1154,7 +1154,8 @@
         function bindEvents() {
             $('#datetimepicker1').datetimepicker({
                 format: 'MM/DD/YYYY',
-                useCurrent: false
+                useCurrent: false, 
+                maxDate: new Date
             });
             $("#datetimepicker1").on("dp.change",
                 function (e) {
@@ -1166,7 +1167,8 @@
                 });
             $('#datetimepicker2').datetimepicker({
                 format: 'MM/DD/YYYY',
-                useCurrent: false
+                useCurrent: false,
+                maxDate: new Date
   
             });
             $("#datetimepicker2").on("dp.change",
@@ -1180,7 +1182,8 @@
                 });
             $('#datetimepicker3').datetimepicker({
                 format: 'MM/DD/YYYY',
-                useCurrent: false
+                useCurrent: false,
+                maxDate: new Date
             });
             $("#datetimepicker3").on("dp.change",
                 function (e) {
@@ -1193,7 +1196,8 @@
                 });
             $('#datetimepicker4').datetimepicker({
                 format: 'MM/DD/YYYY',
-                useCurrent: false
+                useCurrent: false,
+                maxDate: new Date
             });
             $("#datetimepicker4").on("dp.change",
                 function (e) {
@@ -1202,7 +1206,8 @@
                 });
             $('#datetimepicker5').datetimepicker({
                 format: 'MM/DD/YYYY',
-                useCurrent: false
+                useCurrent: false,
+                maxDate: new Date
             });
             $("#datetimepicker5").on("dp.change",
                 function (e) {
@@ -1211,7 +1216,8 @@
                 });
             $('#datetimepicker6').datetimepicker({
                 format: 'MM/DD/YYYY',
-                useCurrent: false
+                useCurrent: false,
+                maxDate: new Date
             });
             $("#datetimepicker6").on("dp.change",
                 function (e) {
