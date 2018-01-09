@@ -563,14 +563,17 @@ namespace CTBWebsite
 
             object[] id_buffer = {
                 Path.GetExtension(fileUpload.FileName),
-                ddlFileFilterType.SelectedValue,
-                int.Parse(ddlPhones.SelectedValue),
-                lblDateSelected.Value, //this is the date created, if the user does not default it to today
-                int.Parse(ddlAuthor1.SelectedValue),
-                int.Parse(ddlAuthor2.SelectedValue), //Need a way to return null
-                int.Parse(ddlVehicles.SelectedValue),
+                int.Parse(ddlFileType.SelectedValue),
+                int.Parse(ddlFilePhone.SelectedValue),
+                DateTime.Parse(lblDateSelected.Value), //this is the date created, if the user does not default it to today
+                int.Parse(ddlFileAuthor1.SelectedValue),
+                int.Parse(ddlFileAuthor2.SelectedValue), //Need a way to return null
+                int.Parse(ddlFileVehicle.SelectedValue),
                 comment //Comment if the user created one
             };
+
+            if (objConn == null)
+                openDBConnection();
 
             write(Tables.File, id_buffer, reportUpload.FileBytes);
         }

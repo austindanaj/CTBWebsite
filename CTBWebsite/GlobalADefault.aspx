@@ -892,7 +892,8 @@
                                         </div>
                                     </div>
 
-
+                                      </ContentTemplate>
+                            </asp:UpdatePanel>
                                     <div class="row">
                                         <div class="col-md-6">
                                             <div class="form-group">
@@ -934,12 +935,13 @@
 
                                         </div>
                                     </div>
+                                      
                                     <div class="row">
 
                                         <div class="form-group" style="padding-left: 15px; padding-right: 15px;">
                                             <asp:FileUpload ID="fileUpload" runat="server" />
                                             <asp:RequiredFieldValidator ID="RequiredFieldValidator15" ForeColor="Red"
-                                                ControlToValidate="fileUpload"
+                                                ControlToValidate="fileUpload" InitialValue=""
                                                 ValidationGroup="UploadGroup"
                                                 ErrorMessage="Select a File."
                                                 runat="Server">
@@ -954,10 +956,9 @@
 
 
                                     <div class="form-group">
-                                        <asp:Button ID="UploadClicked" class="btn btn-lg btn-primary btn-block btn-signin" runat="server" Text="Upload File" type="submit" ValidationGroup="UploadGroup" />
+                                        <asp:Button ID="UploadClicked" class="btn btn-lg btn-primary btn-block btn-signin" OnClick="btnSubmitFile_OnClick" runat="server" Text="Upload File" type="submit" ValidationGroup="UploadGroup" />
                                     </div>
-                                </ContentTemplate>
-                            </asp:UpdatePanel>
+                            
                         </div>
                     </div>
                 </div>
@@ -1018,7 +1019,7 @@
                                     <div class="form-group">
                                         <asp:FileUpload ID="imageUpload" runat="server" />
                                         <asp:RequiredFieldValidator ID="RequiredFieldValidator18" ForeColor="Red"
-                                            ControlToValidate="imageUpload"
+                                            ControlToValidate="imageUpload" InitialValue=""
                                             ValidationGroup="ImageGroup"
                                             ErrorMessage="Select a File."
                                             runat="Server">
