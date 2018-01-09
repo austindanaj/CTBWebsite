@@ -313,9 +313,9 @@ namespace CTBWebsite
                 DateTime date = (DateTime)ds.Tables[0].Rows[i]["Date_updated"];
                 string format = "MMM d, yyyy";
                 ds.Tables[0].Rows[i]["FormDate"] = date.ToString(format);
-                string type = (string)ds.Tables[0].Rows[i]["ContentType"];
+                string type = (string)ds.Tables[0].Rows[i]["Extension"];
                 ds.Tables[0].Rows[i]["IconType"] = GetImageIcon(type);
-                ds.Tables[0].Rows[i]["Comment"] = ds.Tables[0].Rows[i]["Description"].ToString().Replace("\r\n", Environment.NewLine);
+                ds.Tables[0].Rows[i]["Comment"] = ds.Tables[0].Rows[i]["Comment"].ToString().Replace("\r\n", Environment.NewLine);
             }
             lstTools.DataSource = ds;
             lstTools.DataBind();
@@ -404,12 +404,17 @@ namespace CTBWebsite
 
             filename = toolUpload.FileName;
             contentType = toolUpload.PostedFile.ContentType;
+          
             object[] o;
-            /*
-            o = new [] { txtFileName.Text, txtFileDescription.Text, txtVersion.Text, DateTime.Now, Session["Alna_num"], filename, contentType, Session["Alna_num"]};
+            string path =
+                "//AHMARVIN/ENGINEERING/Core EE/CTB/GM_BLE_PEPS_measurement result/DONT MOVE THIS FOLDER/Tools/" +
+                filename;
+            toolUpload.SaveAs(path);
+            
+            o = new [] { txtFileName.Text, txtFileDescription.Text, txtVersion.Text, DateTime.Now, Session["Alna_num"], path, Path.GetExtension(path)};
             executeVoidSQLQuery("INSERT INTO Tools (Name, Comment, Version, Date_updated, Alna_num, Path, Extension) values" +
-                                                      "(@value1, @value2, @value3, @value4, @value5, @value6, @value7)", o, objConn);
-                                                      */
+                                                      "(@value1, @value2, @value3, @value4, @value5, @value6, @value7)", o);
+                                                      
 
         }
         protected void UploadTool_OnClick(object sender, EventArgs e)
@@ -428,15 +433,15 @@ namespace CTBWebsite
                 openDBConnection();
                 objConn.Open();
 
-                SqlCommand cmd = new SqlCommand("SELECT * FROM Tools WHERE ID=@toolId ORDER BY Name ASC");
-                cmd.Parameters.AddWithValue("@toolId", int.Parse(id));
-                SqlDataReader reader = cmd.ExecuteReader();
+              
+                SqlDataReader reader = getReader("SELECT * FROM Tools WHERE ID=@value1 ORDER BY Name ASC",
+                    int.Parse(id));
                 reader.Read();
-
-                string filename = reader.GetString(6);
-                string extension = filename == null ? null : filename.Substring(filename.LastIndexOf('.'));
-                string contentType = reader.GetString(7);
-                byte[] blob = (byte[])reader["Attachment"];
+                string path = reader["Path"].ToString();
+                string filename = Path.GetFileName(path);
+                string extension = reader.GetString(7);
+                //   string contentType = 
+                byte[] blob = File.ReadAllBytes(path);
 
                 reader.Close();
 
@@ -444,7 +449,7 @@ namespace CTBWebsite
                 Response.Buffer = true;
                 Response.Charset = "";
                 Response.Cache.SetCacheability(System.Web.HttpCacheability.NoCache);
-                Response.ContentType = contentType;
+                //Response.ContentType = contentType;
                 Response.AddHeader("content-disposition", $"attachment; filename=\"{filename}\"");
                 Response.BinaryWrite(blob);
                 Response.Flush();
