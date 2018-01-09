@@ -106,9 +106,6 @@ namespace CTBWebsite {
                 objConn.Close();
         }
 
-        //==========================================================
-        // Master executer of all SQL code; handles all exceptions
-        //==========================================================
         private object sqlExecuter(object o, SqlTypes type) {
 			try {
 				switch (type) {
@@ -650,4 +647,69 @@ namespace CTBWebsite {
 			return s + period_of_day;
 		}
 	}
+
+    public class IOPage : SuperPage
+    {
+        protected enum Tables {Report, File, Image};
+
+        protected void write(IOPage.Tables table, object[] insertionData, byte[] bytes)
+        {
+            string selectQuery, insertionQuery;
+            switch (table)
+            {
+                case Tables.File:
+                    selectQuery = "select top 1 ID, Name, Path from Report order by ID desc";
+                    insertionQuery = "exec Insert_File @value1, @value2, @value3, @value4, @value5, @value6, @value7, @value8";
+                    break;
+                case Tables.Report:
+                    selectQuery = "select top 1 ID, Name, Path from GA_File order by ID desc";
+                    insertionQuery = "exec Insert_Report @value1, @value2, @value3, @value4, @value5, @value6, @value7, @value8, @value9, @value11, @value12";
+                    break;
+                default:
+                    selectQuery = "";
+                    insertionQuery = "";
+                    break;
+            }
+
+            // Two things need to happen here: we need to insert and then try to write the file. If the insertion fails, then we stop there.
+            // If the insertion succeeds and the write fails, we need to remove it from the database because the file already exists. This
+            // requires that we delete the most recently inserted file.
+            int id = executeVoidSQLQuery(insertionQuery, insertionData);
+
+            try
+            {
+                SqlDataReader reader = getReader(selectQuery);
+
+                id = reader.GetInt32(0);
+                string path = reader.GetString(1);
+                string filename = reader.GetString(2);
+
+                if (!Directory.Exists(path))
+                    Directory.CreateDirectory(path);
+
+                using (BinaryWriter writer = new BinaryWriter(File.Open(path + filename, FileMode.Create)))
+                {
+                    writer.Write(bytes);
+                }
+            }
+            catch (Exception ex)
+            {
+                writeStackTrace("Error writing file", ex);
+                try
+                {
+                    if (id == -1)
+                        new Exception("Couldn't figure out the id of the latest inserted file to write it to the server");
+                    executeVoidSQLQuery("delete from Report where ID=@value1", id);
+                } catch (Exception e)
+                {
+                    writeStackTrace("FATAL: couldn't write file and the record still exists in the DB!", e);
+                }
+            }
+        }
+
+        protected void open()
+        {
+
+        }
+    }
 }
