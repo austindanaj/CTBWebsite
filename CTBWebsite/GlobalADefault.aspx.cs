@@ -130,7 +130,7 @@ namespace CTBWebsite
             // DataTable dt = getDataTable("GetFilteredReport");
             return dt;
 
-            //   SqlCommand sql = new SqlCommand("SELECT * FROM SelectReport() WHERE Active='1'");
+            //   SqlCommand sql = new SqlCommand("SELECT * FROM SelectReport() WHERE Active=@value1");
             //    //  SqlDataAdapter adp = new SqlDataAdapter(sql);
             //    DataSet ds = new DataSet();
             //      adp.Fill(ds);
@@ -214,7 +214,7 @@ namespace CTBWebsite
 
             /*
 
-            DataTable dt = getDataTable("SELECT * FROM SelectFile() WHERE Active='1'");
+            DataTable dt = getDataTable("SELECT * FROM SelectFile() WHERE Active=@value1");
             //ds.Tables[0].Columns.Add("FormDate", typeof(string));
             dt.Columns.Add("Type", typeof(string));
            
@@ -279,7 +279,7 @@ namespace CTBWebsite
 
 
 
-            SqlCommand sql = new SqlCommand("SELECT * FROM SelectImages() WHERE Active='1'");
+            SqlCommand sql = new SqlCommand("SELECT * FROM SelectImages() WHERE Active=@value1");
             SqlDataAdapter adp = new SqlDataAdapter(sql);
             DataSet ds = new DataSet();
             adp.Fill(ds);
@@ -502,19 +502,19 @@ namespace CTBWebsite
             openDBConnection();
 
             objConn.Open();
-            SqlDataReader reader = getReader("SELECT * FROM Vehicles  WHERE Active='1' ORDER BY Name ASC");
+            SqlDataReader reader = getReader("SELECT * FROM Vehicles  WHERE Active=@value1 ORDER BY Name ASC", true);
             while (reader.Read())
             {
                 ddlVehicles.Items.Add(new ListItem(reader.GetString(1), reader.GetValue(0).ToString()));
             }
             reader.Close();
-            reader = getReader("SELECT * FROM Phones  WHERE Active='1' ORDER BY Name ASC");
+            reader = getReader("SELECT * FROM Phones  WHERE Active=@value1 ORDER BY Name ASC", true);
             while (reader.Read())
             {
                 ddlPhones.Items.Add(new ListItem(reader.GetString(1), reader.GetValue(0).ToString()));
             }
             reader.Close();
-            reader = getReader("SELECT * FROM Employees WHERE Active='1' ORDER BY Name ASC");
+            reader = getReader("SELECT * FROM Employees WHERE Active=@value1 ORDER BY Name ASC", true);
             while (reader.Read())
             {
                 string id = reader.GetValue(0).ToString();
@@ -567,7 +567,7 @@ namespace CTBWebsite
                 comment //Comment if the user created one
             };
 
-            write(Tables.File, reportUpload.FileBytes);
+            write(Tables.File, id_buffer, reportUpload.FileBytes);
         }
         protected void UploadFile_OnClick(object sender, EventArgs e)
         {
@@ -588,19 +588,19 @@ namespace CTBWebsite
 
             openDBConnection();
             objConn.Open();
-            SqlDataReader reader = getReader("SELECT * FROM Vehicles  WHERE Active='1' ORDER BY Name ASC");
+            SqlDataReader reader = getReader("SELECT * FROM Vehicles  WHERE Active=@value1 ORDER BY Name ASC", true);
             while (reader.Read())
             {
                 ddlFileVehicle.Items.Add(new ListItem(reader.GetString(1), reader.GetValue(0).ToString()));
             }
             reader.Close();
-            reader = getReader("SELECT * FROM Phones  WHERE Active='1' ORDER BY Name ASC");
+            reader = getReader("SELECT * FROM Phones  WHERE Active=@value1 ORDER BY Name ASC", true);
             while (reader.Read())
             {
                 ddlFilePhone.Items.Add(new ListItem(reader.GetString(1), reader.GetValue(0).ToString()));
             }
             reader.Close();
-            reader = getReader("SELECT * FROM Employees  WHERE Active='1' ORDER BY Name ASC");
+            reader = getReader("SELECT * FROM Employees  WHERE Active=@value1 ORDER BY Name ASC", true);
             while (reader.Read())
             {
                 string id = reader.GetValue(0).ToString();
