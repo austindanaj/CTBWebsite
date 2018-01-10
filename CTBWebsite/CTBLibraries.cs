@@ -16,6 +16,8 @@ namespace CTBWebsite {
         public SqlConnection objConn { get; set; }
         private enum SqlTypes { DataTable, VoidQuery, DataReader };
 
+	    public readonly static string PATH_TO_SERVER = "//AHMARVIN/ENGINEERING/Core EE/CTB/GM_BLE_PEPS_measurement result/DONT MOVE THIS FOLDER/GAFMS/";
+
         //Need to be deleted:
         public void successDialog(System.Web.UI.WebControls.TextBox txtSuccessBox)
         {
@@ -131,16 +133,18 @@ namespace CTBWebsite {
 
             if (!open)
                 objConn.Open();
-
-            var returnParameter = cmd.Parameters.Add("@ReturnVal", SqlDbType.Int);
-            returnParameter.Direction = ParameterDirection.ReturnValue;
+            //cmd.CommandType = CommandType.StoredProcedure;
+            
+            cmd.Parameters.Add("@ReturnVal", SqlDbType.Int).Direction = ParameterDirection.Output;
+          //  var returnParameter = cmd.Parameters.Add("@ReturnVal", SqlDbType.Int);
+        //    returnParameter.Direction = ParameterDirection.Output;
 
             int returnCode = (int) sqlExecuter(cmd, SqlTypes.VoidQuery);
 
             if (!open)
                 objConn.Close();
 
-            return returnParameter.Value;
+            return cmd.Parameters["@ReturnVal"].Value;
         }
 
         public object executeVoidSQLQuery(string command)
@@ -610,20 +614,21 @@ namespace CTBWebsite {
     {
         protected enum Tables {Report, File, Image};
 
-        protected void write(IOPage.Tables table, object[] insertionData, byte[] bytes)
+        protected void write(IOPage.Tables table, object[] insertionData, byte[] bytes, FileUpload uploader)
         {
             string selectQuery, insertionQuery, deleteQuery;
             switch (table)
             {
                 case Tables.File:
-                    selectQuery = "select Name, Path from Report where ID=@value1";
-                    insertionQuery = "exec Insert_File @value1, @value2, @value3, @value4, @value5, @value6, @value7, @value8";
-                    deleteQuery = "delete from Report where ID=@value1";
+                    selectQuery = "select Name, Path, Extension from GA_File where ID=@value1";
+                    insertionQuery = "exec @ReturnVal = Insert_File @value1, @value2, @value3, @value4, @value5, @value6, @value7, @value8";
+                    deleteQuery = "delete from GA_File where ID=@value1";
+                    
                     break;
                 case Tables.Report:
-                    selectQuery = "select Name, Path from GA_File where ID=@value1";
-                    insertionQuery = "exec Insert_Report @value1, @value2, @value3, @value4, @value5, @value6, @value7, @value8, @value9, @value11, @value12";
-                    deleteQuery = "delete from GA_File where ID=@value1";
+                    selectQuery = "select Name, Path, Extension from Report where ID=@value1";
+                    insertionQuery = "exec @ReturnVal = Insert_Report @value1, @value2, @value3, @value4, @value5, @value6, @value7, @value8, @value9, @value11, @value12";
+                    deleteQuery = "delete from Report where ID=@value1";
                     break;
                 default:
                     selectQuery = "";
@@ -645,20 +650,23 @@ namespace CTBWebsite {
                 return;
             }
 
+            objConn.Open();
             try
             {
-                SqlDataReader reader = getReader(selectQuery);
-                reader.Read();
-                string path = reader.GetString(1);
-                string filename = reader.GetString(2);
-                reader.Close();
-
-                if (!Directory.Exists(path))
-                    Directory.CreateDirectory(path);
-
-                using (BinaryWriter writer = new BinaryWriter(File.Open(path + filename, FileMode.Create)))
+                SqlDataReader reader = getReader(selectQuery, id);
+                if (reader.HasRows)
                 {
-                    writer.Write(bytes);
+                    reader.Read();
+                    string path = reader.GetString(1);
+                    string filename = reader.GetString(0);
+                    string extension = reader.GetString(2);
+                    reader.Close();
+
+                    string fullPath = Path.Combine(PATH_TO_SERVER, path);
+                    if (!Directory.Exists(fullPath))
+                        Directory.CreateDirectory(fullPath);
+
+                    uploader.SaveAs(Path.Combine(fullPath, filename + extension));
                 }
             }
             catch (Exception ex)

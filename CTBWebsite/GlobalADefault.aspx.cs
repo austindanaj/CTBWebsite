@@ -485,7 +485,8 @@ namespace CTBWebsite
                 comment //Comment if the user created one
             };
 
-            write(IOPage.Tables.Report, id_buffer, reportUpload.FileBytes);
+            write(IOPage.Tables.Report, id_buffer, reportUpload.FileBytes, reportUpload);
+            
         }
         protected void CreateReport_OnClick(object sender, EventArgs e)
         {
@@ -578,13 +579,14 @@ namespace CTBWebsite
                 int.Parse(ddlFileAuthor1.SelectedValue),
                 int.Parse(ddlFileAuthor2.SelectedValue), //Need a way to return null
                 int.Parse(ddlFileVehicle.SelectedValue),
-                comment //Comment if the user created one
+                comment //Comment if the user created one,
+                //DBNull.Value
             };
 
             if (objConn == null)
                 openDBConnection();
 
-            write(Tables.File, id_buffer, reportUpload.FileBytes);
+            write(Tables.File, id_buffer, reportUpload.FileBytes, fileUpload);
         }
         protected void UploadFile_OnClick(object sender, EventArgs e)
         {
