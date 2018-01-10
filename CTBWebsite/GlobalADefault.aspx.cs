@@ -561,6 +561,15 @@ namespace CTBWebsite
                 comment = DBNull.Value;
             }
 
+            object author2;
+            if (ddlFileAuthor2.SelectedValue.Equals("-1"))
+            {
+                author2 = DBNull.Value;
+            } else
+            {
+                author2 = int.Parse(ddlFileAuthor2.SelectedValue);
+            }
+
             object[] id_buffer = {
                 Path.GetExtension(fileUpload.FileName),
                 int.Parse(ddlFileType.SelectedValue),
