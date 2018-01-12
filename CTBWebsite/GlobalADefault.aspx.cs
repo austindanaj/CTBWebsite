@@ -707,6 +707,15 @@ namespace CTBWebsite
             {
                 comment = DBNull.Value;
             }
+            object author2;
+            if (ddlFileAuthor2.SelectedValue.Equals("-1"))
+            {
+                author2 = DBNull.Value;
+            }
+            else
+            {
+                author2 = int.Parse(ddlFileAuthor2.SelectedValue);
+            }
 
 
             string date = lblDateSelected.Value == "" ? txtFileDate.Value : lblDateSelected.Value;
@@ -721,7 +730,7 @@ namespace CTBWebsite
                     int.Parse(ddlFilePhone.SelectedValue),
                     DateTime.Parse(date), //this is the date created, if the user does not default it to today
                     int.Parse(ddlFileAuthor1.SelectedValue),
-                    int.Parse(ddlFileAuthor2.SelectedValue), //Need a way to return null
+                    auth, //Need a way to return null
                     int.Parse(ddlFileVehicle.SelectedValue),
                     comment //Comment if the user created one,
                     //DBNull.Value
@@ -732,6 +741,7 @@ namespace CTBWebsite
             }
             else
             {
+            
                 
                 if (ffu.Value == "")
                 {
@@ -747,7 +757,7 @@ namespace CTBWebsite
                         DateTime.Parse(date), //this is the date created, if the user does not default it to today
                         DateTime.Now,
                         int.Parse(ddlFileAuthor1.SelectedValue),
-                        int.Parse(ddlFileAuthor2.SelectedValue), //Need a way to return null
+                        author2, //Need a way to return null
                         int.Parse(ddlFileVehicle.SelectedValue),
                         comment //Comment if the user created one,
 
@@ -764,7 +774,7 @@ namespace CTBWebsite
                         int.Parse(ddlFilePhone.SelectedValue),
                         DateTime.Parse(date), //this is the date created, if the user does not default it to today
                         int.Parse(ddlFileAuthor1.SelectedValue),
-                        int.Parse(ddlFileAuthor2.SelectedValue), //Need a way to return null
+                        author2, //Need a way to return null
                         int.Parse(ddlFileVehicle.SelectedValue),
                         comment //Comment if the user created one,
                         //DBNull.Value
