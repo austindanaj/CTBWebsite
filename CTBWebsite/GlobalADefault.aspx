@@ -156,16 +156,17 @@
                                         AutoGenerateColumns="False"
                                         CssClass="table table-bordered table-responsive">
                                         <Columns>
-                                            <asp:TemplateField HeaderText="ID" SortExpression="ID">
+                                            <asp:TemplateField>
                                                 <ItemTemplate>
-                                                    <asp:Label runat="server"
-                                                        Text='<%# Eval("ID") %>'></asp:Label>
+                                                    <asp:LinkButton runat="server" AutoPostBack="true" ID="lnkEditReport"
+                                                        CommandName="Edit_Report" CommandArgument='<%#Eval("ID")%>'
+                                                        Text='Edit'></asp:LinkButton>
                                                 </ItemTemplate>
                                             </asp:TemplateField>
                                             <asp:TemplateField HeaderText="ID" SortExpression="ID">
                                                 <ItemTemplate>
                                                     <asp:Label runat="server"
-                                                               Text='<%# Eval("ID") %>'></asp:Label>
+                                                        Text='<%# Eval("ID") %>'></asp:Label>
                                                 </ItemTemplate>
                                             </asp:TemplateField>
                                             <asp:TemplateField HeaderText="Report" SortExpression="Report_Name">
@@ -263,7 +264,6 @@
                                 </asp:Panel>
                             </div>
                         </ContentTemplate>
-
                     </asp:UpdatePanel>
                 </div>
 
@@ -327,7 +327,13 @@
                                         AutoGenerateColumns="False"
                                         CssClass="table table-bordered table-responsive">
                                         <Columns>
-
+                                            <asp:TemplateField>
+                                                <ItemTemplate>
+                                                    <asp:LinkButton runat="server" AutoPostBack="true" ID="lnkEditFile"
+                                                        CommandName="Edit_File" CommandArgument='<%#Eval("ID")%>'
+                                                        Text='Edit'></asp:LinkButton>
+                                                </ItemTemplate>
+                                            </asp:TemplateField>
                                             <asp:TemplateField HeaderText="ID" SortExpression="ID">
                                                 <ItemTemplate>
                                                     <asp:Label runat="server"
@@ -516,7 +522,7 @@
                 <div class="tab-pane" id="Tools">
                     <!-- Tools Tabs -->
                     <asp:Panel ID="pnlTools" runat="server">
-                        <asp:ListView ID="lstTools" runat="server" GroupItemCount="3" OnItemCommand="lstTools_OnItemCommand">
+                        <asp:ListView ID="lstTools" runat="server" GroupItemCount="3" OnItemCommand="lstTools_OnItemCommand" DataKeyNames="Alna_num">
                             <EmptyDataTemplate>
                                 <table>
                                     <tr>
@@ -534,9 +540,11 @@
                             </GroupTemplate>
                             <ItemTemplate>
                                 <div class="productItem">
+                                    <asp:LinkButton ID="lnkEditClicked" Font-Size="12px" ForeColor="#00358c" CssClass="closeNotification" CommandName="Edit_Tool" CommandArgument='<%#Eval("ID") %>' runat="server" Text='Edit' />
                                     <div>
                                         <img src='<%# "/images/icons/" + Eval("IconType") %>'
                                             height="120" width="120" />
+
                                     </div>
                                     <br />
                                     <div>
@@ -553,7 +561,7 @@
                                             <span class="itemText">
                                                 <%#:Eval("Version")%>
                                             </span>
-                                            <pre style="height: 100px; overflow: auto; text-align: left; border: transparent; white-space: pre-line; background: gainsboro">
+                                            <pre style="height: 125px; overflow: auto; text-align: left; border: transparent; white-space: pre-line; background: gainsboro">
                                                 <asp:Label runat="server" Text='Release Notes:'></asp:Label>
                                                 <asp:Label runat="server" Text='<%#:Eval("Comment")%>'></asp:Label>
                                                </pre>
@@ -632,12 +640,17 @@
                 <div class="form-signin">
                     <div class="modalReportHeader">
                         <div class="row" style="padding-left: 15px;">
-                            <asp:Label ID="Label1" runat="server" Style="font-size: 32px; font: bold;" Text="Create Report" />
+                            
+                        <asp:UpdatePanel runat="server">
+                        <ContentTemplate>
+                            <asp:Label ID="lblReportTitle" runat="server" Style="font-size: 32px; font: bold;" Text="Create Report" />
+                            </ContentTemplate>
+                        </asp:UpdatePanel>
                             <span id="CancelClickedReport" runat="server" class="close">&times;</span>
                         </div>
 
                         <div class="row" style="padding-left: 15px;">
-                            <asp:Label ID="Label5" runat="server" Style="font-size: 12px; font: bold;" Text="*You need to upload the files before creating a report" />
+                            <asp:Label ID="Label5" runat="server" Style="font-size: 12px; font: bold;" Text="*You need to upload the files before creating/updating a report" />
                         </div>
 
 
@@ -736,10 +749,10 @@
                                             <asp:ListItem Text="N/A" Value="-1" />
                                         </asp:DropDownList>
                                         <asp:RequiredFieldValidator ID="RequiredFieldValidator23" ForeColor="Red"
-                                                                    ControlToValidate="ddlAuthor2" InitialValue="-2"
-                                                                    ValidationGroup="ReportGroup"
-                                                                    ErrorMessage="Select a Name."
-                                                                    runat="Server">
+                                            ControlToValidate="ddlAuthor2" InitialValue="-2"
+                                            ValidationGroup="ReportGroup"
+                                            ErrorMessage="Select a Name."
+                                            runat="Server">
                                         </asp:RequiredFieldValidator>
                                     </div>
                                 </div>
@@ -788,16 +801,24 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="row" style="padding-right: 15px; padding-left: 15px;">
-                                <div class="form-group">
-                                    <asp:FileUpload ID="reportUpload" runat="server" />
+                            <div class="row" style="padding-right: 15px; padding-left: 15px;" runat="server">
+
+                                <div class="form-group" id="rfuDiv" runat="server">
+                                    <input runat="server" onchange="setfile(0)" id="rfu" type="file" name="file" />
                                     <asp:RequiredFieldValidator ID="RequiredFieldValidator22" ForeColor="Red"
-                                        ControlToValidate="reportUpload"
+                                        ControlToValidate="fileSelected"
+                                        InitialValue=""
                                         ValidationGroup="ReportGroup"
                                         ErrorMessage="Select a File."
                                         runat="Server">
                                     </asp:RequiredFieldValidator>
+
                                 </div>
+                                <div class="form-group" style="display: none" id="rfuHasFile" runat="server">
+                                    <asp:Label ID="lblRFU" runat="server" Style="font-size: 20px; font: bold;" Text="Testing" />
+                                    <span onclick="clearfile(0)" style="color: #333333" class="close">&times;</span>
+                                </div>
+
                             </div>
 
                             <div class="form-group">
@@ -807,6 +828,9 @@
                                 <asp:Button ID="btnSubmitReport" class="btn btn-lg btn-primary btn-block btn-signin" runat="server" OnClick="btnSubmitReport_OnClick" Text="Submit Report" type="submit" ValidationGroup="ReportGroup" />
                             </div>
                         </ContentTemplate>
+                        <Triggers>
+                            <asp:PostBackTrigger ControlID="btnSubmitReport" />
+                        </Triggers>
                     </asp:UpdatePanel>
                 </div>
             </div>
@@ -868,7 +892,7 @@
                                                 <asp:DropDownList ID="ddlFilePhone" runat="server" ValidationGroup="UploadGroup" CssClass="form-control">
                                                     <asp:ListItem Text="-- Select a Phone --" Value="-1" />
                                                 </asp:DropDownList>
-                                                <asp:RequiredFieldValidator ID="RequiredFieldValidator4" ForeColor="Red" 
+                                                <asp:RequiredFieldValidator ID="RequiredFieldValidator4" ForeColor="Red"
                                                     ControlToValidate="ddlFilePhone" InitialValue="-1"
                                                     ValidationGroup="UploadGroup"
                                                     ErrorMessage="Select a Phone."
@@ -882,18 +906,16 @@
                                                     <asp:ListItem Text="-- Select Author 2 --" Value="-2" />
                                                     <asp:ListItem Text="N/A" Value="-1" />
                                                 </asp:DropDownList>
-                                                <asp:RequiredFieldValidator ID="RequiredFieldValidator24" ForeColor="Red" 
-                                                                            ControlToValidate="ddlFileAuthor2" InitialValue="-2"
-                                                                            ValidationGroup="UploadGroup"
-                                                                            ErrorMessage="Select a Name."
-                                                                            runat="Server">
+                                                <asp:RequiredFieldValidator ID="RequiredFieldValidator24" ForeColor="Red"
+                                                    ControlToValidate="ddlFileAuthor2" InitialValue="-2"
+                                                    ValidationGroup="UploadGroup"
+                                                    ErrorMessage="Select a Name."
+                                                    runat="Server">
                                                 </asp:RequiredFieldValidator>
                                             </div>
                                         </div>
                                     </div>
 
-                                      </ContentTemplate>
-                            </asp:UpdatePanel>
                                     <div class="row">
                                         <div class="col-md-6">
                                             <div class="form-group">
@@ -935,19 +957,30 @@
 
                                         </div>
                                     </div>
-                                      
+
                                     <div class="row">
 
-                                        <div class="form-group" style="padding-left: 15px; padding-right: 15px;">
-                                            <asp:FileUpload ID="fileUpload" runat="server" />
+                                        <div class="form-group" style="padding-left: 15px; padding-right: 15px;" id="ffuDiv" runat="server">
+
+                                            <input runat="server" onchange="setfile(1)" id="ffu" type="file" name="file" />
                                             <asp:RequiredFieldValidator ID="RequiredFieldValidator15" ForeColor="Red"
-                                                ControlToValidate="fileUpload" InitialValue=""
+                                                ControlToValidate="fileSelected" 
+                                                InitialValue=""
                                                 ValidationGroup="UploadGroup"
                                                 ErrorMessage="Select a File."
                                                 runat="Server">
                                             </asp:RequiredFieldValidator>
+                                        </div>
+
+
+                                        <div class="form-group" style="padding-left: 15px; padding-right: 15px; display: none" id="ffuHasFile" runat="server">
+                                            <asp:Label ID="lblFFU" runat="server" Style="font-size: 20px; font: bold;" Text="Testing" />
+                                            <span onclick="clearfile(1)" style="color: #333333" class="close">&times;</span>
 
                                         </div>
+
+
+
                                     </div>
 
                                     <div class="form-group">
@@ -958,7 +991,13 @@
                                     <div class="form-group">
                                         <asp:Button ID="UploadClicked" class="btn btn-lg btn-primary btn-block btn-signin" OnClick="btnSubmitFile_OnClick" runat="server" Text="Upload File" type="submit" ValidationGroup="UploadGroup" />
                                     </div>
-                            
+
+                                </ContentTemplate>
+                                <Triggers>
+                                    <asp:PostBackTrigger ControlID="UploadClicked" />
+                                </Triggers>
+                            </asp:UpdatePanel>
+
                         </div>
                     </div>
                 </div>
@@ -1016,17 +1055,26 @@
 
 
                                 <div class="row" style="padding-right: 15px; padding-left: 15px;">
-                                    <div class="form-group">
-                                        <asp:FileUpload ID="imageUpload" runat="server" />
-                                        <asp:RequiredFieldValidator ID="RequiredFieldValidator18" ForeColor="Red"
-                                            ControlToValidate="imageUpload" InitialValue=""
+
+
+                                    <div class="form-group" id="ifuDiv" runat="server">
+                                        <input runat="server" onchange="setfile(2)" id="ifu" type="file" name="file" />
+                                        <asp:RequiredFieldValidator ID="RequiredFieldValidator25" ForeColor="Red"
+                                            ControlToValidate="fileSelected"
+                                            InitialValue=""
                                             ValidationGroup="ImageGroup"
                                             ErrorMessage="Select a File."
                                             runat="Server">
                                         </asp:RequiredFieldValidator>
-
                                     </div>
+                                    <div class="form-group" style="display: none" id="ifuHasFile" runat="server">
+                                        <asp:Label ID="lblIFU" runat="server" Style="font-size: 20px; font: bold;" Text="Testing" />
+                                        <span onclick="clearfile(2)" style="color: #333333" class="close">&times;</span>
+                                    </div>
+
+
                                 </div>
+
                                 <div class="row" style="padding-right: 15px; padding-left: 15px;">
                                     <div class="form-group">
                                         <asp:TextBox ID="txtImageComment" placeholder="Comment" runat="server" Style="max-height: 200px; max-width: 100%;" Height="200px" CssClass="form-control" TextMode="MultiLine"></asp:TextBox>
@@ -1093,15 +1141,28 @@
                         </div>
 
                         <div class="row" style="padding-right: 15px; padding-left: 15px;">
-                            <div class="form-group">
-                                <asp:FileUpload ID="toolUpload" runat="server" />
-                                <asp:RequiredFieldValidator ID="RequiredFieldValidator21" ForeColor="Red"
-                                    ControlToValidate="toolUpload" InitialValue=""
+
+
+                            <div class="form-group" id="tfuDiv" runat="server">
+                                <input runat="server" onchange="setfile(3)" id="tfu" type="file" name="file" />
+                                <asp:RequiredFieldValidator ID="RequiredFieldValidator26" ForeColor="Red"
+                                    InitialValue=""
+                                    ControlToValidate="fileSelected"
                                     ValidationGroup="ToolGroup"
                                     ErrorMessage="Select a File."
                                     runat="Server">
                                 </asp:RequiredFieldValidator>
                             </div>
+                            <div class="form-group" style="display: none" id="tfuHasFile" runat="server">
+                                <asp:Label ID="lblTFU" runat="server" Style="font-size: 20px; font: bold;" Text="Testing" />
+                                <span onclick="clearfile(3)" style="color: #333333" class="close">&times;</span>
+                            </div>
+
+
+
+
+
+
                         </div>
 
                         <div class="row" style="padding-right: 15px; padding-left: 15px;">
@@ -1142,20 +1203,96 @@
     <input type="hidden" id="lblFileDateSelected" value="" runat="server" />
     <input type="hidden" id="lblDateSelected" value="" runat="server" />
 
+    <asp:UpdatePanel Style="display: none" runat="server">
+        <ContentTemplate>
+            <asp:TextBox Style="display: none" ID="fileSelected" Text="" runat="server" />
+        </ContentTemplate>
+    </asp:UpdatePanel>
 
     <script type="text/javascript">
+        function clearfile(tagID) {
+            document.getElementById('<%=fileSelected.ClientID %>').value = '';
+            switch (tagID) {
+                case 0:
+                    document.getElementById('<%=rfuDiv.ClientID %>').innerHTML = document.getElementById('<%=rfuDiv.ClientID %>').innerHTML;
+                    document.getElementById('<%=rfuHasFile.ClientID %>').style.display = 'none';
+                    document.getElementById('<%=rfuDiv.ClientID %>').style.display = 'block';
+                
+                    break;
+                case 1:
+                    document.getElementById('<%=ffuDiv.ClientID %>').innerHTML = document.getElementById('<%=ffuDiv.ClientID %>').innerHTML;
+                    document.getElementById('<%=ffuHasFile.ClientID %>').style.display = 'none';
+                    document.getElementById('<%=ffuDiv.ClientID %>').style.display = 'block';
+                   
+                    break;
+                case 2:
+                    document.getElementById('<%=ifuDiv.ClientID %>').innerHTML = document.getElementById('<%=ifuDiv.ClientID %>').innerHTML;
+                    document.getElementById('<%=ifuHasFile.ClientID %>').style.display = 'none';
+                    document.getElementById('<%=ifuDiv.ClientID %>').style.display = 'block';
+                  
+                    break;
+                case 3:
+                    document.getElementById('<%=tfuDiv.ClientID %>').innerHTML = document.getElementById('<%=tfuDiv.ClientID %>').innerHTML;
+                    document.getElementById('<%=tfuHasFile.ClientID %>').style.display = 'none';
+                    document.getElementById('<%=tfuDiv.ClientID %>').style.display = 'block';
+                   
+                    break;
+
+
+            }
+
+        }
+
+
+        //Trigger now when you have selected any file 
+        function setfile(tagID) {
+            switch (tagID) {
+                case 0:
+                    document.getElementById('<%=lblRFU.ClientID %>').innerHTML = document.getElementById('<%=rfu.ClientID %>').files[0].name;
+                    document.getElementById('<%=rfuHasFile.ClientID %>').style.display = 'block';
+                    document.getElementById('<%=rfuDiv.ClientID %>').style.display = 'none';
+                    document.getElementById('<%=fileSelected.ClientID %>').value = document.getElementById('<%=rfu.ClientID %>').files[0].name;
+                    break;
+                case 1:
+                    document.getElementById('<%=lblFFU.ClientID %>').innerHTML = document.getElementById('<%=ffu.ClientID %>').files[0].name;
+                    document.getElementById('<%=ffuHasFile.ClientID %>').style.display = 'block';
+                    document.getElementById('<%=ffuDiv.ClientID %>').style.display = 'none';
+                    document.getElementById('<%=fileSelected.ClientID %>').value = document.getElementById('<%=ffu.ClientID %>').files[0].name;
+                    break;
+                case 2:
+                    document.getElementById('<%=lblIFU.ClientID %>').innerHTML = document.getElementById('<%=ifu.ClientID %>').files[0].name;
+                    document.getElementById('<%=ifuHasFile.ClientID %>').style.display = 'block';
+                    document.getElementById('<%=ifuDiv.ClientID %>').style.display = 'none';
+                    document.getElementById('<%=fileSelected.ClientID %>').value = document.getElementById('<%=ifu.ClientID %>').files[0].name;
+                    break;
+                case 3:
+                    document.getElementById('<%=lblTFU.ClientID %>').innerHTML = document.getElementById('<%=tfu.ClientID %>').files[0].name;
+                    document.getElementById('<%=tfuHasFile.ClientID %>').style.display = 'block';
+                    document.getElementById('<%=tfuDiv.ClientID %>').style.display = 'none';
+                    document.getElementById('<%=fileSelected.ClientID %>').value = document.getElementById('<%=tfu.ClientID %>').files[0].name;
+                    break;
+
+
+            }
+
+        }
+
+
+
+
         $(document).ready(function () {
             // bind your jQuery events here initially
             bindEvents();
         });
         Sys.WebForms.PageRequestManager.getInstance().add_endRequest(function (e, a) {
             bindEvents();
+            document.getElementById('<%=fileSelected.ClientID %>').innerHTML = '';
         });
 
         function bindEvents() {
             $('#datetimepicker1').datetimepicker({
                 format: 'MM/DD/YYYY',
-                useCurrent: false, 
+                useCurrent: false,
                 maxDate: new Date
             });
             $("#datetimepicker1").on("dp.change",
@@ -1170,7 +1307,7 @@
                 format: 'MM/DD/YYYY',
                 useCurrent: false,
                 maxDate: new Date
-  
+
             });
             $("#datetimepicker2").on("dp.change",
                 function (e) {
@@ -1229,6 +1366,7 @@
 
     </script>
     <script type="text/javascript">
+
 
         $('#gaTabs a').click(function (e) {
             $(this).tab('show');
