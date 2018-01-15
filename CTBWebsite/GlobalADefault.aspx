@@ -26,14 +26,14 @@
                                         <div class="col-md-3" style="text-align: center">
                                             <asp:UpdatePanel runat="server">
                                                 <ContentTemplate>
-                                                    <asp:LinkButton ID="CreateReport" CssClass="linkButton" OnClick="CreateReport_OnClick" runat="server" Text='Create Report' />
+                                                    <asp:LinkButton ID="CreateReport" CssClass="linkButton" OnClick="uploadPanel" runat="server" Text='Create Report' />
                                                 </ContentTemplate>
                                             </asp:UpdatePanel>
                                         </div>
                                         <div class="col-md-3" style="text-align: center">
                                             <asp:UpdatePanel runat="server">
                                                 <ContentTemplate>
-                                                    <asp:LinkButton ID="UploadFile" CssClass="linkButton" OnClick="UploadFile_OnClick" runat="server" Text='Upload File' />
+                                                    <asp:LinkButton ID="UploadFile" CssClass="linkButton" OnClick="uploadPanel" runat="server" Text='Upload File' />
                                                 </ContentTemplate>
                                             </asp:UpdatePanel>
                                         </div>
@@ -49,14 +49,14 @@
                                         <div class="col-md-3" style="text-align: center">
                                             <asp:UpdatePanel runat="server">
                                                 <ContentTemplate>
-                                                    <asp:LinkButton ID="UploadImage" CssClass="linkButton" OnClick="UploadImage_OnClick" runat="server" Text='Upload Image' />
+                                                    <asp:LinkButton ID="UploadImage" CssClass="linkButton" OnClick="uploadPanel" runat="server" Text='Upload Image' />
                                                 </ContentTemplate>
                                             </asp:UpdatePanel>
                                         </div>
                                         <div class="col-md-3" style="text-align: center">
                                             <asp:UpdatePanel runat="server">
                                                 <ContentTemplate>
-                                                    <asp:LinkButton ID="UploadTool" CssClass="linkButton" OnClick="UploadTool_OnClick" runat="server" Text='Upload Tool' />
+                                                    <asp:LinkButton ID="UploadTool" CssClass="linkButton" OnClick="uploadPanel" runat="server" Text='Upload Tool' />
                                                 </ContentTemplate>
                                             </asp:UpdatePanel>
                                         </div>
@@ -114,23 +114,23 @@
                             <div class="row">
                                 <div class="container">
                                     <div class="col-md-3">
-                                        <asp:DropDownList ID="ddlVehicleReportFilter" OnSelectedIndexChanged="ddlVehicleReportFilter_OnSelectedIndexChanged" CssClass="form-control" runat="server" AutoPostBack="true">
+                                        <asp:DropDownList ID="ddlVehicleReportFilter" OnSelectedIndexChanged="applyFilter" CssClass="form-control" runat="server" AutoPostBack="true">
                                             <asp:ListItem Text="-- Vehicle Filter --" Value="-1" />
                                         </asp:DropDownList>
                                     </div>
                                     <div class="col-md-3">
-                                        <asp:DropDownList ID="ddlPhoneReportFilter" OnSelectedIndexChanged="ddlPhoneReportFilter_OnSelectedIndexChanged" CssClass="form-control" runat="server" AutoPostBack="true">
+                                        <asp:DropDownList ID="ddlPhoneReportFilter" OnSelectedIndexChanged="applyFilter" CssClass="form-control" runat="server" AutoPostBack="true">
                                             <asp:ListItem Text="-- Phone Filter --" Value="-1" />
                                         </asp:DropDownList>
                                     </div>
                                     <div class="col-md-3">
-                                        <asp:DropDownList ID="ddlEmployeeReportFilter" OnSelectedIndexChanged="ddlEmployeeReportFilter_OnSelectedIndexChanged" CssClass="form-control" runat="server" AutoPostBack="true">
+                                        <asp:DropDownList ID="ddlEmployeeReportFilter" OnSelectedIndexChanged="applyFilter" CssClass="form-control" runat="server" AutoPostBack="true">
                                             <asp:ListItem Text="-- Author Filter --" Value="-1" />
                                         </asp:DropDownList>
                                     </div>
                                     <div class="col-md-3">
                                         <div class='input-group date' id='datetimepicker4'>
-                                            <asp:TextBox runat="server" placeholder="-- Date Filter --" OnTextChanged="txtReportFilterDate_OnTextChanged" ID="txtReportFilterDate" CssClass="form-control" Style="margin-bottom: 0px;" />
+                                            <asp:TextBox runat="server" placeholder="-- Date Filter --" OnTextChanged="applyFilter" ID="txtReportFilterDate" CssClass="form-control" Style="margin-bottom: 0px;" />
                                             <span class="input-group-addon">
                                                 <span class="glyphicon glyphicon-calendar"></span>
                                             </span>
@@ -150,9 +150,9 @@
                                         RowStyle-HorizontalAlign="Center"
                                         AllowPaging="true"
                                         AllowSorting="True"
-                                        OnSorting="dgvReports_OnSorting"
+                                        OnSorting="sort"
                                         PageSize="30"
-                                        OnRowCommand="dgvReports_OnRowCommand"
+                                        OnRowCommand="onRowCommand"
                                         AutoGenerateColumns="False"
                                         CssClass="table table-bordered table-responsive">
                                         <Columns>
@@ -275,17 +275,17 @@
                                 <div class="container">
 
                                     <div style="width: 20%" class="col-md-2">
-                                        <asp:DropDownList ID="ddlFileVehicleFilter" OnSelectedIndexChanged="ddlFileVehicleFilter_OnSelectedIndexChanged" CssClass="form-control" runat="server" AutoPostBack="true">
+                                        <asp:DropDownList ID="ddlFileVehicleFilter" OnSelectedIndexChanged="applyFilter" CssClass="form-control" runat="server" AutoPostBack="true">
                                             <asp:ListItem Text="-- Vehicle Filter --" Value="-1" />
                                         </asp:DropDownList>
                                     </div>
                                     <div style="width: 20%" class="col-md-2">
-                                        <asp:DropDownList ID="ddlFilePhoneFilter" OnSelectedIndexChanged="ddlFilePhoneFilter_OnSelectedIndexChanged" CssClass="form-control" runat="server" AutoPostBack="true">
+                                        <asp:DropDownList ID="ddlFilePhoneFilter" OnSelectedIndexChanged="applyFilter" CssClass="form-control" runat="server" AutoPostBack="true">
                                             <asp:ListItem Text="-- Phone Filter --" Value="-1" />
                                         </asp:DropDownList>
                                     </div>
                                     <div style="width: 20%" class="col-md-2">
-                                        <asp:DropDownList ID="ddlFileFilterType" OnSelectedIndexChanged="ddlFileFilterType_OnSelectedIndexChanged" CssClass="form-control" runat="server" AutoPostBack="true">
+                                        <asp:DropDownList ID="ddlFileFilterType" OnSelectedIndexChanged="applyFilter" CssClass="form-control" runat="server" AutoPostBack="true">
                                             <asp:ListItem Text="-- File Type Filter --" Value="-1" />
                                             <asp:ListItem Text="Calibration" Value="0" />
                                             <asp:ListItem Text="TD1" Value="1" />
@@ -295,13 +295,13 @@
                                         </asp:DropDownList>
                                     </div>
                                     <div style="width: 20%" class="col-md-2">
-                                        <asp:DropDownList ID="ddlFileAuthorFilter" OnSelectedIndexChanged="ddlFileAuthorFilter_OnSelectedIndexChanged" CssClass="form-control" runat="server" AutoPostBack="true">
+                                        <asp:DropDownList ID="ddlFileAuthorFilter" OnSelectedIndexChanged="applyFilter" CssClass="form-control" runat="server" AutoPostBack="true">
                                             <asp:ListItem Text="-- Author Filter --" Value="-1" />
                                         </asp:DropDownList>
                                     </div>
                                     <div style="width: 20%" class="col-md-2">
                                         <div class='input-group date' id='datetimepicker5'>
-                                            <asp:TextBox runat="server" placeholder="-- Date Filter --" OnTextChanged="txtFileDateFilter_OnTextChanged" ID="txtFileDateFilter" CssClass="form-control" Style="margin-bottom: 0px;" />
+                                            <asp:TextBox runat="server" placeholder="-- Date Filter --" OnTextChanged="applyFilter" ID="txtFileDateFilter" CssClass="form-control" Style="margin-bottom: 0px;" />
                                             <span class="input-group-addon">
                                                 <span class="glyphicon glyphicon-calendar"></span>
                                             </span>
@@ -320,10 +320,10 @@
                                         RowStyle-VerticalAlign="Middle"
                                         RowStyle-HorizontalAlign="Center"
                                         AllowPaging="true"
-                                        OnSorting="dgvFiles_OnSorting"
+                                        OnSorting="sort"
                                         AllowSorting="true"
                                         PageSize="30"
-                                        OnRowCommand="dgvFiles_OnRowCommand"
+                                        OnRowCommand="onRowCommand"
                                         AutoGenerateColumns="False"
                                         CssClass="table table-bordered table-responsive">
                                         <Columns>
@@ -422,19 +422,19 @@
                                 <div class="container">
 
                                     <div class="col-md-4">
-                                        <asp:DropDownList ID="ddlImageVehicleFilter" OnSelectedIndexChanged="ddlImageVehicleFilter_OnSelectedIndexChanged" CssClass="form-control" runat="server" AutoPostBack="true">
+                                        <asp:DropDownList ID="ddlImageVehicleFilter" OnSelectedIndexChanged="applyFilter" CssClass="form-control" runat="server" AutoPostBack="true">
                                             <asp:ListItem Text="-- Vehicle Filter --" Value="-1" />
                                         </asp:DropDownList>
                                     </div>
 
                                     <div class="col-md-4">
-                                        <asp:DropDownList ID="ddlImageAuthorFilter" OnSelectedIndexChanged="ddlImageAuthorFilter_OnSelectedIndexChanged" CssClass="form-control" runat="server" AutoPostBack="true">
+                                        <asp:DropDownList ID="ddlImageAuthorFilter" OnSelectedIndexChanged="applyFilter" CssClass="form-control" runat="server" AutoPostBack="true">
                                             <asp:ListItem Text="-- Author Filter --" Value="-1" />
                                         </asp:DropDownList>
                                     </div>
                                     <div class="col-md-4">
                                         <div class='input-group date' id='datetimepicker6'>
-                                            <asp:TextBox runat="server" placeholder="-- Date Filter --" OnTextChanged="txtImageDateFilter_OnTextChanged" ID="txtImageDateFilter" CssClass="form-control" Style="margin-bottom: 0px;" />
+                                            <asp:TextBox runat="server" placeholder="-- Date Filter --" OnTextChanged="applyFilter" ID="txtImageDateFilter" CssClass="form-control" Style="margin-bottom: 0px;" />
                                             <span class="input-group-addon">
                                                 <span class="glyphicon glyphicon-calendar"></span>
                                             </span>
@@ -452,10 +452,10 @@
                                         RowStyle-VerticalAlign="Middle"
                                         RowStyle-HorizontalAlign="Center"
                                         AllowPaging="true"
-                                        OnSorting="dgvImages_OnSorting"
+                                        OnSorting="sort"
                                         AllowSorting="True"
                                         PageSize="30"
-                                        OnRowCommand="dgvImages_OnRowCommand"
+                                        OnRowCommand="onRowCommand"
                                         AutoGenerateColumns="False"
                                         CssClass="table table-bordered table-responsive">
                                         <Columns>
@@ -664,7 +664,7 @@
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <asp:DropDownList ID="ddlVehicles" ValidationGroup="ReportGroup" CssClass="form-control" runat="server" AutoPostBack="true" OnSelectedIndexChanged="ddlVehicles_OnSelectedIndexChanged">
+                                        <asp:DropDownList ID="ddlVehicles" ValidationGroup="ReportGroup" CssClass="form-control" runat="server" AutoPostBack="true" OnSelectedIndexChanged="onSelectedIndexChanged">
                                             <asp:ListItem Text="-- Select a Vehicle --" Value="-1" />
                                         </asp:DropDownList>
                                         <asp:RequiredFieldValidator ID="RequiredFieldValidator2" ForeColor="Red"
@@ -690,7 +690,7 @@
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <asp:DropDownList ID="ddlPhones" CssClass="form-control" AutoPostBack="true" OnSelectedIndexChanged="ddlPhones_OnSelectedIndexChanged" runat="server">
+                                        <asp:DropDownList ID="ddlPhones" CssClass="form-control" AutoPostBack="true" OnSelectedIndexChanged="onSelectedIndexChanged" runat="server">
                                             <asp:ListItem Text="-- Select a Phone --" Value="-1" />
                                         </asp:DropDownList>
                                         <asp:RequiredFieldValidator ID="RequiredFieldValidator5" ForeColor="Red"

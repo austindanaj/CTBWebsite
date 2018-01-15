@@ -25,7 +25,6 @@ namespace CTBWebsite
             {
                 //cldTimeOffStart.SelectedDate = DateTime.Now;
                 init();
-                successDialog(txtSuccessBox);
             }
         }
         protected void gdvUser_PageIndexChanged(object sender, GridViewPageEventArgs e)

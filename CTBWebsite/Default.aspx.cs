@@ -20,8 +20,7 @@ namespace CTBWebsite
                 SqlDataReader reader = getReader("select Dates from Dates order by Dates desc");
                 if (reader == null)
                 {
-                    throwJSAlert("Can't connect to DB; contact admin");
-                    return;
+                    throw new Exception("We can't access the database currently; there may be a problem with the connection");
                 }
                 while (reader.Read())
                     ddlselectWeek.Items.Add(reader.GetDateTime(0).ToShortDateString());
@@ -100,8 +99,7 @@ namespace CTBWebsite
         {
             if (!Date.TryParse(ddlselectWeek.SelectedValue, out Date date))
             {
-                throwJSAlert("Not a valid date");
-                return;
+                throw new Exception("We forgot to add some functionality to check the date, remind us to do that. Your date was bad, put in a valid one and it'll work");
             }
 
             HoursPage h = new HoursPage();
@@ -110,8 +108,7 @@ namespace CTBWebsite
 
             if (projectDataTable == null | vehicleDataTable == null)
             {
-                throwJSAlert("Data could not be downloaded; some sort of error");
-                return;
+                throw new IOException("Data could not be downloaded; some sort of error");
             }
 
             //Write file then transmit it
@@ -161,8 +158,7 @@ namespace CTBWebsite
             }
             catch (Exception ex)
             {
-                writeStackTrace("Something wrong in file writing", ex);
-                throwJSAlert("Something wrong with the directory structure/file IO; contact an admin");
+                throw new IOException("Something wrong with the directory structure/file IO; contact an admin");
             }
         }
 

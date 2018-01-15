@@ -4,6 +4,7 @@ using System;
 using System.Web.UI.WebControls;
 using System.Data;
 using System.Collections;
+using System.IO;
 
 namespace CTBWebsite
 {
@@ -67,8 +68,7 @@ namespace CTBWebsite
 
             if (projectData == null || vehiclesData == null || projectHoursData == null || vehicleHoursData == null || datesData == null)
             {
-                throwJSAlert("Problem accessing data; contact Anthony or Austin");
-                return;
+                throw new IOException("Problem accessing database; contact an admin");
             }
         }
 
@@ -147,15 +147,12 @@ namespace CTBWebsite
 
         protected void TriggerEvent(object sender, EventArgs e)
         {
-
-            
             if (sender.Equals(btnselectWeek))
             {
                 Session["Active"] = !chkInactive.Checked;
                 if (!Date.TryParse(ddlselectWeek.SelectedValue, out Date selection))
                 {
-                    throwJSAlert("Something went wrong. try again.");
-                    return;
+                    throw new ArgumentException("Your date entered is bad; we forgot to add logic to check it, reenter it with a correct date and it'll work");
                 }
                 Session["Date"] = selection;
                 objConn.Open();
@@ -183,15 +180,13 @@ namespace CTBWebsite
             {
                 if (!txtDelete.Text.Equals("YES"))
                 {
-                    throwJSAlert("You must exactly type YES to delete all your records for the week. No extra whitespace, all caps.");
                     return;
                 }
 
                 string selection = ddlWorkedHours.SelectedValue;
                 if (string.IsNullOrEmpty(selection))
                 {
-                    throwJSAlert("Don't try and hack the system! What are you doing?");
-                    return;
+                    throw new ArgumentException("You changed the value of one of the dropdown items");
                 }
 
                 string table = selection.Substring(0, 1).Equals("V") ? "VehicleHours" : "ProjectHours";
@@ -200,8 +195,7 @@ namespace CTBWebsite
                 selection = selection.Substring(startIndex, endIndex - startIndex);
                 if (!int.TryParse(selection, out int id))
                 {
-                    throwJSAlert("Don't try and hack the system! What are you doing?");
-                    return;
+                    throw new ArgumentException("You changed the value of one of the dropdown items");
                 }
 
                 objConn.Open();
