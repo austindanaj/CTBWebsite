@@ -21,7 +21,6 @@ namespace CTBWebsite
                 ViewState["directionState"] = value;
             }
         }
-
         private enum FILE_TYPE
         {
             CALIBRATION = 0,
@@ -30,13 +29,14 @@ namespace CTBWebsite
             TD3 = 3,
             TD4 = 4
         }
+        private static readonly string TOOLS_PATH = Path.Combine(HOME, "Tools/");
 
         //===========================================================
         // Init object
         //===========================================================
         protected void Page_Load(object sender, EventArgs e)
         {
-        
+
             if (!IsPostBack)
             {
                 openDBConnection();
@@ -54,13 +54,14 @@ namespace CTBWebsite
 
                 //  LoadImages();
                 LoadTools();
-              //  objConn.Close();
+                //  objConn.Close();
 
             }
             RegisterPostBackControl();
 
 
         }
+
         private void RegisterPostBackControl()
         {
             foreach (GridViewRow row in dgvFiles.Rows)
@@ -91,7 +92,7 @@ namespace CTBWebsite
         }
 
         //===========================================================
-        // Load static content
+        // Prep the page (Load DB contents/static content)
         //===========================================================
         public DataTable LoadReports()
         {
@@ -299,6 +300,121 @@ namespace CTBWebsite
             */
         }
 
+        public void LoadFileDropdowns()
+        {
+            ddlFileVehicle.Items.Clear();
+            ddlFileVehicle.Items.Add(new ListItem("-- Select a Vehicle --", "-1"));
+            ddlFilePhone.Items.Clear();
+            ddlFilePhone.Items.Add(new ListItem("-- Select a Phone --", "-1"));
+            ddlFileAuthor1.Items.Clear();
+            ddlFileAuthor1.Items.Add(new ListItem("-- Select Author 1 --", "-1"));
+            ddlFileAuthor2.Items.Clear();
+            ddlFileAuthor2.Items.Add(new ListItem("-- Select Author 2 --", "-2"));
+            ddlFileAuthor2.Items.Add(new ListItem("N/A", "-1"));
+
+            openDBConnection();
+            objConn.Open();
+            SqlDataReader reader = getReader("SELECT * FROM Vehicles  WHERE Active=@value1 ORDER BY Name ASC", true);
+            while (reader.Read())
+            {
+                ddlFileVehicle.Items.Add(new ListItem(reader.GetString(1), reader.GetValue(0).ToString()));
+            }
+            reader.Close();
+            reader = getReader("SELECT * FROM Phones  WHERE Active=@value1 ORDER BY Name ASC", true);
+            while (reader.Read())
+            {
+                ddlFilePhone.Items.Add(new ListItem(reader.GetString(1), reader.GetValue(0).ToString()));
+            }
+            reader.Close();
+            reader = getReader("SELECT * FROM Employees  WHERE Active=@value1 ORDER BY Name ASC", true);
+            while (reader.Read())
+            {
+                string id = reader.GetValue(0).ToString();
+                string name = reader.GetString(1);
+                ddlFileAuthor1.Items.Add(new ListItem(name, id));
+                ddlFileAuthor2.Items.Add(new ListItem(name, id));
+            }
+            reader.Close();
+            reader.Dispose();
+
+            objConn.Close();
+            objConn.Dispose();
+
+        }
+
+        public void LoadDD()
+        {
+            ddlVehicleReportFilter.Items.Clear();
+            ddlFileVehicleFilter.Items.Clear();
+            ddlImageVehicleFilter.Items.Clear();
+            ddlVehicleReportFilter.Items.Add(new ListItem("-- Vehicle Filter --", "-1"));
+            ddlFileVehicleFilter.Items.Add(new ListItem("-- Vehicle Filter --", "-1"));
+            ddlImageVehicleFilter.Items.Add(new ListItem("-- Vehicle Filter --", "-1"));
+            SqlDataReader reader = getReader("SELECT * FROM Vehicles WHERE Active=@value1 ORDER BY Name ASC", true);
+            string id;
+            string name;
+            while (reader.Read())
+            {
+                id = reader.GetValue(0).ToString();
+                name = reader.GetString(1);
+                ddlVehicleReportFilter.Items.Add(new ListItem(name, id));
+                ddlFileVehicleFilter.Items.Add(new ListItem(name, id));
+                ddlImageVehicleFilter.Items.Add(new ListItem(name, id));
+            }
+            reader.Close();
+
+            ddlPhoneReportFilter.Items.Clear();
+            ddlFilePhoneFilter.Items.Clear();
+            ddlPhoneReportFilter.Items.Add(new ListItem("-- Phone Filter --", "-1"));
+            ddlFilePhoneFilter.Items.Add(new ListItem("-- Phone Filter --", "-1"));
+            reader = getReader("SELECT * FROM Phones WHERE Active=@value1 ORDER BY Name ASC", true);
+            while (reader.Read())
+            {
+                id = reader.GetValue(0).ToString();
+                name = reader.GetString(1);
+                ddlPhoneReportFilter.Items.Add(new ListItem(name, id));
+                ddlFilePhoneFilter.Items.Add(new ListItem(name, id));
+            }
+            reader.Close();
+
+            ddlEmployeeReportFilter.Items.Clear();
+            ddlFileAuthorFilter.Items.Clear();
+            ddlImageAuthorFilter.Items.Clear();
+            ddlEmployeeReportFilter.Items.Add(new ListItem("-- Author Filter --", "-1"));
+            ddlFileAuthorFilter.Items.Add(new ListItem("-- Author Filter --", "-1"));
+            ddlImageAuthorFilter.Items.Add(new ListItem("-- Author Filter --", "-1"));
+            reader = getReader("SELECT * FROM Employees  WHERE Active=@value1 ORDER BY Name ASC", true);
+            while (reader.Read())
+            {
+                id = reader.GetValue(0).ToString();
+                name = reader.GetString(1);
+                ddlEmployeeReportFilter.Items.Add(new ListItem(name, id));
+                ddlFileAuthorFilter.Items.Add(new ListItem(name, id));
+                ddlImageAuthorFilter.Items.Add(new ListItem(name, id));
+            }
+            reader.Close();
+            reader.Dispose();
+        }
+
+        public void LoadImageDropdowns()
+        {
+            ddlImageVehicle.Items.Clear();
+            ddlImageVehicle.Items.Add(new ListItem("-- Select a Vehicle --", "-1"));
+
+            openDBConnection();
+            objConn.Open();
+            SqlDataReader reader = getReader("SELECT * FROM Vehicles  WHERE Active=@value1 ORDER BY Name ASC", true);
+            while (reader.Read())
+            {
+                ddlImageVehicle.Items.Add(new ListItem(reader.GetString(1), reader.GetValue(0).ToString()));
+            }
+            reader.Close();
+            reader.Dispose();
+
+            objConn.Close();
+            objConn.Dispose();
+        }
+
         public void LoadTools()
         {
             SqlCommand sql = new SqlCommand("SELECT * FROM Tools ORDER BY Name ASC", objConn);
@@ -389,38 +505,30 @@ namespace CTBWebsite
 
                 }
             }
-            catch (Exception ex)
+            catch
             {
 
             }
         }
 
-        protected void btnUploadTool_Click(object sender, EventArgs e)
+        protected void uploadPanel(object sender, EventArgs e)
         {
-            openDBConnection();
-            this.objConn.Open();
-
-            object filename = DBNull.Value, contentType = DBNull.Value;
-
-            filename = toolUpload.FileName;
-            contentType = toolUpload.PostedFile.ContentType;
-          
-            object[] o;
-            string path =
-                "//AHMARVIN/ENGINEERING/Core EE/CTB/GM_BLE_PEPS_measurement result/DONT MOVE THIS FOLDER/Tools/" +
-                filename;
-            toolUpload.SaveAs(path);
-            
-            o = new [] { txtFileName.Text, txtFileDescription.Text, txtVersion.Text, DateTime.Now, Session["Alna_num"], path, Path.GetExtension(path)};
-            executeVoidSQLQuery("INSERT INTO Tools (Name, Comment, Version, Date_updated, Alna_num, Path, Extension) values" +
-                                                      "(@value1, @value2, @value3, @value4, @value5, @value6, @value7)", o);
-                                                      
-
-        }
-        protected void UploadTool_OnClick(object sender, EventArgs e)
-        {
-            mpeTools.Show();
-            // Maybe needs logic
+            if (sender.Equals(toolUpload))
+            {
+                mpeTools.Show();
+            } else if (sender.Equals(fileUpload))
+            {
+                mpeFiles.Show();
+                LoadFileDropdowns();
+            } else if (sender.Equals(imageUpload))
+            {
+                mpeImages.Show();
+                LoadImageDropdowns();
+            } else
+            {
+                mpeReports.Show();
+                LoadReportDropdowns();
+            }
         }
 
         protected void lstTools_OnItemCommand(object sender, ListViewCommandEventArgs e)
@@ -433,7 +541,7 @@ namespace CTBWebsite
                 openDBConnection();
                 objConn.Open();
 
-              
+
                 SqlDataReader reader = getReader("SELECT * FROM Tools WHERE ID=@value1 ORDER BY Name ASC",
                     int.Parse(id));
                 reader.Read();
@@ -457,42 +565,6 @@ namespace CTBWebsite
             }
         }
 
-        protected void btnSubmitReport_OnClick(object sender, EventArgs e)
-        {
-            object comment = txtReportComment.Text;
-            if (((string)comment).Length > 255)
-            {
-                //this throws an exception until there's a way to give user feedback
-                throw new ArgumentException("Filename is too long, database only accepts 255 or less");
-            }
-            else if (((string)comment).Equals(""))
-            {
-                comment = DBNull.Value;
-            }
-
-            object[] id_buffer = {
-                int.Parse(ddlCalibration.SelectedValue),
-                int.Parse(ddlTD1.SelectedValue),
-                int.Parse(ddlTD2.SelectedValue),
-                int.Parse(ddlTD3.SelectedValue),
-                int.Parse(ddlTD4.SelectedValue),
-                int.Parse(ddlVehicles.SelectedValue),
-                int.Parse(ddlPhones.SelectedValue),
-                int.Parse(ddlAuthor1.SelectedValue),
-                int.Parse(ddlAuthor2.SelectedValue), //Need a way to return null
-                lblDateSelected.Value, //this is the date created, if the user does not default it to today
-                Path.GetExtension(reportUpload.FileName),
-                comment //Comment if the user created one
-            };
-
-            write(IOPage.Tables.Report, id_buffer, reportUpload.FileBytes, reportUpload);
-            
-        }
-        protected void CreateReport_OnClick(object sender, EventArgs e)
-        {
-            mpeReports.Show();
-            LoadReportDropdowns();
-        }
         public void LoadReportDropdowns()
         {
             ddlVehicles.Items.Clear();
@@ -535,6 +607,7 @@ namespace CTBWebsite
             objConn.Dispose();
 
         }
+
         public void ClearReportDropdowns()
         {
             ddlCalibration.Items.Clear();
@@ -547,6 +620,41 @@ namespace CTBWebsite
             ddlTD3.Items.Add(new ListItem("-- Select a TD3 File --", "-1"));
             ddlTD4.Items.Clear();
             ddlTD4.Items.Add(new ListItem("-- Select a TD4 File --", "-1"));
+        }
+
+        //===========================================================
+        // Upload to DB
+        //===========================================================
+
+        protected void btnSubmitReport_OnClick(object sender, EventArgs e)
+        {
+            object comment = txtReportComment.Text;
+            if (((string)comment).Length > 255)
+            {
+                //this throws an exception until there's a way to give user feedback
+                throw new ArgumentException("Filename is too long, database only accepts 255 or less");
+            }
+            else if (((string)comment).Equals(""))
+            {
+                comment = DBNull.Value;
+            }
+
+            object[] id_buffer = {
+                int.Parse(ddlCalibration.SelectedValue),
+                int.Parse(ddlTD1.SelectedValue),
+                int.Parse(ddlTD2.SelectedValue),
+                int.Parse(ddlTD3.SelectedValue),
+                int.Parse(ddlTD4.SelectedValue),
+                int.Parse(ddlVehicles.SelectedValue),
+                int.Parse(ddlPhones.SelectedValue),
+                int.Parse(ddlAuthor1.SelectedValue),
+                int.Parse(ddlAuthor2.SelectedValue), //Need a way to return null
+                lblDateSelected.Value, //this is the date created, if the user does not default it to today
+                Path.GetExtension(reportUpload.FileName),
+                comment //Comment if the user created one
+            };
+
+            write(Tables.Report, id_buffer, reportUpload);
         }
 
         protected void btnSubmitFile_OnClick(object sender, EventArgs e)
@@ -586,159 +694,59 @@ namespace CTBWebsite
             if (objConn == null)
                 openDBConnection();
 
-            write(Tables.File, id_buffer, reportUpload.FileBytes, fileUpload);
+            write(Tables.File, id_buffer, fileUpload);
         }
-        protected void UploadFile_OnClick(object sender, EventArgs e)
-        {
-            mpeFiles.Show();
-            LoadFileDropdowns();
-        }
-        public void LoadFileDropdowns()
-        {
-            ddlFileVehicle.Items.Clear();
-            ddlFileVehicle.Items.Add(new ListItem("-- Select a Vehicle --", "-1"));
-            ddlFilePhone.Items.Clear();
-            ddlFilePhone.Items.Add(new ListItem("-- Select a Phone --", "-1"));
-            ddlFileAuthor1.Items.Clear();
-            ddlFileAuthor1.Items.Add(new ListItem("-- Select Author 1 --", "-1"));
-            ddlFileAuthor2.Items.Clear();
-            ddlFileAuthor2.Items.Add(new ListItem("-- Select Author 2 --", "-2"));
-            ddlFileAuthor2.Items.Add(new ListItem("N/A", "-1"));
 
-            openDBConnection();
+        protected void uploadImage(object sender, EventArgs e)
+        {
+            if (objConn == null) openDBConnection();
             objConn.Open();
-            SqlDataReader reader = getReader("SELECT * FROM Vehicles  WHERE Active=@value1 ORDER BY Name ASC", true);
-            while (reader.Read())
-            {
-                ddlFileVehicle.Items.Add(new ListItem(reader.GetString(1), reader.GetValue(0).ToString()));
-            }
-            reader.Close();
-            reader = getReader("SELECT * FROM Phones  WHERE Active=@value1 ORDER BY Name ASC", true);
-            while (reader.Read())
-            {
-                ddlFilePhone.Items.Add(new ListItem(reader.GetString(1), reader.GetValue(0).ToString()));
-            }
-            reader.Close();
-            reader = getReader("SELECT * FROM Employees  WHERE Active=@value1 ORDER BY Name ASC", true);
-            while (reader.Read())
-            {
-                string id = reader.GetValue(0).ToString();
-                string name = reader.GetString(1);
-                ddlFileAuthor1.Items.Add(new ListItem(name, id));
-                ddlFileAuthor2.Items.Add(new ListItem(name, id));
-            }
-            reader.Close();
-            reader.Dispose();
 
-            objConn.Close();
-            objConn.Dispose();
+            object comment = txtImageComment.Text;
+            if (((string)comment).Length > 255)
+            {
+                //this throws an exception until there's a way to give user feedback
+                throw new ArgumentException("Filename is too long, database only accepts 255 or less");
+            }
+            else if (((string)comment).Equals(""))
+            {
+                comment = DBNull.Value;
+            }
 
+            object[] id_buffer = {
+                int.Parse(ddlImageVehicle.SelectedValue),
+                int.Parse(ddlAuthor1.SelectedValue),
+                lblDateSelected.Value, //this is the date created, if the user does not default it to today
+                Path.GetExtension(imageUpload.FileName),
+                comment //Comment if the user created one
+            };
+
+            write(Tables.Image, id_buffer, imageUpload);
         }
 
-
-        public void LoadDD()
+        protected void btnUploadTool_Click(object sender, EventArgs e)
         {
-            ddlVehicleReportFilter.Items.Clear();
-            ddlFileVehicleFilter.Items.Clear();
-            ddlImageVehicleFilter.Items.Clear();
-            ddlVehicleReportFilter.Items.Add(new ListItem("-- Vehicle Filter --", "-1"));
-            ddlFileVehicleFilter.Items.Add(new ListItem("-- Vehicle Filter --", "-1"));
-            ddlImageVehicleFilter.Items.Add(new ListItem("-- Vehicle Filter --", "-1"));
-            SqlDataReader reader = getReader("SELECT * FROM Vehicles WHERE Active=@value1 ORDER BY Name ASC", true);
-            string id;
-            string name;
-            while (reader.Read())
-            {
-                id = reader.GetValue(0).ToString();
-                name = reader.GetString(1);
-                ddlVehicleReportFilter.Items.Add(new ListItem(name, id));
-                ddlFileVehicleFilter.Items.Add(new ListItem(name, id));
-                ddlImageVehicleFilter.Items.Add(new ListItem(name, id));
-            }
-            reader.Close();
-
-            ddlPhoneReportFilter.Items.Clear();
-            ddlFilePhoneFilter.Items.Clear();
-            ddlPhoneReportFilter.Items.Add(new ListItem("-- Phone Filter --", "-1"));
-            ddlFilePhoneFilter.Items.Add(new ListItem("-- Phone Filter --", "-1"));
-            reader = getReader("SELECT * FROM Phones WHERE Active=@value1 ORDER BY Name ASC", true);
-            while (reader.Read())
-            {
-                id = reader.GetValue(0).ToString();
-                name = reader.GetString(1);
-                ddlPhoneReportFilter.Items.Add(new ListItem(name, id));
-                ddlFilePhoneFilter.Items.Add(new ListItem(name, id));
-            }
-            reader.Close();
-
-            ddlEmployeeReportFilter.Items.Clear();
-            ddlFileAuthorFilter.Items.Clear();
-            ddlImageAuthorFilter.Items.Clear();
-            ddlEmployeeReportFilter.Items.Add(new ListItem("-- Author Filter --", "-1"));
-            ddlFileAuthorFilter.Items.Add(new ListItem("-- Author Filter --", "-1"));
-            ddlImageAuthorFilter.Items.Add(new ListItem("-- Author Filter --", "-1"));
-            reader = getReader("SELECT * FROM Employees  WHERE Active=@value1 ORDER BY Name ASC", true);
-            while (reader.Read())
-            {
-                id = reader.GetValue(0).ToString();
-                name = reader.GetString(1);
-                ddlEmployeeReportFilter.Items.Add(new ListItem(name, id));
-                ddlFileAuthorFilter.Items.Add(new ListItem(name, id));
-                ddlImageAuthorFilter.Items.Add(new ListItem(name, id));
-            }
-            reader.Close();
-            reader.Dispose();
-        }
-
-        protected void UploadImage_OnClick(object sender, EventArgs e)
-        {
-            mpeImages.Show();
-            LoadImageDropdowns();
-        }
-        public void LoadImageDropdowns()
-        {
-            ddlImageVehicle.Items.Clear();
-            ddlImageVehicle.Items.Add(new ListItem("-- Select a Vehicle --", "-1"));
-
-            openDBConnection();
+            if (objConn == null) openDBConnection();
             objConn.Open();
-            SqlDataReader reader = getReader("SELECT * FROM Vehicles  WHERE Active=@value1 ORDER BY Name ASC", true);
-            while (reader.Read())
-            {
-                ddlImageVehicle.Items.Add(new ListItem(reader.GetString(1), reader.GetValue(0).ToString()));
-            }
-            reader.Close();
-            reader.Dispose();
 
-            objConn.Close();
-            objConn.Dispose();
+            string path = Path.Combine(TOOLS_PATH, toolUpload.FileName);
+
+            object[] o = { txtFileName.Text, txtFileDescription.Text, txtVersion.Text, DateTime.Now, Session["Alna_num"], path, Path.GetExtension(path) };
+            executeVoidSQLQuery("INSERT INTO Tools (Name, Comment, Version, Date_updated, Alna_num, Path, Extension) values" +
+                                                      "(@value1, @value2, @value3, @value4, @value5, @value6, @value7)", o);
+
+            toolUpload.SaveAs(path);
         }
 
         //===========================================================
         // Code to be refactored with row commands
         //===========================================================
-        protected void dgvReports_OnRowCommand(object sender, GridViewCommandEventArgs e)
+        protected void onRowCommand(object sender, GridViewCommandEventArgs e)
         {
             ExecuteCommand(e);
-        }
-        protected void dgvFiles_OnRowCommand(object sender, GridViewCommandEventArgs e)
-        {
-            ExecuteCommand(e);
-        }
-        protected void dgvImages_OnRowCommand(object sender, GridViewCommandEventArgs e)
-        {
-            ExecuteCommand(e);
-        }
-        protected void ddlVehicles_OnSelectedIndexChanged(object sender, EventArgs e)
-        {
-            FillReportFileTypes();
-        }
-        protected void ddlPhones_OnSelectedIndexChanged(object sender, EventArgs e)
-        {
-            FillReportFileTypes();
         }
 
-        public void FillReportFileTypes()
+        protected void onSelectedIndexChanged(object sender, EventArgs e)
         {
             if (ddlVehicles.SelectedIndex != 0 && ddlPhones.SelectedIndex != 0)
             {
@@ -778,14 +786,10 @@ namespace CTBWebsite
                 reader.Close();
                 reader.Dispose();
                 objConn.Close();
-
             }
         }
 
-        //===========================================================
-        // Code to be refactored
-        //===========================================================
-        protected void dgvFiles_OnSorting(object sender, GridViewSortEventArgs e)
+        protected void sort(object sender, GridViewSortEventArgs e)
         {
             openDBConnection();
             objConn.Open();
@@ -795,206 +799,135 @@ namespace CTBWebsite
             {
                 direction = SortDirection.Descending;
                 sortingDirection = "Desc";
-
             }
             else
             {
                 direction = SortDirection.Ascending;
                 sortingDirection = "Asc";
-
             }
-            DataView sortedView = new DataView(LoadFiles());
-            sortedView.Sort = e.SortExpression + " " + sortingDirection;
-            Session["SortedView"] = sortedView;
 
-            dgvFiles.DataSource = sortedView;
-            dgvFiles.DataBind();
+            Tables tableBeingViewed;
+            DataView sortedView;
 
-
-        }
-
-        protected void dgvReports_OnSorting(object sender, GridViewSortEventArgs e)
-        {
-            openDBConnection();
-            objConn.Open();
-
-            string sortingDirection = string.Empty;
-            if (direction == SortDirection.Ascending)
+            if (sender.Equals(dgvFiles))
             {
-                direction = SortDirection.Descending;
-                sortingDirection = "Desc";
-
+                tableBeingViewed = Tables.File;
+                sortedView = new DataView(LoadFiles());
+            }
+            else if (sender.Equals(dgvReports))
+            {
+                tableBeingViewed = Tables.Report;
+                sortedView = new DataView(LoadReports());
             }
             else
             {
-                direction = SortDirection.Ascending;
-                sortingDirection = "Asc";
-
+                tableBeingViewed = Tables.Image;
+                sortedView = new DataView(LoadImages());
             }
-            DataView sortedView = new DataView(LoadReports());
+
             sortedView.Sort = e.SortExpression + " " + sortingDirection;
             Session["SortedView"] = sortedView;
 
-            dgvReports.DataSource = sortedView;
-            dgvReports.DataBind();
-        }
-
-        protected void txtReportFilterDate_OnTextChanged(object sender, EventArgs e)
-        {
-            openDBConnection();
-            objConn.Open();
-            string selectedValue = txtReportFilterDate.Text;
-            ViewState["DateCreated"] = selectedValue;
-            dgvReports.DataSource = LoadReports();
-            dgvReports.DataBind();
-            objConn.Close();
-        }
-
-        protected void ddlVehicleReportFilter_OnSelectedIndexChanged(object sender, EventArgs e)
-        {
-            openDBConnection();
-            objConn.Open();
-            string selectedValue = ddlVehicleReportFilter.SelectedItem.Value;
-            ViewState["VehicleName"] = selectedValue;
-            dgvReports.DataSource = LoadReports();
-            dgvReports.DataBind();
-            objConn.Close();
-        }
-
-        protected void ddlPhoneReportFilter_OnSelectedIndexChanged(object sender, EventArgs e)
-        {
-            openDBConnection();
-            objConn.Open();
-            string selectedValue = ddlPhoneReportFilter.SelectedItem.Value;
-            ViewState["PhoneName"] = selectedValue;
-            dgvReports.DataSource = LoadReports();
-            dgvReports.DataBind();
-            objConn.Close();
-        }
-
-        protected void ddlEmployeeReportFilter_OnSelectedIndexChanged(object sender, EventArgs e)
-        {
-            openDBConnection();
-            objConn.Open();
-            string selectedValue = ddlEmployeeReportFilter.SelectedItem.Value;
-            ViewState["EmployeeName"] = selectedValue;
-            dgvReports.DataSource = LoadReports();
-            dgvReports.DataBind();
-            objConn.Close();
-        }
-
-        protected void ddlFileFilterType_OnSelectedIndexChanged(object sender, EventArgs e)
-        {
-            openDBConnection();
-            objConn.Open();
-            string selectedValue = ddlFileFilterType.SelectedItem.Value;
-            ViewState["FileType"] = selectedValue;
-            dgvFiles.DataSource = LoadFiles();
-            dgvFiles.DataBind();
-            objConn.Close();
-        }
-
-        protected void ddlFileVehicleFilter_OnSelectedIndexChanged(object sender, EventArgs e)
-        {
-            openDBConnection();
-            objConn.Open();
-            string selectedValue = ddlFileVehicleFilter.SelectedItem.Value;
-            ViewState["VehicleFileName"] = selectedValue;
-            dgvFiles.DataSource = LoadFiles();
-            dgvFiles.DataBind();
-            objConn.Close();
-        }
-
-        protected void ddlFilePhoneFilter_OnSelectedIndexChanged(object sender, EventArgs e)
-        {
-            openDBConnection();
-            objConn.Open();
-            string selectedValue = ddlFilePhoneFilter.SelectedItem.Value;
-            ViewState["PhoneFileName"] = selectedValue;
-            dgvFiles.DataSource = LoadFiles();
-            dgvFiles.DataBind();
-            objConn.Close();
-        }
-
-        protected void ddlFileAuthorFilter_OnSelectedIndexChanged(object sender, EventArgs e)
-        {
-            openDBConnection();
-            objConn.Open();
-            string selectedValue = ddlFileAuthorFilter.SelectedItem.Value;
-            ViewState["EmployeeFileName"] = selectedValue;
-            dgvFiles.DataSource = LoadFiles();
-            dgvFiles.DataBind();
-            objConn.Close();
-        }
-
-        protected void txtFileDateFilter_OnTextChanged(object sender, EventArgs e)
-        {
-            openDBConnection();
-            objConn.Open();
-            string selectedValue = txtFileDateFilter.Text;
-            ViewState["DateFileCreated"] = selectedValue;
-            dgvFiles.DataSource = LoadFiles();
-            dgvFiles.DataBind();
-            objConn.Close();
-        }
-
-        protected void ddlImageVehicleFilter_OnSelectedIndexChanged(object sender, EventArgs e)
-        {
-            openDBConnection();
-            objConn.Open();
-            string selectedValue = ddlImageVehicleFilter.SelectedItem.Value;
-            ViewState["VehicleImageName"] = selectedValue;
-            dgvImages.DataSource = LoadImages();
-            dgvImages.DataBind();
-            objConn.Close();
-        }
-
-        protected void ddlImageAuthorFilter_OnSelectedIndexChanged(object sender, EventArgs e)
-        {
-            openDBConnection();
-            objConn.Open();
-            string selectedValue = ddlImageAuthorFilter.SelectedItem.Value;
-            ViewState["EmployeeImageName"] = selectedValue;
-            dgvImages.DataSource = LoadImages();
-            dgvImages.DataBind();
-            objConn.Close();
-        }
-
-        protected void txtImageDateFilter_OnTextChanged(object sender, EventArgs e)
-        {
-            openDBConnection();
-            objConn.Open();
-            string selectedValue = txtImageDateFilter.Text;
-            ViewState["DateImageCreated"] = selectedValue;
-            dgvImages.DataSource = LoadImages();
-            dgvImages.DataBind();
-            objConn.Close();
-        }
-
-        protected void dgvImages_OnSorting(object sender, GridViewSortEventArgs e)
-        {
-            openDBConnection();
-            objConn.Open();
-
-            string sortingDirection = string.Empty;
-            if (direction == SortDirection.Ascending)
+            switch (tableBeingViewed)
             {
-                direction = SortDirection.Descending;
-                sortingDirection = "Desc";
+                case Tables.File:
+                   dgvFiles.DataSource = sortedView;
+                   dgvFiles.DataBind();
+                   break;
+                case Tables.Report:
+                   dgvReports.DataSource = sortedView;
+                   dgvReports.DataBind();
+                   break;
+                default:
+                   dgvImages.DataSource = sortedView;
+                   dgvImages.DataBind();
+                   break;
+            }
+        }
 
+        protected void applyFilter(object sender, EventArgs e)
+        {
+            openDBConnection();
+            objConn.Open();
+
+            Tables tableBeingViewed = Tables.File;
+
+            //if viewing a file
+            if (sender.Equals(ddlFileFilterType))
+            {
+                ViewState["FileType"] = ddlFileFilterType.SelectedItem.Value;
+            }
+            else if (sender.Equals(ddlFileVehicleFilter))
+            {
+                ViewState["VehicleFileName"] = ddlFileVehicleFilter.SelectedItem.Value;
+            }
+            else if (sender.Equals(ddlFilePhoneFilter))
+            {
+                ViewState["PhoneFileName"] = ddlFilePhoneFilter.SelectedItem.Value;
+            }
+            else if (sender.Equals(ddlFileAuthorFilter))
+            {
+                ViewState["EmployeeFileName"] = ddlFileAuthorFilter.SelectedItem.Value;
+            }
+            else if (sender.Equals(txtFileDateFilter))
+            {
+                ViewState["DateFileCreated"] = txtFileDateFilter.Text;
+            }
+            //If viewing a report
+            else if (sender.Equals(txtReportFilterDate))
+            {
+                ViewState["DateCreated"] = txtReportFilterDate.Text;
+                tableBeingViewed = Tables.Report;
+            }
+            else if (sender.Equals(ddlVehicleReportFilter))
+            {
+                ViewState["VehicleName"] = ddlVehicleReportFilter.SelectedItem.Value;
+                tableBeingViewed = Tables.Report;
+            }
+            else if (sender.Equals(ddlPhoneReportFilter))
+            {
+                ViewState["PhoneName"] = ddlPhoneReportFilter.SelectedItem.Value;
+                tableBeingViewed = Tables.Report;
+            }
+            else if (sender.Equals(ddlEmployeeReportFilter))
+            {
+                ViewState["EmployeeName"] = ddlEmployeeReportFilter.SelectedItem.Value;
+                tableBeingViewed = Tables.Report;
+            }
+            //If viewing an image
+            else if (sender.Equals(ddlImageVehicleFilter))
+            {
+                ViewState["VehicleImageName"] = ddlImageVehicleFilter.SelectedItem.Value;
+                tableBeingViewed = Tables.Image;
+            }
+            else if (sender.Equals(ddlImageAuthorFilter))
+            {
+                ViewState["EmployeeImageName"] = ddlImageAuthorFilter.SelectedItem.Value;
+                tableBeingViewed = Tables.Image;
             }
             else
             {
-                direction = SortDirection.Ascending;
-                sortingDirection = "Asc";
-
+                ViewState["DateImageCreated"] = txtImageDateFilter.Text;
+                tableBeingViewed = Tables.Image;
             }
-            DataView sortedView = new DataView(LoadImages());
-            sortedView.Sort = e.SortExpression + " " + sortingDirection;
-            Session["SortedView"] = sortedView;
 
-            dgvImages.DataSource = sortedView;
-            dgvImages.DataBind();
+            switch (tableBeingViewed)
+            {
+                case Tables.File:
+                    dgvFiles.DataSource = LoadFiles();
+                    dgvFiles.DataBind();
+                    break;
+                case Tables.Report:
+                    dgvReports.DataSource = LoadReports();
+                    dgvReports.DataBind();
+                    break;
+                default:
+                    dgvImages.DataSource = LoadImages();
+                    dgvImages.DataBind();
+                    break;
+            }
+            
+            objConn.Close();
         }
     }
 }

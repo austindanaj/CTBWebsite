@@ -10,22 +10,12 @@ using Date = System.DateTime;
 namespace CTBWebsite {
 	public delegate void Lambda(object o);
 	public class SuperPage : Page {
-		private readonly static string LOCALHOST_CONNECTION_STRING = "Data Source=(LocalDB)\\v13.0;Server = (localdb)\\MSSQLLocalDB;Database=Alps;";
-		private readonly static string DEPLOYMENT_CONNECTION_STRING = "Server=(local);Database=CTBwebsite;User Id=admin;Password=alnatest;";
+		//private readonly static string DEPLOYMENT_CONNECTION_STRING = "Server=(local);Database=CTBwebsite;User Id=admin;Password=alnatest;";
 		public  readonly static string LOCAL_TO_SERVER_CONNECTION_STRING = "Data Source=ahfreya;Initial Catalog=CTBwebsite;Integrated Security=False;User ID=Admin;Password=alnatest;Connect Timeout=30;Encrypt=False;TrustServerCertificate=True;ApplicationIntent=ReadWrite;MultiSubnetFailover=False";
         public SqlConnection objConn { get; set; }
         private enum SqlTypes { DataTable, VoidQuery, DataReader };
 
-	    public readonly static string PATH_TO_SERVER = "//AHMARVIN/ENGINEERING/Core EE/CTB/GM_BLE_PEPS_measurement result/DONT MOVE THIS FOLDER/GAFMS/";
-
         //Need to be deleted:
-        public void successDialog(System.Web.UI.WebControls.TextBox txtSuccessBox)
-        {
-            if (Session["success?"] != null)
-                txtSuccessBox.Visible = (bool)Session["success?"];
-            Session["success?"] = false;
-        }
-
         public void throwJSAlert(string s)
         {
             try
@@ -54,7 +44,7 @@ namespace CTBWebsite {
 		public void openDBConnection() {
 			//this.objConn = new SqlConnection(LOCALHOST_CONNECTION_STRING);
 			//this.objConn = new SqlConnection(DEPLOYMENT_CONNECTION_STRING);
-			this.objConn = new SqlConnection(LOCAL_TO_SERVER_CONNECTION_STRING);
+			objConn = objConn ?? new SqlConnection(LOCAL_TO_SERVER_CONNECTION_STRING);
 		}
 
         public void redirectSafely(string path)
@@ -613,27 +603,40 @@ namespace CTBWebsite {
     public class IOPage : SuperPage
     {
         protected enum Tables {Report, File, Image};
+        protected static readonly string HOME = @"//AHMARVIN/ENGINEERING/Core EE/CTB/GM_BLE_PEPS_measurement result/DONT MOVE THIS FOLDER/";
+        protected static readonly string PATH_TO_SERVER = Path.Combine(HOME, "GAFMS/");
 
-        protected void write(IOPage.Tables table, object[] insertionData, byte[] bytes, FileUpload uploader)
+        private void checkEverythingsOkay()
         {
+            if (!Directory.Exists(HOME))
+            {
+                throw new IOException("Somebody moved the file labeled 'DONT MOVE THIS FOLDER'! We can't save anything if that happens!");
+            }
+        }
+
+        protected void write(IOPage.Tables table, object[] insertionData, FileUpload uploader)
+        {
+            //Before we do anything let's make sure nobody did anything stupid
+            checkEverythingsOkay();
+
             string selectQuery, insertionQuery, deleteQuery;
             switch (table)
             {
                 case Tables.File:
-                    selectQuery = "select Name, Path, Extension from GA_File where ID=@value1";
+                    selectQuery = "select Path, Name, Extension from GA_File where ID=@value1";
                     insertionQuery = "exec @ReturnVal = Insert_File @value1, @value2, @value3, @value4, @value5, @value6, @value7, @value8";
                     deleteQuery = "delete from GA_File where ID=@value1";
                     
                     break;
                 case Tables.Report:
-                    selectQuery = "select Name, Path, Extension from Report where ID=@value1";
+                    selectQuery = "select Path, Name, Extension from Report where ID=@value1";
                     insertionQuery = "exec @ReturnVal = Insert_Report @value1, @value2, @value3, @value4, @value5, @value6, @value7, @value8, @value9, @value11, @value12";
                     deleteQuery = "delete from Report where ID=@value1";
                     break;
                 default:
-                    selectQuery = "";
-                    insertionQuery = "";
-                    deleteQuery = "";
+                    selectQuery = "select Path, Name, Extensions from Pictures where ID=@value1";
+                    insertionQuery = "exec @ReturnVal = Insert_Picture @value1, @value2, @value3, @value4, @value5";
+                    deleteQuery = "delete from Pictures where ID=@value1";
                     break;
             }
 
@@ -657,8 +660,8 @@ namespace CTBWebsite {
                 if (reader.HasRows)
                 {
                     reader.Read();
-                    string path = reader.GetString(1);
-                    string filename = reader.GetString(0);
+                    string path = reader.GetString(0);
+                    string filename = reader.GetString(1);
                     string extension = reader.GetString(2);
                     reader.Close();
 
@@ -678,6 +681,8 @@ namespace CTBWebsite {
 
         protected byte[] open(int id, IOPage.Tables table)
         {
+            checkEverythingsOkay();
+
             string query = null;
             switch(table)
             {
@@ -699,8 +704,31 @@ namespace CTBWebsite {
             string extension = reader.GetString(2);
             reader.Close();
 
-            byte[] file = File.ReadAllBytes(Path.Combine(path, filename, extension));
+            filename = Path.Combine(path, filename, extension);
+
+            byte[] file;
+            if (File.Exists(filename))
+            {
+                file = File.ReadAllBytes(filename);
+            } else
+            {
+                throw new IOException("File doesn't exist, someone moved it or didn't go through the proper process of deletion. Contact an admin.");
+            }
+
             return file;
+        }
+
+        protected void send(byte[] blob, string filename)
+        {
+            Response.Clear();
+            Response.Buffer = true;
+            Response.Charset = "";
+            Response.Cache.SetCacheability(System.Web.HttpCacheability.NoCache);
+            //Response.ContentType = contentType;
+            Response.AddHeader("content-disposition", $"attachment; filename=\"{filename}\"");
+            Response.BinaryWrite(blob);
+            Response.Flush();
+            Response.End();
         }
     }
 }

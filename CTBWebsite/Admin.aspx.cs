@@ -28,7 +28,6 @@ namespace CTBWebsite
             if (!IsPostBack)
             {
                 populateTables();
-                successDialog(txtSuccessBox);
             }
         }
 
@@ -36,21 +35,19 @@ namespace CTBWebsite
         {
             if (string.IsNullOrEmpty(txtName.Text))
             {
-                throwJSAlert("Error: name blank! Please fill in all fields!");
-                return;
+                throw new ArgumentException("Error: name blank! Please fill in all fields!");
             }
 
             if (!int.TryParse(txtAlna.Text, out int alna))
             {
-                throwJSAlert("Alna number is not a number");
+                new ArgumentException("Alna number is not a number");
                 return;
             }
 
             string text = txtName.Text;
             if (!Regex.IsMatch(text, @"[A-z]+ [A-z]+"))
             {
-                throwJSAlert("The name you entered makes no sense. Only letters and one space are allowed");
-                return;
+                throw new ArgumentException("The name you entered makes no sense. Only letters and one space are allowed");
             }
 
             object[] o = { alna, txtName.Text, !chkPartTime.Checked, chkUseVehicle.Checked | chkPartTime.Checked };
@@ -65,7 +62,6 @@ namespace CTBWebsite
             string text = txtProject.Text;
             if (string.IsNullOrEmpty(text))
             {
-                throwJSAlert("Project needs a name");
                 return;
             }
 
@@ -85,7 +81,6 @@ namespace CTBWebsite
                     projectCategory = 'D';
                     break;
                 default:
-                    throwJSAlert("Not a valid option (did you select a radio button?)");
                     return;
             }
 
