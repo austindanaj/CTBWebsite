@@ -604,6 +604,8 @@ namespace CTBWebsite {
     public class IOPage : SuperPage
     {
         protected enum Tables {Report, File, Image, Tool};
+        protected static readonly string HOME = @"\\AHMARVIN\Engineering\Core EE\CTB\GM_BLE_PEPS_measurement result\DONT MOVE THIS FOLDER\";
+        protected static readonly string SERVER = Path.Combine(HOME, @"GAFMS\");
 
         protected void update(IOPage.Tables table, object[] insertionData, int id)
         {
@@ -696,9 +698,6 @@ namespace CTBWebsite {
 
         protected void write(IOPage.Tables table, object[] insertionData, HttpPostedFile uploader)
         {
-            //Before we do anything let's make sure nobody did anything stupid
-            checkEverythingsOkay();
-
             string selectQuery, insertionQuery, deleteQuery;
             switch (table)
             {
@@ -748,11 +747,11 @@ namespace CTBWebsite {
                     string extension = reader.GetString(2);
                     reader.Close();
 
-                    string fullPath = Path.Combine(PATH_TO_SERVER, path);
+                    string fullPath = Path.Combine(SERVER, path);
                     if (!Directory.Exists(fullPath))
                         Directory.CreateDirectory(fullPath);
 
-                    file.SaveAs(Path.Combine(fullPath, filename + extension));
+                    uploader.SaveAs(Path.Combine(fullPath, filename + extension));
                 }
             }
             catch (Exception ex)
@@ -764,7 +763,10 @@ namespace CTBWebsite {
 
         protected byte[] open(int id, IOPage.Tables table)
         {
-            checkEverythingsOkay();
+            if (!Directory.Exists(SERVER))
+            {
+                throw new IOException("Someone moved our folders, they broke the website!");
+            }
 
             string query = null;
             switch(table)
@@ -818,8 +820,10 @@ namespace CTBWebsite {
                     query = "select Path, Name, Extension from Report where ID=@value1";
                     break;
                 case Tables.Image:
+                    query = "select Path, Name, Extension from Pictures where ID=@value1";
                     break;
                 case Tables.Tool:
+                    query = "select Path, Name, Extension from Tool where ID=@value1";
                     break;
                 default:
                     query = "";
@@ -832,7 +836,7 @@ namespace CTBWebsite {
             string filename = reader.GetString(1);
             string extension = reader.GetString(2);
             reader.Close();
-            return Path.Combine(PATH_TO_SERVER, path, filename + extension);
+            return Path.Combine(SERVER, path, filename + extension);
         }
     }
 }

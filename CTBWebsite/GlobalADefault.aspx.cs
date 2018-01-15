@@ -9,21 +9,18 @@ namespace CTBWebsite
 {
     public partial class GlobalADefault : IOPage
     {
-        public SortDirection direction
-        {
-            get
-            {
+        public SortDirection direction {
+            get {
                 if (ViewState["directionState"] == null)
                 {
                     ViewState["directionState"] = SortDirection.Ascending;
                 }
+
                 return (SortDirection)ViewState["directionState"];
             }
-            set
-            {
-                ViewState["directionState"] = value;
-            }
+            set { ViewState["directionState"] = value; }
         }
+
         private enum FILE_TYPE
         {
             CALIBRATION = 0,
@@ -32,6 +29,7 @@ namespace CTBWebsite
             TD3 = 3,
             TD4 = 4
         }
+
         private static readonly string TOOLS_PATH = Path.Combine(HOME, "Tools/");
 
         //===========================================================
@@ -65,6 +63,7 @@ namespace CTBWebsite
                 //  objConn.Close();
 
             }
+
             RegisterPostBackControl();
 
 
@@ -77,6 +76,7 @@ namespace CTBWebsite
                 LinkButton lnkFull = row.FindControl("lnkDownload") as LinkButton;
                 ScriptManager.GetCurrent(this).RegisterPostBackControl(lnkFull);
             }
+
             foreach (GridViewRow row in dgvReports.Rows)
             {
                 LinkButton lnkReport = row.FindControl("lnkReportFile") as LinkButton;
@@ -92,6 +92,7 @@ namespace CTBWebsite
                 LinkButton lnkTD4 = row.FindControl("lnkReportTD4") as LinkButton;
                 ScriptManager.GetCurrent(this).RegisterPostBackControl(lnkTD4);
             }
+
             foreach (GridViewRow row in dgvImages.Rows)
             {
                 LinkButton lnkImage = row.FindControl("lnkImageFile") as LinkButton;
@@ -112,18 +113,22 @@ namespace CTBWebsite
             {
                 cmd.Parameters.AddWithValue("@Vehicle_Name", ViewState["VehicleName"].ToString());
             }
+
             if (ViewState["PhoneName"] != null && ViewState["PhoneName"].ToString() != "-1")
             {
                 cmd.Parameters.AddWithValue("@Phone_Name", ViewState["PhoneName"].ToString());
             }
+
             if (ViewState["EmployeeName"] != null && ViewState["EmployeeName"].ToString() != "-1")
             {
                 cmd.Parameters.AddWithValue("@Emp_Name", ViewState["EmployeeName"].ToString());
             }
+
             if (ViewState["DateCreated"] != null && ViewState["DateCreated"].ToString() != "")
             {
                 cmd.Parameters.AddWithValue("@Date", ViewState["DateCreated"].ToString());
             }
+
             cmd.Connection = objConn;
 
             SqlDataAdapter adp = new SqlDataAdapter();
@@ -136,6 +141,7 @@ namespace CTBWebsite
                 string format = "MMM d, yyyy";
                 dt.Rows[i]["FormDate"] = date.ToString(format);
             }
+
             // DataTable dt = getDataTable("GetFilteredReport");
             return dt;
 
@@ -167,22 +173,27 @@ namespace CTBWebsite
             {
                 cmd.Parameters.AddWithValue("@File_Type", ViewState["FileType"].ToString());
             }
+
             if (ViewState["VehicleFileName"] != null && ViewState["VehicleFileName"].ToString() != "-1")
             {
                 cmd.Parameters.AddWithValue("@Vehicle_Name", ViewState["VehicleFileName"].ToString());
             }
+
             if (ViewState["PhoneFileName"] != null && ViewState["PhoneFileName"].ToString() != "-1")
             {
                 cmd.Parameters.AddWithValue("@Phone_Name", ViewState["PhoneFileName"].ToString());
             }
+
             if (ViewState["EmployeeFileName"] != null && ViewState["EmployeeFileName"].ToString() != "-1")
             {
                 cmd.Parameters.AddWithValue("@Emp_Name", ViewState["EmployeeFileName"].ToString());
             }
+
             if (ViewState["DateFileCreated"] != null && ViewState["DateFileCreated"].ToString() != "")
             {
                 cmd.Parameters.AddWithValue("@Date", ViewState["DateFileCreated"].ToString());
             }
+
             cmd.Connection = objConn;
 
             SqlDataAdapter adp = new SqlDataAdapter();
@@ -215,6 +226,7 @@ namespace CTBWebsite
                     } // dt.Rows.Add();
                 }
             }
+
             // DataTable dt = getDataTable("GetFilteredReport");
             return dt;
 
@@ -248,14 +260,17 @@ namespace CTBWebsite
             {
                 cmd.Parameters.AddWithValue("@Vehicle_Name", ViewState["VehicleImageName"].ToString());
             }
+
             if (ViewState["EmployeeImageName"] != null && ViewState["EmployeeImageName"].ToString() != "-1")
             {
                 cmd.Parameters.AddWithValue("@Emp_Name", ViewState["EmployeeImageName"].ToString());
             }
+
             if (ViewState["DateImageCreated"] != null && ViewState["DateImageCreated"].ToString() != "")
             {
                 cmd.Parameters.AddWithValue("@Date", ViewState["DateImageCreated"].ToString());
             }
+
             cmd.Connection = objConn;
 
             SqlDataAdapter adp = new SqlDataAdapter();
@@ -271,8 +286,10 @@ namespace CTBWebsite
                     string format = "MMM d, yyyy";
                     dt.Rows[i]["FormDate"] = date.ToString(format);
                 }
+
                 // dt.Rows.Add();
             }
+
             // DataTable dt = getDataTable("GetFilteredReport");
             return dt;
 
@@ -327,12 +344,14 @@ namespace CTBWebsite
             {
                 ddlFileVehicle.Items.Add(new ListItem(reader.GetString(1), reader.GetValue(0).ToString()));
             }
+
             reader.Close();
             reader = getReader("SELECT * FROM Phones  WHERE Active=@value1 ORDER BY Name ASC", true);
             while (reader.Read())
             {
                 ddlFilePhone.Items.Add(new ListItem(reader.GetString(1), reader.GetValue(0).ToString()));
             }
+
             reader.Close();
             reader = getReader("SELECT * FROM Employees  WHERE Active=@value1 ORDER BY Name ASC", true);
             while (reader.Read())
@@ -342,6 +361,7 @@ namespace CTBWebsite
                 ddlFileAuthor1.Items.Add(new ListItem(name, id));
                 ddlFileAuthor2.Items.Add(new ListItem(name, id));
             }
+
             reader.Close();
             reader.Dispose();
 
@@ -369,6 +389,7 @@ namespace CTBWebsite
                 ddlFileVehicleFilter.Items.Add(new ListItem(name, id));
                 ddlImageVehicleFilter.Items.Add(new ListItem(name, id));
             }
+
             reader.Close();
 
             ddlPhoneReportFilter.Items.Clear();
@@ -383,6 +404,7 @@ namespace CTBWebsite
                 ddlPhoneReportFilter.Items.Add(new ListItem(name, id));
                 ddlFilePhoneFilter.Items.Add(new ListItem(name, id));
             }
+
             reader.Close();
 
             ddlEmployeeReportFilter.Items.Clear();
@@ -400,6 +422,7 @@ namespace CTBWebsite
                 ddlFileAuthorFilter.Items.Add(new ListItem(name, id));
                 ddlImageAuthorFilter.Items.Add(new ListItem(name, id));
             }
+
             reader.Close();
             reader.Dispose();
         }
@@ -416,6 +439,7 @@ namespace CTBWebsite
             {
                 ddlImageVehicle.Items.Add(new ListItem(reader.GetString(1), reader.GetValue(0).ToString()));
             }
+
             reader.Close();
             reader.Dispose();
 
@@ -439,8 +463,10 @@ namespace CTBWebsite
                 ds.Tables[0].Rows[i]["FormDate"] = date.ToString(format);
                 string type = (string)ds.Tables[0].Rows[i]["Extension"];
                 ds.Tables[0].Rows[i]["IconType"] = GetImageIcon(type);
-                ds.Tables[0].Rows[i]["Comment"] = ds.Tables[0].Rows[i]["Comment"].ToString().Replace("\r\n", Environment.NewLine);
+                ds.Tables[0].Rows[i]["Comment"] =
+                    ds.Tables[0].Rows[i]["Comment"].ToString().Replace("\r\n", Environment.NewLine);
             }
+
             lstTools.DataSource = ds;
             lstTools.DataBind();
             sql.Dispose();
@@ -450,7 +476,7 @@ namespace CTBWebsite
             {
                 LinkButton lnkbutton = item.FindControl("lnkEditClicked") as LinkButton;
                 if ((int)Session["Alna_num"] !=
-                int.Parse(lstTools.DataKeys[item.DataItemIndex].Values["Alna_num"].ToString()))
+                    int.Parse(lstTools.DataKeys[item.DataItemIndex].Values["Alna_num"].ToString()))
                 {
                     lnkbutton.Visible = false;
                 }
@@ -475,6 +501,7 @@ namespace CTBWebsite
             {
                 return "zip_icon.png";
             }
+
             if (type.Contains("pdf"))
             {
                 return "pdf_icon.png";
@@ -568,6 +595,7 @@ namespace CTBWebsite
                         created = ((DateTime)reader.GetValue(11)).ToString("MM/dd/yyyy");
                         reader.Close();
                     }
+
                     // reportUpload.
                     ddlVehicles.SelectedValue = vID;
                     ddlPhones.SelectedValue = pID;
@@ -588,7 +616,7 @@ namespace CTBWebsite
                 {
 
                     Session["CreateClicked"] = false;
-                    
+
                     mpeFiles.Show();
                     LoadFileDropdowns();
 
@@ -624,6 +652,7 @@ namespace CTBWebsite
                         comment = reader.GetValue(13).ToString();
                         reader.Close();
                     }
+
                     ddlFileType.SelectedValue = TD;
                     ddlFileVehicle.SelectedValue = vID;
                     ddlFilePhone.SelectedValue = pID;
@@ -636,7 +665,7 @@ namespace CTBWebsite
                     fileSelected.Text = name;
                 }
             }
-            catch (Exception ex)
+            catch
             {
 
             }
@@ -658,29 +687,37 @@ namespace CTBWebsite
                 filename;
             tfu.PostedFile.SaveAs(path);
 
-            o = new[] { txtFileName.Text, txtFileDescription.Text, txtVersion.Text, DateTime.Now, Session["Alna_num"], path, Path.GetExtension(path) };
-            executeVoidSQLQuery("INSERT INTO Tools (Name, Comment, Version, Date_updated, Alna_num, Path, Extension) values" +
-                                                      "(@value1, @value2, @value3, @value4, @value5, @value6, @value7)", o);
+            o = new[]
+            {
+                txtFileName.Text, txtFileDescription.Text, txtVersion.Text, DateTime.Now, Session["Alna_num"], path,
+                Path.GetExtension(path)
+            };
+            executeVoidSQLQuery(
+                "INSERT INTO Tools (Name, Comment, Version, Date_updated, Alna_num, Path, Extension) values" +
+                "(@value1, @value2, @value3, @value4, @value5, @value6, @value7)", o);
 
 
         }
+
         protected void UploadTool_OnClick(object sender, EventArgs e)
         {
             mpeTools.Show();
             // Maybe needs logic
-        }
             if (sender.Equals(toolUpload))
             {
                 mpeTools.Show();
-            } else if (sender.Equals(fileUpload))
+            }
+            else if (sender.Equals(fileUpload))
             {
                 mpeFiles.Show();
                 LoadFileDropdowns();
-            } else if (sender.Equals(imageUpload))
+            }
+            else if (sender.Equals(imageUpload))
             {
                 mpeImages.Show();
                 LoadImageDropdowns();
-            } else
+            }
+            else
             {
                 mpeReports.Show();
                 LoadReportDropdowns();
@@ -735,7 +772,8 @@ namespace CTBWebsite
             }
 
 
-            object[] id_buffer = {
+            object[] id_buffer =
+            {
                 int.Parse(ddlCalibration.SelectedValue),
                 int.Parse(ddlTD1.SelectedValue),
                 int.Parse(ddlTD2.SelectedValue),
@@ -752,21 +790,24 @@ namespace CTBWebsite
 
             if ((bool)Session["CreateClicked"])
             {
-                write(Tables.Report, id_buffer, null, rfu.PostedFile);
+                write(Tables.Report, id_buffer, rfu.PostedFile);
             }
             else
             {
-              //  update(Tables.Report, id_buffer, 0);
+                //  update(Tables.Report, id_buffer, 0);
             }
+
             redirectSafely("~/GlobalADefault");
 
         }
+
         protected void CreateReport_OnClick(object sender, EventArgs e)
         {
             Session["CreateClicked"] = true;
             mpeReports.Show();
             LoadReportDropdowns();
         }
+
         public void LoadReportDropdowns()
         {
             ddlVehicles.Items.Clear();
@@ -787,12 +828,14 @@ namespace CTBWebsite
             {
                 ddlVehicles.Items.Add(new ListItem(reader.GetString(1), reader.GetValue(0).ToString()));
             }
+
             reader.Close();
             reader = getReader("SELECT * FROM Phones  WHERE Active=@value1 ORDER BY Name ASC", true);
             while (reader.Read())
             {
                 ddlPhones.Items.Add(new ListItem(reader.GetString(1), reader.GetValue(0).ToString()));
             }
+
             reader.Close();
             reader = getReader("SELECT * FROM Employees WHERE Active=@value1 ORDER BY Name ASC", true);
             while (reader.Read())
@@ -802,6 +845,7 @@ namespace CTBWebsite
                 ddlAuthor1.Items.Add(new ListItem(name, id));
                 ddlAuthor2.Items.Add(new ListItem(name, id));
             }
+
             reader.Close();
             reader.Dispose();
 
@@ -828,37 +872,6 @@ namespace CTBWebsite
         // Upload to DB
         //===========================================================
 
-        protected void btnSubmitReport_OnClick(object sender, EventArgs e)
-        {
-            object comment = txtReportComment.Text;
-            if (((string)comment).Length > 255)
-            {
-                //this throws an exception until there's a way to give user feedback
-                throw new ArgumentException("Filename is too long, database only accepts 255 or less");
-            }
-            else if (((string)comment).Equals(""))
-            {
-                comment = DBNull.Value;
-            }
-
-            object[] id_buffer = {
-                int.Parse(ddlCalibration.SelectedValue),
-                int.Parse(ddlTD1.SelectedValue),
-                int.Parse(ddlTD2.SelectedValue),
-                int.Parse(ddlTD3.SelectedValue),
-                int.Parse(ddlTD4.SelectedValue),
-                int.Parse(ddlVehicles.SelectedValue),
-                int.Parse(ddlPhones.SelectedValue),
-                int.Parse(ddlAuthor1.SelectedValue),
-                int.Parse(ddlAuthor2.SelectedValue), //Need a way to return null
-                lblDateSelected.Value, //this is the date created, if the user does not default it to today
-                Path.GetExtension(reportUpload.FileName),
-                comment //Comment if the user created one
-            };
-
-            write(Tables.Report, id_buffer, reportUpload);
-        }
-
         protected void btnSubmitFile_OnClick(object sender, EventArgs e)
         {
             if (objConn == null)
@@ -874,6 +887,7 @@ namespace CTBWebsite
             {
                 comment = DBNull.Value;
             }
+
             object author2;
             if (ddlFileAuthor2.SelectedValue.Equals("-1"))
             {
@@ -904,12 +918,10 @@ namespace CTBWebsite
                 };
 
                 write(Tables.File, id_buffer, null, ffu.PostedFile);
-             
+
             }
             else
             {
-            
-                
                 if (ffu.Value == "")
                 {
                     string fid = fileSelected.Text.Substring(0, fileSelected.Text.IndexOf('_'));
@@ -933,7 +945,7 @@ namespace CTBWebsite
                 }
                 else
                 {
-                    int id = int.Parse((string) Session["Edit_ID"]);
+                    int id = int.Parse((string)Session["Edit_ID"]);
                     object[] id_buffer =
                     {
                         Path.GetExtension(ffu.PostedFile.FileName),
@@ -948,31 +960,22 @@ namespace CTBWebsite
                     };
 
                     write(Tables.File, id_buffer, null, ffu.PostedFile);
-                    inactive(Tables.File,id );
-                    
+                    inactive(Tables.File, id);
+
                 }
 
 
             }
+
             redirectSafely("~/GlobalADefault");
         }
+
         protected void UploadFile_OnClick(object sender, EventArgs e)
         {
             Session["CreateClicked"] = true;
             mpeFiles.Show();
             LoadFileDropdowns();
         }
-        public void LoadFileDropdowns()
-        {
-            ddlFileVehicle.Items.Clear();
-            ddlFileVehicle.Items.Add(new ListItem("-- Select a Vehicle --", "-1"));
-            ddlFilePhone.Items.Clear();
-            ddlFilePhone.Items.Add(new ListItem("-- Select a Phone --", "-1"));
-            ddlFileAuthor1.Items.Clear();
-            ddlFileAuthor1.Items.Add(new ListItem("-- Select Author 1 --", "-1"));
-            ddlFileAuthor2.Items.Clear();
-            ddlFileAuthor2.Items.Add(new ListItem("-- Select Author 2 --", "-2"));
-            ddlFileAuthor2.Items.Add(new ListItem("N/A", "-1"));
 
         protected void uploadImage(object sender, EventArgs e)
         {
@@ -990,13 +993,14 @@ namespace CTBWebsite
                 comment = DBNull.Value;
             }
 
-            object[] id_buffer = {
-                int.Parse(ddlImageVehicle.SelectedValue),
-                int.Parse(ddlAuthor1.SelectedValue),
-                lblDateSelected.Value, //this is the date created, if the user does not default it to today
-                Path.GetExtension(imageUpload.FileName),
-                comment //Comment if the user created one
-            };
+            object[] id_buffer =
+            {
+                    int.Parse(ddlImageVehicle.SelectedValue),
+                    int.Parse(ddlAuthor1.SelectedValue),
+                    lblDateSelected.Value, //this is the date created, if the user does not default it to today
+                    Path.GetExtension(imageUpload.FileName),
+                    comment //Comment if the user created one
+                };
 
             write(Tables.Image, id_buffer, imageUpload);
         }
@@ -1008,14 +1012,17 @@ namespace CTBWebsite
 
             string path = Path.Combine(TOOLS_PATH, toolUpload.FileName);
 
-            object[] o = { txtFileName.Text, txtFileDescription.Text, txtVersion.Text, DateTime.Now, Session["Alna_num"], path, Path.GetExtension(path) };
-            executeVoidSQLQuery("INSERT INTO Tools (Name, Comment, Version, Date_updated, Alna_num, Path, Extension) values" +
-                                                      "(@value1, @value2, @value3, @value4, @value5, @value6, @value7)", o);
+            object[] o =
+            {
+                    txtFileName.Text, txtFileDescription.Text, txtVersion.Text, DateTime.Now, Session["Alna_num"], path,
+                    Path.GetExtension(path)
+                };
+            executeVoidSQLQuery(
+                "INSERT INTO Tools (Name, Comment, Version, Date_updated, Alna_num, Path, Extension) values" +
+                "(@value1, @value2, @value3, @value4, @value5, @value6, @value7)", o);
 
             toolUpload.SaveAs(path);
         }
-
-
 
         //===========================================================
         // Code to be refactored with row commands
@@ -1035,7 +1042,9 @@ namespace CTBWebsite
                 objConn.Open();
                 object[] o = { int.Parse(ddlPhones.SelectedValue), int.Parse(ddlVehicles.SelectedValue) };
 
-                SqlDataReader reader = getReader("SELECT * FROM GA_File WHERE Phone_ID=@value1 AND Vehicle_ID=@value2 ORDER BY Name ASC", o);
+                SqlDataReader reader =
+                    getReader(
+                        "SELECT * FROM GA_File WHERE Phone_ID=@value1 AND Vehicle_ID=@value2 ORDER BY Name ASC", o);
                 int tdNumber;
                 while (reader.Read())
                 {
@@ -1062,6 +1071,7 @@ namespace CTBWebsite
                             break;
                     }
                 }
+
                 reader.Close();
                 reader.Dispose();
                 objConn.Close();
@@ -1110,17 +1120,17 @@ namespace CTBWebsite
             switch (tableBeingViewed)
             {
                 case Tables.File:
-                   dgvFiles.DataSource = sortedView;
-                   dgvFiles.DataBind();
-                   break;
+                    dgvFiles.DataSource = sortedView;
+                    dgvFiles.DataBind();
+                    break;
                 case Tables.Report:
-                   dgvReports.DataSource = sortedView;
-                   dgvReports.DataBind();
-                   break;
+                    dgvReports.DataSource = sortedView;
+                    dgvReports.DataBind();
+                    break;
                 default:
-                   dgvImages.DataSource = sortedView;
-                   dgvImages.DataBind();
-                   break;
+                    dgvImages.DataSource = sortedView;
+                    dgvImages.DataBind();
+                    break;
             }
         }
 
@@ -1205,7 +1215,7 @@ namespace CTBWebsite
                     dgvImages.DataBind();
                     break;
             }
-            
+
             objConn.Close();
         }
     }
