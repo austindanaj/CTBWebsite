@@ -301,7 +301,6 @@ namespace CTBWebsite
             reader.Dispose();
 
             objConn.Close();
-            objConn.Dispose();
 
         }
 
@@ -539,7 +538,7 @@ namespace CTBWebsite
                     // reportUpload.
                     ddlVehicles.SelectedValue = vID;
                     ddlPhones.SelectedValue = pID;
-                    ddlPhones_OnSelectedIndexChanged(ddlPhones, EventArgs.Empty);
+                    onSelectedIndexChanged(ddlPhones, EventArgs.Empty);
                     ddlAuthor1.SelectedValue = emp1;
                     ddlAuthor2.SelectedValue = emp2 == "" ? "-1" : emp2;
                     ddlCalibration.SelectedValue = calibration;
@@ -607,13 +606,39 @@ namespace CTBWebsite
                     fileSelected.Text = name;
                 }
             }
-            catch
+            catch(Exception ex)
             {
 
             }
         }
 
         protected void uploadPanel(object sender, EventArgs e)
+        {
+         
+
+            if (sender.Equals(UploadTool))
+            {
+                mpeTools.Show();
+            }
+            else if (sender.Equals(UploadFile))
+            {
+                mpeFiles.Show();
+                LoadFileDropdowns();
+            }
+            else if (sender.Equals(UploadImage))
+            {
+                mpeImages.Show();
+                LoadImageDropdowns();
+            }
+            else
+            {
+                mpeReports.Show();
+                LoadReportDropdowns();
+            }
+
+        }
+
+        protected void UploadTool_OnClick(object sender, EventArgs e)
         {
             openDBConnection();
             this.objConn.Open();
@@ -631,34 +656,10 @@ namespace CTBWebsite
 
             o = new[] { txtFileName.Text, txtFileDescription.Text, txtVersion.Text, DateTime.Now, Session["Alna_num"], path, Path.GetExtension(path) };
             executeVoidSQLQuery("INSERT INTO Tools (Name, Comment, Version, Date_updated, Alna_num, Path, Extension) values" +
-                                                      "(@value1, @value2, @value3, @value4, @value5, @value6, @value7)", o);
+                                "(@value1, @value2, @value3, @value4, @value5, @value6, @value7)", o);
             redirectSafely("~/GlobalADefault");
 
-        }
 
-        protected void UploadTool_OnClick(object sender, EventArgs e)
-        {
-            mpeTools.Show();
-            // Maybe needs logic
-            if (sender.Equals(toolUpload))
-            {
-                mpeTools.Show();
-            }
-            else if (sender.Equals(fileUpload))
-            {
-                mpeFiles.Show();
-                LoadFileDropdowns();
-            }
-            else if (sender.Equals(imageUpload))
-            {
-                mpeImages.Show();
-                LoadImageDropdowns();
-            }
-            else
-            {
-                mpeReports.Show();
-                LoadReportDropdowns();
-            }
         }
 
         protected void lstTools_OnItemCommand(object sender, ListViewCommandEventArgs e)
@@ -731,7 +732,7 @@ namespace CTBWebsite
                     Path.GetExtension(rfu.PostedFile.FileName),
                     comment //Comment if the user created one
                 };
-                write(Tables.Report, id_buffer, null, rfu.PostedFile);
+                write(Tables.Report, id_buffer, rfu.PostedFile);
             }
             else
             {
@@ -860,7 +861,7 @@ namespace CTBWebsite
                     //DBNull.Value
                 };
 
-                write(Tables.File, id_buffer, null, ffu.PostedFile);
+                write(Tables.File, id_buffer, ffu.PostedFile);
 
             }
             else
@@ -902,7 +903,7 @@ namespace CTBWebsite
                         //DBNull.Value
                     };
 
-                    write(Tables.File, id_buffer, null, ffu.PostedFile);
+                    write(Tables.File, id_buffer, ffu.PostedFile);
                     inactive(Tables.File, id);
 
                 }
@@ -941,11 +942,11 @@ namespace CTBWebsite
                     int.Parse(ddlImageVehicle.SelectedValue),
                     int.Parse(ddlAuthor1.SelectedValue),
                     lblDateSelected.Value, //this is the date created, if the user does not default it to today
-                    Path.GetExtension(imageUpload.FileName),
+                    Path.GetExtension(ifu.PostedFile.FileName),
                     comment //Comment if the user created one
                 };
 
-            write(Tables.Image, id_buffer, imageUpload);
+            write(Tables.Image, id_buffer, ifu.PostedFile);
         }
 
         protected void btnUploadTool_Click(object sender, EventArgs e)
@@ -953,7 +954,7 @@ namespace CTBWebsite
             if (objConn == null) openDBConnection();
             objConn.Open();
 
-            string path = Path.Combine(TOOLS_PATH, toolUpload.FileName);
+            string path = Path.Combine(TOOLS_PATH, tfu.PostedFile.FileName);
 
             object[] o =
             {
@@ -964,7 +965,7 @@ namespace CTBWebsite
                 "INSERT INTO Tools (Name, Comment, Version, Date_updated, Alna_num, Path, Extension) values" +
                 "(@value1, @value2, @value3, @value4, @value5, @value6, @value7)", o);
 
-            toolUpload.SaveAs(path);
+            tfu.PostedFile.SaveAs(path);
         }
 
         //===========================================================
