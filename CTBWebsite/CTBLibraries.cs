@@ -662,8 +662,9 @@ namespace CTBWebsite {
                     {
                         if (!Directory.Exists(Path.GetDirectoryName(newPath)))
                             Directory.CreateDirectory(Path.GetDirectoryName(newPath));
-                        File.Copy(oldPath, newPath);
-                        File.Delete(oldPath);
+                        File.Move(oldPath, newPath);
+                      
+                        //File.Delete(oldPath);
                     }
                     catch (Exception ex)
                     {

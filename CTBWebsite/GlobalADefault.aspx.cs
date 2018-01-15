@@ -140,23 +140,6 @@ namespace CTBWebsite
             // DataTable dt = getDataTable("GetFilteredReport");
             return dt;
 
-            //   SqlCommand sql = new SqlCommand("SELECT * FROM SelectReport() WHERE Active=@value1");
-            //    //  SqlDataAdapter adp = new SqlDataAdapter(sql);
-            //    DataSet ds = new DataSet();
-            //      adp.Fill(ds);
-            /*
-            ds.Tables[0].Columns.Add("FormDate", typeof(string));
-
-            for (int i = 0; i < ds.Tables[0].Rows.Count; i++)
-            {
-                DateTime date = (DateTime)ds.Tables[0].Rows[i]["Date_Created"];
-                string format = "MMM d, yyyy";
-                ds.Tables[0].Rows[i]["FormDate"] = date.ToString(format);
-            }
-            */
-            // dgvReports.DataSource = ds;
-            //   dgvReports.DataBind();
-            //   sql.Dispose();
         }
 
         public DataTable LoadFiles()
@@ -219,23 +202,6 @@ namespace CTBWebsite
             // DataTable dt = getDataTable("GetFilteredReport");
             return dt;
 
-
-
-
-            /*
-
-            DataTable dt = getDataTable("SELECT * FROM SelectFile() WHERE Active=@value1");
-            //ds.Tables[0].Columns.Add("FormDate", typeof(string));
-            dt.Columns.Add("Type", typeof(string));
-           
-                //DateTime date = (DateTime)ds.Tables[0].Rows[i]["Date_Created"];
-              //  string format = "MMM d, yyyy";
-               // ds.Tables[0].Rows[i]["FormDate"] = date.ToString(format);
-            }
-           
-            return dt;
-
-            */
         }
 
         public DataTable LoadImages()
@@ -276,37 +242,6 @@ namespace CTBWebsite
             }
             // DataTable dt = getDataTable("GetFilteredReport");
             return dt;
-
-
-
-
-
-
-
-
-            /*
-
-
-
-
-            SqlCommand sql = new SqlCommand("SELECT * FROM SelectImages() WHERE Active=@value1");
-            SqlDataAdapter adp = new SqlDataAdapter(sql);
-            DataSet ds = new DataSet();
-            adp.Fill(ds);
-            /*
-            ds.Tables[0].Columns.Add("FormDate", typeof(string));
-
-            for (int i = 0; i < ds.Tables[0].Rows.Count; i++)
-            {
-                DateTime date = (DateTime)ds.Tables[0].Rows[i]["Date_Created"];
-                string format = "MMM d, yyyy";
-                ds.Tables[0].Rows[i]["FormDate"] = date.ToString(format);
-            }
-            
-            dgvImages.DataSource = ds;
-            dgvImages.DataBind();
-            sql.Dispose();
-            */
         }
 
         public void LoadTools()
@@ -421,7 +356,8 @@ namespace CTBWebsite
                     btnSubmitReport.Text = "Save Report";
 
                     string id = lnkView.CommandArgument;
-
+                    Session["Edit_ID"] = id;
+                    string name = "";
                     string calibration = "-1";
                     string td1 = "-1";
                     string td2 = "-1";
@@ -434,6 +370,9 @@ namespace CTBWebsite
                     string created = "";
                     string comment = "";
 
+                    rfuDiv.Style.Add("display", "none");
+                    rfuHasFile.Style.Add("display", "block");
+
                     openDBConnection();
                     objConn.Open();
 
@@ -441,6 +380,7 @@ namespace CTBWebsite
                     if (reader.HasRows)
                     {
                         reader.Read();
+                        name = reader.GetValue(15).ToString() + reader.GetValue(16).ToString();
                         calibration = reader.GetValue(1).ToString();
                         td1 = reader.GetValue(2).ToString();
                         td2 = reader.GetValue(3).ToString();
@@ -457,8 +397,9 @@ namespace CTBWebsite
                     // reportUpload.
                     ddlVehicles.SelectedValue = vID;
                     ddlPhones.SelectedValue = pID;
+                    ddlPhones_OnSelectedIndexChanged(ddlPhones, EventArgs.Empty);
                     ddlAuthor1.SelectedValue = emp1;
-                    ddlAuthor2.SelectedValue = emp2;
+                    ddlAuthor2.SelectedValue = emp2 == "" ? "-1" : emp2;
                     ddlCalibration.SelectedValue = calibration;
                     ddlTD1.SelectedValue = td1;
                     ddlTD2.SelectedValue = td2;
@@ -467,7 +408,8 @@ namespace CTBWebsite
                     txtReportDate.Value = created;
                     lblDateSelected.Value = created;
                     txtReportComment.Text = comment;
-
+                    lblRFU.Text = name;
+                    fileSelected.Text = name;
 
                 }
                 else if (e.CommandName == "Edit_File")
@@ -547,7 +489,7 @@ namespace CTBWebsite
             o = new[] { txtFileName.Text, txtFileDescription.Text, txtVersion.Text, DateTime.Now, Session["Alna_num"], path, Path.GetExtension(path) };
             executeVoidSQLQuery("INSERT INTO Tools (Name, Comment, Version, Date_updated, Alna_num, Path, Extension) values" +
                                                       "(@value1, @value2, @value3, @value4, @value5, @value6, @value7)", o);
-
+            redirectSafely("~/GlobalADefault");
 
         }
         protected void UploadTool_OnClick(object sender, EventArgs e)
@@ -592,6 +534,10 @@ namespace CTBWebsite
 
         protected void btnSubmitReport_OnClick(object sender, EventArgs e)
         {
+
+            if (objConn == null)
+                openDBConnection();
+
             object comment = txtReportComment.Text;
             if (((string)comment).Length > 255)
             {
@@ -604,23 +550,24 @@ namespace CTBWebsite
             }
 
 
-            object[] id_buffer = {
-                int.Parse(ddlCalibration.SelectedValue),
-                int.Parse(ddlTD1.SelectedValue),
-                int.Parse(ddlTD2.SelectedValue),
-                int.Parse(ddlTD3.SelectedValue),
-                int.Parse(ddlTD4.SelectedValue),
-                int.Parse(ddlVehicles.SelectedValue),
-                int.Parse(ddlPhones.SelectedValue),
-                int.Parse(ddlAuthor1.SelectedValue),
-                int.Parse(ddlAuthor2.SelectedValue), //Need a way to return null
-                lblDateSelected.Value, //this is the date created, if the user does not default it to today
-                Path.GetExtension(rfu.PostedFile.FileName),
-                comment //Comment if the user created one
-            };
+            string date = lblDateSelected.Value == "" ? txtReportDate.Value : lblDateSelected.Value;
 
             if ((bool)Session["CreateClicked"])
             {
+                object[] id_buffer = {
+                    int.Parse(ddlCalibration.SelectedValue),
+                    int.Parse(ddlTD1.SelectedValue),
+                    int.Parse(ddlTD2.SelectedValue),
+                    int.Parse(ddlTD3.SelectedValue),
+                    int.Parse(ddlTD4.SelectedValue),
+                    int.Parse(ddlVehicles.SelectedValue),
+                    int.Parse(ddlPhones.SelectedValue),
+                    int.Parse(ddlAuthor1.SelectedValue),
+                    int.Parse(ddlAuthor2.SelectedValue), //Need a way to return null
+                    DateTime.Parse(date), //this is the date created, if the user does not default it to today
+                    Path.GetExtension(rfu.PostedFile.FileName),
+                    comment //Comment if the user created one
+                };
                 write(Tables.Report, id_buffer, null, rfu.PostedFile);
             }
             else
@@ -634,6 +581,8 @@ namespace CTBWebsite
         {
             Session["CreateClicked"] = true;
             mpeReports.Show();
+            lblReportTitle.Text = "Create Report";
+            btnSubmitReport.Text = "Submit Report";
             LoadReportDropdowns();
         }
         public void LoadReportDropdowns()
@@ -730,7 +679,7 @@ namespace CTBWebsite
                     int.Parse(ddlFilePhone.SelectedValue),
                     DateTime.Parse(date), //this is the date created, if the user does not default it to today
                     int.Parse(ddlFileAuthor1.SelectedValue),
-                    auth, //Need a way to return null
+                    author2, //Need a way to return null
                     int.Parse(ddlFileVehicle.SelectedValue),
                     comment //Comment if the user created one,
                     //DBNull.Value
@@ -762,7 +711,7 @@ namespace CTBWebsite
                         comment //Comment if the user created one,
 
                     };
-                    update(IOPage.Tables.File, id_buffer, id);
+                    update(Tables.File, id_buffer, id);
                 }
                 else
                 {
