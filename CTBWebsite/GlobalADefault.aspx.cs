@@ -9,15 +9,18 @@ namespace CTBWebsite
 {
     public partial class GlobalADefault : IOPage
     {
-        public SortDirection direction {
-            get {
+        public SortDirection direction
+        {
+            get
+            {
                 if (ViewState["directionState"] == null)
                 {
                     ViewState["directionState"] = SortDirection.Ascending;
                 }
                 return (SortDirection)ViewState["directionState"];
             }
-            set {
+            set
+            {
                 ViewState["directionState"] = value;
             }
         }
@@ -36,6 +39,11 @@ namespace CTBWebsite
         //===========================================================
         protected void Page_Load(object sender, EventArgs e)
         {
+            if (Session["Alna_num"] == null)
+            {
+                redirectSafely("~/Default");
+                return;
+            }
 
             if (!IsPostBack)
             {
@@ -438,6 +446,17 @@ namespace CTBWebsite
             sql.Dispose();
 
 
+            foreach (ListViewDataItem item in lstTools.Items)
+            {
+                LinkButton lnkbutton = item.FindControl("lnkEditClicked") as LinkButton;
+                if ((int)Session["Alna_num"] !=
+                int.Parse(lstTools.DataKeys[item.DataItemIndex].Values["Alna_num"].ToString()))
+                {
+                    lnkbutton.Visible = false;
+                }
+
+            }
+
 
             // lstTools.Items.Add();
         }
@@ -487,9 +506,10 @@ namespace CTBWebsite
         {
             try
             {
+                LinkButton lnkView = (LinkButton)e.CommandSource;
                 if (e.CommandName == "Download_File")
                 {
-                    LinkButton lnkView = (LinkButton)e.CommandSource;
+
                     string[] args = lnkView.CommandArgument.Split(',');
                     string filePath = args[0];
                     string extension = args[1];
@@ -504,8 +524,119 @@ namespace CTBWebsite
                     Response.End();
 
                 }
+                else if (e.CommandName == "Edit_Report")
+                {
+
+
+                    Session["CreateClicked"] = false;
+                    mpeReports.Show();
+                    LoadReportDropdowns();
+                    lblReportTitle.Text = "Update Report";
+                    btnSubmitReport.Text = "Save Report";
+
+                    string id = lnkView.CommandArgument;
+
+                    string calibration = "-1";
+                    string td1 = "-1";
+                    string td2 = "-1";
+                    string td3 = "-1";
+                    string td4 = "-1";
+                    string vID = "-1";
+                    string pID = "-1";
+                    string emp1 = "-1";
+                    string emp2 = "-2";
+                    string created = "";
+                    string comment = "";
+
+                    openDBConnection();
+                    objConn.Open();
+
+                    SqlDataReader reader = getReader("select * from Report where ID=@value1", int.Parse(id));
+                    if (reader.HasRows)
+                    {
+                        reader.Read();
+                        calibration = reader.GetValue(1).ToString();
+                        td1 = reader.GetValue(2).ToString();
+                        td2 = reader.GetValue(3).ToString();
+                        td3 = reader.GetValue(4).ToString();
+                        td4 = reader.GetValue(5).ToString();
+                        vID = reader.GetValue(6).ToString();
+                        pID = reader.GetValue(7).ToString();
+                        emp1 = reader.GetValue(8).ToString();
+                        emp2 = reader.GetValue(9).ToString();
+                        comment = reader.GetValue(17).ToString();
+                        created = ((DateTime)reader.GetValue(11)).ToString("MM/dd/yyyy");
+                        reader.Close();
+                    }
+                    // reportUpload.
+                    ddlVehicles.SelectedValue = vID;
+                    ddlPhones.SelectedValue = pID;
+                    ddlAuthor1.SelectedValue = emp1;
+                    ddlAuthor2.SelectedValue = emp2;
+                    ddlCalibration.SelectedValue = calibration;
+                    ddlTD1.SelectedValue = td1;
+                    ddlTD2.SelectedValue = td2;
+                    ddlTD3.SelectedValue = td3;
+                    ddlTD4.SelectedValue = td4;
+                    txtReportDate.Value = created;
+                    lblDateSelected.Value = created;
+                    txtReportComment.Text = comment;
+
+
+                }
+                else if (e.CommandName == "Edit_File")
+                {
+
+                    Session["CreateClicked"] = false;
+                    
+                    mpeFiles.Show();
+                    LoadFileDropdowns();
+
+                    string id = lnkView.CommandArgument;
+                    Session["Edit_ID"] = id;
+                    string name = "";
+                    string TD = "-1";
+                    string pID = "-1";
+                    string vID = "-1";
+                    string created = "-1";
+                    string emp1 = "-1";
+                    string emp2 = "-2";
+                    string comment = "";
+
+                    ffuDiv.Style.Add("display", "none");
+                    ffuHasFile.Style.Add("display", "block");
+
+
+                    openDBConnection();
+                    objConn.Open();
+
+                    SqlDataReader reader = getReader("select * from GA_File where ID=@value1", int.Parse(id));
+                    if (reader.HasRows)
+                    {
+                        reader.Read();
+                        name = reader.GetValue(1).ToString() + reader.GetValue(2).ToString();
+                        TD = reader.GetValue(3).ToString();
+                        pID = reader.GetValue(4).ToString();
+                        created = ((DateTime)reader.GetValue(5)).ToString("MM/dd/yyyy");
+                        emp1 = reader.GetValue(8).ToString();
+                        emp2 = reader.GetValue(9).ToString();
+                        vID = reader.GetValue(10).ToString();
+                        comment = reader.GetValue(13).ToString();
+                        reader.Close();
+                    }
+                    ddlFileType.SelectedValue = TD;
+                    ddlFileVehicle.SelectedValue = vID;
+                    ddlFilePhone.SelectedValue = pID;
+                    ddlFileAuthor1.SelectedValue = emp1;
+                    ddlFileAuthor2.SelectedValue = emp2 == "" ? "-1" : emp2;
+                    txtFileDate.Value = created;
+                    lblDateSelected.Value = created;
+                    txtFileComment.Text = comment;
+                    lblFFU.Text = name;
+                    fileSelected.Text = name;
+                }
             }
-            catch
+            catch (Exception ex)
             {
 
             }
@@ -513,6 +644,31 @@ namespace CTBWebsite
 
         protected void uploadPanel(object sender, EventArgs e)
         {
+            openDBConnection();
+            this.objConn.Open();
+
+            object filename = DBNull.Value, contentType = DBNull.Value;
+
+            filename = tfu.PostedFile.FileName;
+            contentType = tfu.PostedFile.ContentType;
+
+            object[] o;
+            string path =
+                "//AHMARVIN/ENGINEERING/Core EE/CTB/GM_BLE_PEPS_measurement result/DONT MOVE THIS FOLDER/Tools/" +
+                filename;
+            tfu.PostedFile.SaveAs(path);
+
+            o = new[] { txtFileName.Text, txtFileDescription.Text, txtVersion.Text, DateTime.Now, Session["Alna_num"], path, Path.GetExtension(path) };
+            executeVoidSQLQuery("INSERT INTO Tools (Name, Comment, Version, Date_updated, Alna_num, Path, Extension) values" +
+                                                      "(@value1, @value2, @value3, @value4, @value5, @value6, @value7)", o);
+
+
+        }
+        protected void UploadTool_OnClick(object sender, EventArgs e)
+        {
+            mpeTools.Show();
+            // Maybe needs logic
+        }
             if (sender.Equals(toolUpload))
             {
                 mpeTools.Show();
@@ -565,6 +721,52 @@ namespace CTBWebsite
             }
         }
 
+        protected void btnSubmitReport_OnClick(object sender, EventArgs e)
+        {
+            object comment = txtReportComment.Text;
+            if (((string)comment).Length > 255)
+            {
+                //this throws an exception until there's a way to give user feedback
+                throw new ArgumentException("Filename is too long, database only accepts 255 or less");
+            }
+            else if (((string)comment).Equals(""))
+            {
+                comment = DBNull.Value;
+            }
+
+
+            object[] id_buffer = {
+                int.Parse(ddlCalibration.SelectedValue),
+                int.Parse(ddlTD1.SelectedValue),
+                int.Parse(ddlTD2.SelectedValue),
+                int.Parse(ddlTD3.SelectedValue),
+                int.Parse(ddlTD4.SelectedValue),
+                int.Parse(ddlVehicles.SelectedValue),
+                int.Parse(ddlPhones.SelectedValue),
+                int.Parse(ddlAuthor1.SelectedValue),
+                int.Parse(ddlAuthor2.SelectedValue), //Need a way to return null
+                lblDateSelected.Value, //this is the date created, if the user does not default it to today
+                Path.GetExtension(rfu.PostedFile.FileName),
+                comment //Comment if the user created one
+            };
+
+            if ((bool)Session["CreateClicked"])
+            {
+                write(Tables.Report, id_buffer, null, rfu.PostedFile);
+            }
+            else
+            {
+              //  update(Tables.Report, id_buffer, 0);
+            }
+            redirectSafely("~/GlobalADefault");
+
+        }
+        protected void CreateReport_OnClick(object sender, EventArgs e)
+        {
+            Session["CreateClicked"] = true;
+            mpeReports.Show();
+            LoadReportDropdowns();
+        }
         public void LoadReportDropdowns()
         {
             ddlVehicles.Items.Clear();
@@ -659,43 +861,118 @@ namespace CTBWebsite
 
         protected void btnSubmitFile_OnClick(object sender, EventArgs e)
         {
+            if (objConn == null)
+                openDBConnection();
+
             object comment = txtFileComment.Text;
             if (((string)comment).Length > 255)
             {
                 //this throws an exception until there's a way to give user feedback
-                throw new ArgumentException("Filename is too long, database only accepts 255 or less");
+                throw new ArgumentException("Comment is too long, database only accepts 255 or less");
             }
             else if (((string)comment).Equals(""))
             {
                 comment = DBNull.Value;
             }
-
             object author2;
             if (ddlFileAuthor2.SelectedValue.Equals("-1"))
             {
                 author2 = DBNull.Value;
-            } else
+            }
+            else
             {
                 author2 = int.Parse(ddlFileAuthor2.SelectedValue);
             }
 
-            object[] id_buffer = {
-                Path.GetExtension(fileUpload.FileName),
-                int.Parse(ddlFileType.SelectedValue),
-                int.Parse(ddlFilePhone.SelectedValue),
-                DateTime.Parse(lblDateSelected.Value), //this is the date created, if the user does not default it to today
-                int.Parse(ddlFileAuthor1.SelectedValue),
-                int.Parse(ddlFileAuthor2.SelectedValue), //Need a way to return null
-                int.Parse(ddlFileVehicle.SelectedValue),
-                comment //Comment if the user created one,
-                //DBNull.Value
-            };
 
-            if (objConn == null)
-                openDBConnection();
+            string date = lblDateSelected.Value == "" ? txtFileDate.Value : lblDateSelected.Value;
+            if ((bool)Session["CreateClicked"])
+            {
 
-            write(Tables.File, id_buffer, fileUpload);
+
+                object[] id_buffer =
+                {
+                    Path.GetExtension(ffu.PostedFile.FileName),
+                    int.Parse(ddlFileType.SelectedValue),
+                    int.Parse(ddlFilePhone.SelectedValue),
+                    DateTime.Parse(date), //this is the date created, if the user does not default it to today
+                    int.Parse(ddlFileAuthor1.SelectedValue),
+                    auth, //Need a way to return null
+                    int.Parse(ddlFileVehicle.SelectedValue),
+                    comment //Comment if the user created one,
+                    //DBNull.Value
+                };
+
+                write(Tables.File, id_buffer, null, ffu.PostedFile);
+             
+            }
+            else
+            {
+            
+                
+                if (ffu.Value == "")
+                {
+                    string fid = fileSelected.Text.Substring(0, fileSelected.Text.IndexOf('_'));
+                    int id = int.Parse(fid.Substring(1));
+
+                    object[] id_buffer =
+                    {
+                        id,
+                        fid,
+                        int.Parse(ddlFileType.SelectedValue),
+                        int.Parse(ddlFilePhone.SelectedValue),
+                        DateTime.Parse(date), //this is the date created, if the user does not default it to today
+                        DateTime.Now,
+                        int.Parse(ddlFileAuthor1.SelectedValue),
+                        author2, //Need a way to return null
+                        int.Parse(ddlFileVehicle.SelectedValue),
+                        comment //Comment if the user created one,
+
+                    };
+                    update(IOPage.Tables.File, id_buffer, id);
+                }
+                else
+                {
+                    int id = int.Parse((string) Session["Edit_ID"]);
+                    object[] id_buffer =
+                    {
+                        Path.GetExtension(ffu.PostedFile.FileName),
+                        int.Parse(ddlFileType.SelectedValue),
+                        int.Parse(ddlFilePhone.SelectedValue),
+                        DateTime.Parse(date), //this is the date created, if the user does not default it to today
+                        int.Parse(ddlFileAuthor1.SelectedValue),
+                        author2, //Need a way to return null
+                        int.Parse(ddlFileVehicle.SelectedValue),
+                        comment //Comment if the user created one,
+                        //DBNull.Value
+                    };
+
+                    write(Tables.File, id_buffer, null, ffu.PostedFile);
+                    inactive(Tables.File,id );
+                    
+                }
+
+
+            }
+            redirectSafely("~/GlobalADefault");
         }
+        protected void UploadFile_OnClick(object sender, EventArgs e)
+        {
+            Session["CreateClicked"] = true;
+            mpeFiles.Show();
+            LoadFileDropdowns();
+        }
+        public void LoadFileDropdowns()
+        {
+            ddlFileVehicle.Items.Clear();
+            ddlFileVehicle.Items.Add(new ListItem("-- Select a Vehicle --", "-1"));
+            ddlFilePhone.Items.Clear();
+            ddlFilePhone.Items.Add(new ListItem("-- Select a Phone --", "-1"));
+            ddlFileAuthor1.Items.Clear();
+            ddlFileAuthor1.Items.Add(new ListItem("-- Select Author 1 --", "-1"));
+            ddlFileAuthor2.Items.Clear();
+            ddlFileAuthor2.Items.Add(new ListItem("-- Select Author 2 --", "-2"));
+            ddlFileAuthor2.Items.Add(new ListItem("N/A", "-1"));
 
         protected void uploadImage(object sender, EventArgs e)
         {
@@ -737,6 +1014,8 @@ namespace CTBWebsite
 
             toolUpload.SaveAs(path);
         }
+
+
 
         //===========================================================
         // Code to be refactored with row commands

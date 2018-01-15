@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.IO;
+using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using Date = System.DateTime;
@@ -602,19 +603,98 @@ namespace CTBWebsite {
 
     public class IOPage : SuperPage
     {
-        protected enum Tables {Report, File, Image};
-        protected static readonly string HOME = @"//AHMARVIN/ENGINEERING/Core EE/CTB/GM_BLE_PEPS_measurement result/DONT MOVE THIS FOLDER/";
-        protected static readonly string PATH_TO_SERVER = Path.Combine(HOME, "GAFMS/");
+        protected enum Tables {Report, File, Image, Tool};
 
-        private void checkEverythingsOkay()
+        protected void update(IOPage.Tables table, object[] insertionData, int id)
         {
-            if (!Directory.Exists(HOME))
+            if (objConn.State == ConnectionState.Closed)
+                objConn.Open();
+
+            string oldPath = getPath(id, table);
+            
+            string updateQuery;
+          
+            switch (table)
             {
-                throw new IOException("Somebody moved the file labeled 'DONT MOVE THIS FOLDER'! We can't save anything if that happens!");
+                case Tables.File:
+                    updateQuery = "exec @ReturnVal = Update_File @value1, @value2, @value3, @value4, @value5, @value6, @value7, @value8, @value9, @value10";
+                    break;
+                case Tables.Report:
+                    updateQuery = "";
+                    break;
+                case Tables.Image:
+                    updateQuery = "";
+                    break;
+                case Tables.Tool:
+                    updateQuery = "";
+                    break;
+                default:
+                    updateQuery = "";
+                    break;
             }
+            if (objConn.State == ConnectionState.Closed)
+                objConn.Open();
+
+
+            int val = (int)executeVoidSQLQuery(updateQuery, insertionData);
+
+
+            if (objConn.State == ConnectionState.Closed)
+                objConn.Open();
+
+
+            string newPath = getPath(id, table);
+            if (!oldPath.Equals(newPath))
+            {
+                if (File.Exists(oldPath))
+                {
+                    try
+                    {
+                        if (!Directory.Exists(Path.GetDirectoryName(newPath)))
+                            Directory.CreateDirectory(Path.GetDirectoryName(newPath));
+                        File.Copy(oldPath, newPath);
+                        File.Delete(oldPath);
+                    }
+                    catch (Exception ex)
+                    {
+                        
+                    }
+                }
+            }
+            
         }
 
-        protected void write(IOPage.Tables table, object[] insertionData, FileUpload uploader)
+        protected void inactive(Tables table, int id)
+        {
+            
+
+            string updateQuery;
+            object[] o = { 0, id };
+            switch (table)
+            {
+
+                case Tables.File:
+                    updateQuery = "update GA_File Set Active=@value1 where ID=@value2";
+                    break;
+                case Tables.Report:
+                    updateQuery = "";
+                    break;
+                case Tables.Image:
+                    updateQuery = "";
+                    break;
+                case Tables.Tool:
+                    updateQuery = "";
+                    break;
+                default:
+                    updateQuery = "";
+                    break;
+            }
+            if (objConn.State == ConnectionState.Closed)
+                objConn.Open();
+            executeVoidSQLQuery(updateQuery, o);
+        }
+
+        protected void write(IOPage.Tables table, object[] insertionData, HttpPostedFile uploader)
         {
             //Before we do anything let's make sure nobody did anything stupid
             checkEverythingsOkay();
@@ -644,6 +724,8 @@ namespace CTBWebsite {
             // If the insertion succeeds and the write fails, we need to remove it from the database because the file already exists. This
             // requires that we delete the most recently inserted file.
             int id;
+            if (objConn.State == ConnectionState.Closed)
+                objConn.Open();
             try
             {
                 id = (int)executeVoidSQLQuery(insertionQuery, insertionData);
@@ -653,7 +735,8 @@ namespace CTBWebsite {
                 return;
             }
 
-            objConn.Open();
+            if (objConn.State == ConnectionState.Closed)
+                objConn.Open();
             try
             {
                 SqlDataReader reader = getReader(selectQuery, id);
@@ -669,7 +752,7 @@ namespace CTBWebsite {
                     if (!Directory.Exists(fullPath))
                         Directory.CreateDirectory(fullPath);
 
-                    uploader.SaveAs(Path.Combine(fullPath, filename + extension));
+                    file.SaveAs(Path.Combine(fullPath, filename + extension));
                 }
             }
             catch (Exception ex)
@@ -692,11 +775,13 @@ namespace CTBWebsite {
                 case Tables.Report:
                     query = "select Path, Name, Extension from Report where ID=@value1";
                     break;
+               
                 default:
                     query = "";
                     break;
             }
-
+            if (objConn.State == ConnectionState.Closed)
+                objConn.Open();
             SqlDataReader reader = getReader(query, id);
             reader.Read();
             string path = reader.GetString(0);
@@ -718,17 +803,36 @@ namespace CTBWebsite {
             return file;
         }
 
-        protected void send(byte[] blob, string filename)
+        protected string getPath(int id, Tables table)
         {
-            Response.Clear();
-            Response.Buffer = true;
-            Response.Charset = "";
-            Response.Cache.SetCacheability(System.Web.HttpCacheability.NoCache);
-            //Response.ContentType = contentType;
-            Response.AddHeader("content-disposition", $"attachment; filename=\"{filename}\"");
-            Response.BinaryWrite(blob);
-            Response.Flush();
-            Response.End();
+            if(objConn.State == ConnectionState.Closed)
+                objConn.Open();
+
+            string query = null;
+            switch (table)
+            {
+                case Tables.File:
+                    query = "select Path, Name, Extension from GA_File where ID=@value1";
+                    break;
+                case Tables.Report:
+                    query = "select Path, Name, Extension from Report where ID=@value1";
+                    break;
+                case Tables.Image:
+                    break;
+                case Tables.Tool:
+                    break;
+                default:
+                    query = "";
+                    break;
+            }
+
+            SqlDataReader reader = getReader(query, id);
+            reader.Read();
+            string path = reader.GetString(0);
+            string filename = reader.GetString(1);
+            string extension = reader.GetString(2);
+            reader.Close();
+            return Path.Combine(PATH_TO_SERVER, path, filename + extension);
         }
     }
 }
