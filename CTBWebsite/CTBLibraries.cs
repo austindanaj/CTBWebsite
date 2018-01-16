@@ -622,13 +622,13 @@ namespace CTBWebsite {
                     updateQuery = "exec @ReturnVal = Update_File @value1, @value2, @value3, @value4, @value5, @value6, @value7, @value8, @value9, @value10";
                     break;
                 case Tables.Report:
-                    updateQuery = "";
+                    updateQuery = "exec @ReturnVal = Update_Report @value1, @value2, @value3, @value4, @value5, @value6, @value7, @value8, @value9, @value10, @value11, @value12, @value13";
                     break;
                 case Tables.Image:
-                    updateQuery = "";
+                    updateQuery = "exec @ReturnVal = Update_Picture @value1, @value2, @value3, @value4, @value5, @value6";
                     break;
                 case Tables.Tool:
-                    updateQuery = "";
+                    updateQuery = "exec @ReturnVal = Update_Tool @value1, @value2, @value3, @value4, @value5";
                     break;
                 default:
                     updateQuery = "";
@@ -680,13 +680,13 @@ namespace CTBWebsite {
                     updateQuery = "update GA_File Set Active=@value1 where ID=@value2";
                     break;
                 case Tables.Report:
-                    updateQuery = "";
+                    updateQuery = "update Report Set Active=@value1 where ID=@value2";
                     break;
                 case Tables.Image:
-                    updateQuery = "";
+                    updateQuery = "update Pictures Set Active=@value1 where ID=@value2";
                     break;
                 case Tables.Tool:
-                    updateQuery = "";
+                    updateQuery = "update Tools Set Active=@value1 where ID=@value2";
                     break;
                 default:
                     updateQuery = "";
@@ -699,24 +699,28 @@ namespace CTBWebsite {
 
         protected void write(IOPage.Tables table, object[] insertionData, HttpPostedFile uploader)
         {
-            string selectQuery, insertionQuery, deleteQuery;
+            string selectQuery = "", insertionQuery = "", deleteQuery = "";
             switch (table)
             {
                 case Tables.File:
                     selectQuery = "select Path, Name, Extension from GA_File where ID=@value1";
                     insertionQuery = "exec @ReturnVal = Insert_File @value1, @value2, @value3, @value4, @value5, @value6, @value7, @value8";
                     deleteQuery = "delete from GA_File where ID=@value1";
-                    
                     break;
                 case Tables.Report:
                     selectQuery = "select Path, Name, Extension from Report where ID=@value1";
-                    insertionQuery = "exec @ReturnVal = Insert_Report @value1, @value2, @value3, @value4, @value5, @value6, @value7, @value8, @value9, @value11, @value12";
+                    insertionQuery = "exec @ReturnVal = Insert_Report @value1, @value2, @value3, @value4, @value5, @value6, @value7, @value8, @value9, @value10, @value11, @value12";
                     deleteQuery = "delete from Report where ID=@value1";
                     break;
-                default:
-                    selectQuery = "select Path, Name, Extensions from Pictures where ID=@value1";
+                case Tables.Image:
+                    selectQuery = "select Path, Name, Extension from Pictures where ID=@value1";
                     insertionQuery = "exec @ReturnVal = Insert_Picture @value1, @value2, @value3, @value4, @value5";
                     deleteQuery = "delete from Pictures where ID=@value1";
+                    break;
+                case Tables.Tool:
+                    selectQuery = "select Path, Name, Extension from Tools where ID=@value1";
+                    insertionQuery = "exec @ReturnVal = Insert_Tool @value1, @value2, @value3, @value4, @value5";
+                    deleteQuery = "delete from Tools where ID=@value1";
                     break;
             }
 
@@ -739,6 +743,7 @@ namespace CTBWebsite {
                 objConn.Open();
             try
             {
+
                 SqlDataReader reader = getReader(selectQuery, id);
                 if (reader.HasRows)
                 {
@@ -748,7 +753,7 @@ namespace CTBWebsite {
                     string extension = reader.GetString(2);
                     reader.Close();
 
-                    string fullPath = Path.Combine(SERVER, path);
+                    string fullPath = Path.Combine(HOME, path);
                     if (!Directory.Exists(fullPath))
                         Directory.CreateDirectory(fullPath);
 
@@ -808,7 +813,9 @@ namespace CTBWebsite {
 
         protected string getPath(int id, Tables table)
         {
-            if(objConn.State == ConnectionState.Closed)
+            if(objConn == null)
+               openDBConnection();
+            if (objConn.State == ConnectionState.Closed)
                 objConn.Open();
 
             string query = null;
@@ -824,7 +831,7 @@ namespace CTBWebsite {
                     query = "select Path, Name, Extension from Pictures where ID=@value1";
                     break;
                 case Tables.Tool:
-                    query = "select Path, Name, Extension from Tool where ID=@value1";
+                    query = "select Path, Name, Extension from Tools where ID=@value1";
                     break;
                 default:
                     query = "";
@@ -837,7 +844,7 @@ namespace CTBWebsite {
             string filename = reader.GetString(1);
             string extension = reader.GetString(2);
             reader.Close();
-            return Path.Combine(SERVER, path, filename + extension);
+            return Path.Combine(HOME, path, filename + extension);
         }
     }
 }

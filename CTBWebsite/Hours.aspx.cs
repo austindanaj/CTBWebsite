@@ -268,8 +268,8 @@ namespace CTBWebsite
                 executeVoidSQLQuery(insertionQuery, o);
                 if (!(bool)Session["Full_time"] & !isProject)
                 {
-                    o[1] = "BLE_Key_Pass_Global_A_Testing";
-                    executeVoidSQLQuery("insert into ProjectHours values(@value1, (select Project_ID from Projects where Name=@value2), @value3, @value4)", o);
+                    //o[1] = "BLE_Key_Pass_Global_A_Testing";
+                //    executeVoidSQLQuery("insert into ProjectHours values(@value1, (select Project_ID from Projects where Name=@value2), @value3, @value4)", o);
                 }
                 objConn.Close();
             }
@@ -349,7 +349,7 @@ namespace CTBWebsite
                 }
             });
 
-            ddlHours.Items.Add("--Select A Percent (Out of 40 hrs)--");
+            ddlHours.Items.Add(new ListItem("--Select A Percent (Out of 40 hrs)--", "-1"));
             howMuchHoursWorked(projectHoursData);
             addDDLoptions(ddlHours);
             lblUserHours.Text = "Your Hours: " + hoursWorked + "/40";
@@ -373,7 +373,7 @@ namespace CTBWebsite
                 Session["showVehicleHours"] = true;
             }
 
-            ddlHoursVehicles.Items.Add("--Select A Percent (Out of 40 hrs)--");
+            ddlHoursVehicles.Items.Add(new ListItem("--Select A Percent (Out of 40 hrs)--", "-1"));
             addDDLoptions(ddlHoursVehicles);
             lblUserHours.Text = "Logged " + hoursWorked + "/40";
         }
