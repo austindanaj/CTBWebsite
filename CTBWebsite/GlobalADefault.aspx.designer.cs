@@ -958,13 +958,13 @@ namespace CTBWebsite {
         protected global::System.Web.UI.WebControls.Label Label4;
         
         /// <summary>
-        /// txtFileName control.
+        /// txtToolName control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox txtFileName;
+        protected global::System.Web.UI.WebControls.TextBox txtToolName;
         
         /// <summary>
         /// RequiredFieldValidator19 control.
@@ -1039,13 +1039,13 @@ namespace CTBWebsite {
         protected global::System.Web.UI.WebControls.Label lblTFU;
         
         /// <summary>
-        /// txtFileDescription control.
+        /// txtReleaseNotes control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox txtFileDescription;
+        protected global::System.Web.UI.WebControls.TextBox txtReleaseNotes;
         
         /// <summary>
         /// btnUploadTool control.

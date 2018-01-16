@@ -72,9 +72,15 @@
                                                 <br />
                                                 <br />
                                                 <asp:DropDownList ID="ddlHours" CssClass="form-control" runat="server" />
+                                                <asp:RequiredFieldValidator ID="RequiredFieldValidator3" ForeColor="Red"
+                                                                            ControlToValidate="ddlHours" InitialValue="-1"
+                                                                            ValidationGroup="ProjectHoursGroup"
+                                                                            ErrorMessage="Select percentage of time."
+                                                                            runat="Server">
+                                                </asp:RequiredFieldValidator>
                                                 <br />
                                                 <br />
-                                                <asp:Button ID="btnSubmitPercent" runat="server" OnClick="TriggerEvent" Text="Submit" CssClass="btn btn-lg btn-primary btn-block" Text-Align="Center" />
+                                                <asp:Button ID="btnSubmitPercent" runat="server" ValidationGroup="ProjectHoursGroup" OnClick="TriggerEvent" Text="Submit" CssClass="btn btn-lg btn-primary btn-block" Text-Align="Center" />
                                                 <br />
                                                 <asp:Label ID="lblUserHours" runat="server" ForeColor="#999999" Font-Size="X-Small" Text="Your Hours: 0/40" />
                                             </asp:Panel>
@@ -92,9 +98,15 @@
                                                     <br />
                                                     <br />
                                                     <asp:DropDownList ID="ddlHoursVehicles" runat="server" CssClass="form-control" Visible="false" />
+                                                    <asp:RequiredFieldValidator ID="RequiredFieldValidator1" ForeColor="Red"
+                                                                                ControlToValidate="ddlHoursVehicles" InitialValue="-1"
+                                                                                ValidationGroup="VehicleHoursGroup"
+                                                                                ErrorMessage="Select percentage of time."
+                                                                                runat="Server">
+                                                    </asp:RequiredFieldValidator>
                                                     <br />
                                                     <br />
-                                                    <asp:Button ID="btnSubmitVehicles" AutoPostBack="true" OnClick="TriggerEvent" runat="server" Text="Submit" CssClass="btn btn-lg btn-primary btn-block" Text-Align="Center" Visible="false" />
+                                                    <asp:Button ID="btnSubmitVehicles" ValidationGroup="VehicleHoursGroup" AutoPostBack="true" OnClick="TriggerEvent" runat="server" Text="Submit" CssClass="btn btn-lg btn-primary btn-block" Text-Align="Center" Visible="false" />
                                                 </asp:Panel>
                                             </div>
                                         </div>
@@ -110,9 +122,15 @@
                                                     <br />
                                                     <br />
                                                     <asp:TextBox ID="txtDelete" runat="server" CssClass="form-control" placeholder="Type YES to confirm." />
+                                                    <asp:RequiredFieldValidator ID="RequiredFieldValidator2" ForeColor="Red"
+                                                                                ControlToValidate="txtDelete" InitialValue=""
+                                                                                ValidationGroup="DeleteHoursGroup"
+                                                                                ErrorMessage="Please type YES"
+                                                                                runat="Server">
+                                                    </asp:RequiredFieldValidator>
                                                     <br />
                                                     <br />
-                                                    <asp:Button ID="btnDelete" AutoPostBack="true" runat="server" OnClick="TriggerEvent" Text="Delete" CssClass="btn btn-lg btn-primary btn-block" BackColor="#d9534f" Visible="true" />
+                                                    <asp:Button ID="btnDelete" AutoPostBack="true" ValidationGroup="DeleteHoursGroup" runat="server" OnClick="TriggerEvent" Text="Delete" CssClass="btn btn-lg btn-primary btn-block" BackColor="#d9534f" Visible="true" />
 
                                                 </asp:Panel>
                                             </div>
@@ -135,6 +153,16 @@
                     <i class="fa fa-chevron-right"></i>
                 </a>
             </ContentTemplate>
+            
+            
+            <Triggers>
+                <asp:PostBackTrigger ControlID="btnSubmitPercent" />
+                <asp:PostBackTrigger ControlID="btnSubmitVehicles" />
+                <asp:PostBackTrigger ControlID="btnDelete" />
+            </Triggers>
+
+            
+
         </asp:UpdatePanel>
     </section>
     <!--/#main-slider-->

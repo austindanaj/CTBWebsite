@@ -432,17 +432,31 @@ namespace CTBWebsite
                 LinkButton lnkView = (LinkButton)e.CommandSource;
                 if (e.CommandName == "Download_File")
                 {
+                    Tables table;
+                    string[] args = lnkView.CommandArgument.Split('_');
+                    string type = args[0];
+                    int id = int.Parse(args[1]);
+                    switch (type)
+                    {
+                        case "F":
+                            table = Tables.File;
+                            break;
+                        case "R":
+                            table = Tables.Report;
+                            break;
+                        default:
+                            table = Tables.Image;
+                            break;
 
-                    string[] args = lnkView.CommandArgument.Split(',');
-                    string filePath = args[0];
-                    string extension = args[1];
+                    }
+                    string path = getPath(id, table);
 
                     Response.ClearContent();
                     Response.Clear();
-                    Response.ContentType = "application/" + extension;
+                    Response.ContentType = "application/" + Path.GetExtension(path);
                     Response.AddHeader("Content-Disposition",
-                        "attachment; filename=" + Path.GetFileName(filePath) + ";");
-                    Response.TransmitFile(filePath);
+                        "attachment; filename=" + Path.GetFileName(path) + ";");
+                    Response.TransmitFile(path);
                     Response.Flush();
                     Response.End();
 
@@ -565,6 +579,47 @@ namespace CTBWebsite
                     lblFFU.Text = name;
                     fileSelected.Text = name;
                 }
+                else if (e.CommandName == "Edit_Image")
+                {
+                    Session["CreateClicked"] = false;
+
+                    mpeImages.Show();
+                    LoadImageDropdowns();
+
+                    string id = lnkView.CommandArgument;
+                    Session["Edit_ID"] = id;
+
+                    string name = "";
+                    string vID = "-1";
+                    string created = "-1";
+                    string comment = "";
+
+                    ifuDiv.Style.Add("display", "none");
+                    ifuHasFile.Style.Add("display", "block");
+
+
+                    openDBConnection();
+                    if (objConn.State == ConnectionState.Closed)
+                        objConn.Open();
+
+                    SqlDataReader reader = getReader("select * from Pictures where ID=@value1", int.Parse(id));
+                    if (reader.HasRows)
+                    {
+                        reader.Read();
+                        name = reader.GetValue(2).ToString() + reader.GetValue(8).ToString();
+                        vID = reader.GetValue(1).ToString();
+                        created = ((DateTime)reader.GetValue(3)).ToString("MM/dd/yyyy");
+                        comment = reader.GetValue(7).ToString();
+                        reader.Close();
+                    }
+                    ddlImageVehicle.SelectedValue = vID;
+                    txtImageDate.Value = created;
+                    lblDateSelected.Value = created;
+                    txtImageComment.Text = comment;
+                    lblIFU.Text = name;
+                    fileSelected.Text = name;
+                }
+               
             }
             catch(Exception ex)
             {
@@ -574,7 +629,7 @@ namespace CTBWebsite
 
         protected void uploadPanel(object sender, EventArgs e)
         {
-         
+            Session["CreateClicked"] = true;
 
             if (sender.Equals(UploadTool))
             {
@@ -593,6 +648,8 @@ namespace CTBWebsite
             else
             {
                 mpeReports.Show();
+                lblReportTitle.Text = "Create Report";
+                btnSubmitReport.Text = "Submit Report";
                 LoadReportDropdowns();
             }
 
@@ -602,33 +659,52 @@ namespace CTBWebsite
         {
             if (String.Equals(e.CommandName, "Download_Tool"))
             {
-                ListViewDataItem item = (ListViewDataItem)e.Item;
-                string id = e.CommandArgument.ToString();
-
-                
-                
-
-
-                SqlDataReader reader = getReader("SELECT * FROM Tools WHERE ID=@value1 ORDER BY Name ASC",
-                    int.Parse(id));
-                reader.Read();
-                string path = reader["Path"].ToString();
-                string filename = Path.GetFileName(path);
-                string extension = reader.GetString(7);
-                //   string contentType = 
-                byte[] blob = File.ReadAllBytes(path);
-
-                reader.Close();
-
+                int id = int.Parse(e.CommandArgument.ToString());
+                string path = getPath(id, Tables.Tool);
+                Response.ClearContent();
                 Response.Clear();
-                Response.Buffer = true;
-                Response.Charset = "";
-                Response.Cache.SetCacheability(System.Web.HttpCacheability.NoCache);
-                //Response.ContentType = contentType;
-                Response.AddHeader("content-disposition", $"attachment; filename=\"{filename}\"");
-                Response.BinaryWrite(blob);
+                Response.ContentType = "application/" + Path.GetExtension(path);
+                Response.AddHeader("Content-Disposition",
+                    "attachment; filename=" + Path.GetFileName(path) + ";");
+                Response.TransmitFile(path);
                 Response.Flush();
                 Response.End();
+            }
+            else if (e.CommandName == "Edit_Tool")
+            {
+                Session["CreateClicked"] = false;
+                mpeTools.Show();
+
+                string id = e.CommandArgument.ToString();
+                Session["Edit_ID"] = id;
+
+                string toolName = "";
+                string name = "";
+                string folder_name = "";
+                string comment = "";
+                string version = "";
+
+                tfuDiv.Style.Add("display", "none");
+                tfuHasFile.Style.Add("display", "block");
+
+
+                SqlDataReader reader = getReader("select * from Tools where ID=@value1", int.Parse(id));
+                if (reader.HasRows)
+                {
+                    reader.Read();
+                    toolName = reader.GetValue(1).ToString();
+                    folder_name = reader.GetValue(9).ToString();
+                    name = toolName + reader.GetValue(8).ToString();
+                    comment = reader.GetValue(2).ToString();
+                    version = reader.GetValue(3).ToString();
+                    // updated = ((DateTime)reader.GetValue(4)).ToString("MM/dd/yyyy");
+                    reader.Close();
+                }
+                txtToolName.Text = folder_name;
+                txtVersion.Text = version;
+                lblTFU.Text = name;
+                fileSelected.Text = name;
+                txtReleaseNotes.Text = comment;
             }
         }
 
@@ -645,6 +721,16 @@ namespace CTBWebsite
                 comment = DBNull.Value;
             }
 
+            object author2;
+            if (ddlAuthor2.SelectedValue.Equals("-1"))
+            {
+                author2 = DBNull.Value;
+            }
+            else
+            {
+                author2 = int.Parse(ddlAuthor2.SelectedValue);
+            }
+
 
             string date = lblDateSelected.Value == "" ? txtReportDate.Value : lblDateSelected.Value;
 
@@ -659,7 +745,7 @@ namespace CTBWebsite
                     int.Parse(ddlVehicles.SelectedValue),
                     int.Parse(ddlPhones.SelectedValue),
                     int.Parse(ddlAuthor1.SelectedValue),
-                    int.Parse(ddlAuthor2.SelectedValue), //Need a way to return null
+                    author2, //Need a way to return null
                     DateTime.Parse(date), //this is the date created, if the user does not default it to today
                     Path.GetExtension(rfu.PostedFile.FileName),
                     comment //Comment if the user created one
@@ -668,22 +754,54 @@ namespace CTBWebsite
             }
             else
             {
-                //  update(Tables.Report, id_buffer, 0);
+                int id = int.Parse((string)Session["Edit_ID"]);
+                if (rfu.Value == "")
+                {
+                    string rid = fileSelected.Text.Substring(0, fileSelected.Text.IndexOf('_'));
+                    object[] id_buffer =
+                    {
+                        id,
+                        rid,
+                        int.Parse(ddlCalibration.SelectedValue),
+                        int.Parse(ddlTD1.SelectedValue),
+                        int.Parse(ddlTD2.SelectedValue),
+                        int.Parse(ddlTD3.SelectedValue),
+                        int.Parse(ddlTD4.SelectedValue),
+                        int.Parse(ddlVehicles.SelectedValue),
+                        int.Parse(ddlPhones.SelectedValue),
+                        DateTime.Parse(date),
+                        int.Parse(ddlAuthor1.SelectedValue),
+                        author2, //Need a way to return null
+                        comment //Comment if the user created one
+                    };
+                    update(Tables.Report, id_buffer, id);
+                }
+                else
+                {
+                    object[] id_buffer = {
+                        int.Parse(ddlCalibration.SelectedValue),
+                        int.Parse(ddlTD1.SelectedValue),
+                        int.Parse(ddlTD2.SelectedValue),
+                        int.Parse(ddlTD3.SelectedValue),
+                        int.Parse(ddlTD4.SelectedValue),
+                        int.Parse(ddlVehicles.SelectedValue),
+                        int.Parse(ddlPhones.SelectedValue),
+                        int.Parse(ddlAuthor1.SelectedValue),
+                        author2, //Need a way to return null
+                        DateTime.Parse(date), //this is the date created, if the user does not default it to today
+                        Path.GetExtension(rfu.PostedFile.FileName),
+                        comment //Comment if the user created one
+                    };
+                    write(Tables.Report, id_buffer, rfu.PostedFile);
+                    inactive(Tables.Report, id);
+                }
             }
 
             redirectSafely("~/GlobalADefault");
 
         }
 
-        protected void CreateReport_OnClick(object sender, EventArgs e)
-        {
-            Session["CreateClicked"] = true;
-            mpeReports.Show();
-            lblReportTitle.Text = "Create Report";
-            btnSubmitReport.Text = "Submit Report";
-            LoadReportDropdowns();
-        }
-
+    
         public void LoadReportDropdowns()
         {
             ddlVehicles.Items.Clear();
@@ -801,7 +919,6 @@ namespace CTBWebsite
                         int.Parse(ddlFileType.SelectedValue),
                         int.Parse(ddlFilePhone.SelectedValue),
                         DateTime.Parse(date), //this is the date created, if the user does not default it to today
-                        DateTime.Now,
                         int.Parse(ddlFileAuthor1.SelectedValue),
                         author2, //Need a way to return null
                         int.Parse(ddlFileVehicle.SelectedValue),
@@ -836,54 +953,117 @@ namespace CTBWebsite
 
             redirectSafely("~/GlobalADefault");
         }
-
-        protected void UploadFile_OnClick(object sender, EventArgs e)
-        {
-            Session["CreateClicked"] = true;
-            mpeFiles.Show();
-            LoadFileDropdowns();
-        }
+     
 
         protected void uploadImage(object sender, EventArgs e)
         {
 
             object comment = txtImageComment.Text;
-            if (((string)comment).Length > 255)
+            if (((string) comment).Length > 255)
             {
                 //this throws an exception until there's a way to give user feedback
                 throw new ArgumentException("Filename is too long, database only accepts 255 or less");
             }
-            else if (((string)comment).Equals(""))
+            else if (((string) comment).Equals(""))
             {
                 comment = DBNull.Value;
             }
 
-            object[] id_buffer =
+            string date = lblDateSelected.Value == "" ? txtImageDate.Value : lblDateSelected.Value;
+
+            if ((bool) Session["CreateClicked"])
             {
+                object[] id_buffer =
+                {
                     int.Parse(ddlImageVehicle.SelectedValue),
-                    int.Parse(ddlAuthor1.SelectedValue),
-                    lblDateSelected.Value, //this is the date created, if the user does not default it to today
+                    Session["Alna_num"],
+                    DateTime.Parse(date), //this is the date created, if the user does not default it to today
                     Path.GetExtension(ifu.PostedFile.FileName),
                     comment //Comment if the user created one
                 };
-
-            write(Tables.Image, id_buffer, ifu.PostedFile);
+                write(Tables.Image, id_buffer, ifu.PostedFile);
+            }
+            else
+            {
+                if (ifu.Value == "")
+                {
+                    string iid = fileSelected.Text.Substring(0, fileSelected.Text.IndexOf('_'));
+                    int id = int.Parse(iid.Substring(1));
+                    object[] id_buffer =
+                    {
+                        id,
+                        iid,
+                        int.Parse(ddlImageVehicle.SelectedValue),
+                        Session["Alna_num"],
+                        DateTime.Parse(date), //this is the date created, if the user does not default it to today
+                        comment //Comment if the user created one
+                    };
+                    update(Tables.Image, id_buffer, id);
+                }
+                else
+                {
+                    int id = int.Parse((string)Session["Edit_ID"]);
+                    object[] id_buffer =
+                    {
+                        int.Parse(ddlImageVehicle.SelectedValue),
+                        Session["Alna_num"],
+                        DateTime.Parse(date), //this is the date created, if the user does not default it to today
+                        Path.GetExtension(ifu.PostedFile.FileName),
+                        comment //Comment if the user created one
+                    };
+                    write(Tables.Image, id_buffer, ifu.PostedFile);
+                    inactive(Tables.Image, id);
+                }
+            }
+            redirectSafely("~/GlobalADefault");
         }
 
         protected void btnUploadTool_Click(object sender, EventArgs e)
         {
-            string path = Path.Combine(TOOLS_PATH, tfu.PostedFile.FileName);
-
-            object[] o =
+            if ((bool) Session["CreateClicked"])
             {
-                    txtFileName.Text, txtFileDescription.Text, txtVersion.Text, DateTime.Now, Session["Alna_num"], path,
-                    Path.GetExtension(path)
+                object[] id_buffer =
+                {
+                    txtToolName.Text,
+                    txtReleaseNotes.Text,
+                    txtVersion.Text,
+                    Session["Alna_num"],
+                    Path.GetExtension(tfu.PostedFile.FileName)
                 };
-            executeVoidSQLQuery(
-                "INSERT INTO Tools (Name, Comment, Version, Date_updated, Alna_num, Path, Extension) values" +
-                "(@value1, @value2, @value3, @value4, @value5, @value6, @value7)", o);
+                write(Tables.Tool, id_buffer, tfu.PostedFile);
+            }
+            else
+            {
 
-            tfu.PostedFile.SaveAs(path);
+                int id = int.Parse((string)Session["Edit_ID"]);
+                if (tfu.Value == "")
+                {
+                    string tid = fileSelected.Text.Substring(0, fileSelected.Text.IndexOf('_'));
+                    object[] id_buffer =
+                    {
+                        id,
+                        tid,
+                        txtToolName.Text,
+                        txtReleaseNotes.Text,
+                        txtVersion.Text,
+                    };
+                    update(Tables.Tool, id_buffer, id);
+                }
+                else
+                {
+                    object[] id_buffer =
+                    {
+                        txtToolName.Text,
+                        txtReleaseNotes.Text,
+                        txtVersion.Text,
+                        Session["Alna_num"],
+                        Path.GetExtension(tfu.PostedFile.FileName)
+                    };
+                    write(Tables.Tool, id_buffer, tfu.PostedFile);
+                    inactive(Tables.Tool, id);
+                }
+            }
+            redirectSafely("~/GlobalADefault");
         }
 
         //===========================================================

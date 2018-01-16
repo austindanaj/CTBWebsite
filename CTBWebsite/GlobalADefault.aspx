@@ -172,7 +172,7 @@
                                             <asp:TemplateField HeaderText="Report" SortExpression="Report_Name">
                                                 <ItemTemplate>
                                                     <asp:LinkButton runat="server" AutoPostBack="true" ID="lnkReportFile"
-                                                        CommandName="Download_File" CommandArgument='<%#Eval("Report_Path") + "," + Eval("Report_Ext") %>'
+                                                        CommandName="Download_File" CommandArgument='<%#"R_" + Eval("ID")%>'
                                                         Text='<%# Eval("Report_Name") %>'></asp:LinkButton>
                                                 </ItemTemplate>
                                             </asp:TemplateField>
@@ -191,35 +191,35 @@
                                             <asp:TemplateField HeaderText="Calibration" SortExpression="Calibration_Name">
                                                 <ItemTemplate>
                                                     <asp:LinkButton runat="server" ID="lnkReportCalibration"
-                                                        CommandName="Download_File" CommandArgument='<%#Eval("Calibration_Path") + "," + Eval("Calibration_Ext") %>'
-                                                        Text='<%# Eval("Calibration_Name") %>'></asp:LinkButton>
+                                                        CommandName="Download_File" CommandArgument='<%#"F_" + Eval("TD0_ID")%>'
+                                                        Text='<%# Eval("TD0_Name") %>'></asp:LinkButton>
                                                 </ItemTemplate>
                                             </asp:TemplateField>
                                             <asp:TemplateField HeaderText="TD1" SortExpression="TD1_Name">
                                                 <ItemTemplate>
                                                     <asp:LinkButton runat="server" ID="lnkReportTD1"
-                                                        CommandName="Download_File" CommandArgument='<%#Eval("TD1_Path") + "," + Eval("TD1_Ext")%>'
+                                                        CommandName="Download_File" CommandArgument='<%#"F_" + Eval("TD1_ID")%>'
                                                         Text='<%# Eval("TD1_Name") %>'></asp:LinkButton>
                                                 </ItemTemplate>
                                             </asp:TemplateField>
                                             <asp:TemplateField HeaderText="TD2" SortExpression="TD2_Name">
                                                 <ItemTemplate>
                                                     <asp:LinkButton runat="server" ID="lnkReportTD2"
-                                                        CommandName="Download_File" CommandArgument='<%#Eval("TD2_Path") + "," + Eval("TD2_Ext") %>'
+                                                        CommandName="Download_File" CommandArgument='<%#"F_" + Eval("TD2_ID") %>'
                                                         Text='<%# Eval("TD2_Name") %>'></asp:LinkButton>
                                                 </ItemTemplate>
                                             </asp:TemplateField>
                                             <asp:TemplateField HeaderText="TD3" SortExpression="TD3_Name">
                                                 <ItemTemplate>
                                                     <asp:LinkButton runat="server" ID="lnkReportTD3"
-                                                        CommandName="Download_File" CommandArgument='<%#Eval("TD3_Path") + "," + Eval("TD3_Ext") %>'
+                                                        CommandName="Download_File" CommandArgument='<%#"F_" + Eval("TD3_ID") %>'
                                                         Text='<%# Eval("TD3_Name") %>'></asp:LinkButton>
                                                 </ItemTemplate>
                                             </asp:TemplateField>
                                             <asp:TemplateField HeaderText="TD4" SortExpression="TD4_Name">
                                                 <ItemTemplate>
                                                     <asp:LinkButton runat="server" ID="lnkReportTD4"
-                                                        CommandName="Download_File" CommandArgument='<%#Eval("TD4_Path") + "," + Eval("TD4_Ext") %>'
+                                                        CommandName="Download_File" CommandArgument='<%#"F_" + Eval("TD4_ID")%>'
                                                         Text='<%# Eval("TD4_Name") %>'></asp:LinkButton>
                                                 </ItemTemplate>
                                             </asp:TemplateField>
@@ -343,7 +343,7 @@
                                             <asp:TemplateField HeaderText="Name" SortExpression="F_Name">
                                                 <ItemTemplate>
                                                     <asp:LinkButton runat="server" ID="lnkDownload"
-                                                        CommandName="Download_File" CommandArgument='<%#Eval("F_Path") + "," + Eval("F_Ext") %>'
+                                                        CommandName="Download_File" CommandArgument='<%#"F_" + Eval("ID")%>'
                                                         Text='<%# Eval("F_Name") %>'></asp:LinkButton>
                                                 </ItemTemplate>
                                             </asp:TemplateField>
@@ -459,6 +459,13 @@
                                         AutoGenerateColumns="False"
                                         CssClass="table table-bordered table-responsive">
                                         <Columns>
+                                            <asp:TemplateField>
+                                                <ItemTemplate>
+                                                    <asp:LinkButton runat="server" AutoPostBack="true" ID="lnkEditImage"
+                                                        CommandName="Edit_Image" CommandArgument='<%#Eval("ID")%>'
+                                                        Text='Edit'></asp:LinkButton>
+                                                </ItemTemplate>
+                                            </asp:TemplateField>
                                             <asp:TemplateField HeaderText="ID" SortExpression="ID">
                                                 <ItemTemplate>
                                                     <asp:Label runat="server"
@@ -468,7 +475,7 @@
                                             <asp:TemplateField HeaderText="Name" SortExpression="Name">
                                                 <ItemTemplate>
                                                     <asp:LinkButton runat="server" ID="lnkImageFile"
-                                                        CommandName="Download_File" CommandArgument='<%#Eval("Image_Path") + "," + Eval("Image_Ext") %>'
+                                                        CommandName="Download_File" CommandArgument='<%#"I_" + Eval("ID")%>'
                                                         Text='<%# Eval("Image_Name") %>'></asp:LinkButton>
                                                 </ItemTemplate>
                                             </asp:TemplateField>
@@ -549,7 +556,7 @@
                                     <br />
                                     <div>
                                         <b>
-                                            <asp:LinkButton ID="lblToolClick" CssClass="itemTitle" CommandName="Download_Tool" CommandArgument='<%#Eval("ID") %>' runat="server" Text='<%#Eval("Name")%>' />
+                                            <asp:LinkButton ID="lblToolClick" CssClass="itemTitle" CommandName="Download_Tool" CommandArgument='<%#Eval("ID") %>' runat="server" Text='<%#Eval("Folder_Name")%>' />
                                         </b>
                                     </div>
                                     <div>
@@ -640,12 +647,12 @@
                 <div class="form-signin">
                     <div class="modalReportHeader">
                         <div class="row" style="padding-left: 15px;">
-                            
-                        <asp:UpdatePanel runat="server">
-                        <ContentTemplate>
-                            <asp:Label ID="lblReportTitle" runat="server" Style="font-size: 32px; font: bold;" Text="Create Report" />
-                            </ContentTemplate>
-                        </asp:UpdatePanel>
+
+                            <asp:UpdatePanel runat="server">
+                                <ContentTemplate>
+                                    <asp:Label ID="lblReportTitle" runat="server" Style="font-size: 32px; font: bold;" Text="Create Report" />
+                                </ContentTemplate>
+                            </asp:UpdatePanel>
                             <span id="CancelClickedReport" runat="server" class="close">&times;</span>
                         </div>
 
@@ -964,7 +971,7 @@
 
                                             <input runat="server" onchange="setfile(1)" id="ffu" type="file" name="file" />
                                             <asp:RequiredFieldValidator ID="RequiredFieldValidator15" ForeColor="Red"
-                                                ControlToValidate="fileSelected" 
+                                                ControlToValidate="fileSelected"
                                                 InitialValue=""
                                                 ValidationGroup="UploadGroup"
                                                 ErrorMessage="Select a File."
@@ -1032,7 +1039,6 @@
                                             runat="Server">
                                         </asp:RequiredFieldValidator>
                                     </div>
-
                                 </div>
 
                                 <div class="row" style="padding-right: 15px; padding-left: 15px;">
@@ -1050,13 +1056,10 @@
                                             runat="Server">
                                         </asp:RequiredFieldValidator>
                                     </div>
-
                                 </div>
 
 
                                 <div class="row" style="padding-right: 15px; padding-left: 15px;">
-
-
                                     <div class="form-group" id="ifuDiv" runat="server">
                                         <input runat="server" onchange="setfile(2)" id="ifu" type="file" name="file" />
                                         <asp:RequiredFieldValidator ID="RequiredFieldValidator25" ForeColor="Red"
@@ -1071,31 +1074,25 @@
                                         <asp:Label ID="lblIFU" runat="server" Style="font-size: 20px; font: bold;" Text="Testing" />
                                         <span onclick="clearfile(2)" style="color: #333333" class="close">&times;</span>
                                     </div>
-
-
                                 </div>
 
                                 <div class="row" style="padding-right: 15px; padding-left: 15px;">
                                     <div class="form-group">
                                         <asp:TextBox ID="txtImageComment" placeholder="Comment" runat="server" Style="max-height: 200px; max-width: 100%;" Height="200px" CssClass="form-control" TextMode="MultiLine"></asp:TextBox>
                                     </div>
-
-
                                 </div>
-
-
 
 
                                 <div class="row" style="padding-right: 15px; padding-left: 15px;">
                                     <div class="form-group">
-                                        <asp:Button ID="btnUploadImage" class="btn btn-lg btn-primary btn-block btn-signin" runat="server" Text="Upload Image" type="submit" ValidationGroup="ImageGroup" />
+                                        <asp:Button ID="btnUploadImage" OnClick="uploadImage" class="btn btn-lg btn-primary btn-block btn-signin" runat="server" Text="Upload Image" type="submit" ValidationGroup="ImageGroup" />
                                     </div>
                                 </div>
                             </ContentTemplate>
+                            <Triggers>
+                                <asp:PostBackTrigger ControlID="btnUploadImage" />
+                            </Triggers>
                         </asp:UpdatePanel>
-
-
-
                     </div>
                 </div>
             </div>
@@ -1115,69 +1112,76 @@
                         <br />
                     </div>
                     <div>
-                        <div class="row" style="padding-right: 15px; padding-left: 15px;">
-                            <div class="form-group">
-                                <asp:TextBox ID="txtFileName" Style="margin-bottom: 0px;" placeholder="Tool Name" runat="server" CssClass="form-control"></asp:TextBox>
-                                <asp:RequiredFieldValidator ID="RequiredFieldValidator19" ForeColor="Red"
-                                    ControlToValidate="txtFileName" InitialValue=""
-                                    ValidationGroup="ToolGroup"
-                                    ErrorMessage="Enter a name."
-                                    runat="Server">
-                                </asp:RequiredFieldValidator>
-                            </div>
-                        </div>
+                        <asp:UpdatePanel runat="server">
+                            <ContentTemplate>
+                                <div class="row" style="padding-right: 15px; padding-left: 15px;">
+                                    <div class="form-group">
+                                        <asp:TextBox ID="txtToolName" Style="margin-bottom: 0px;" placeholder="Tool Name" runat="server" CssClass="form-control"></asp:TextBox>
+                                        <asp:RequiredFieldValidator ID="RequiredFieldValidator19" ForeColor="Red"
+                                            ControlToValidate="txtToolName" InitialValue=""
+                                            ValidationGroup="ToolGroup"
+                                            ErrorMessage="Enter a name."
+                                            runat="Server">
+                                        </asp:RequiredFieldValidator>
+                                    </div>
+                                </div>
 
 
-                        <div class="row" style="padding-right: 15px; padding-left: 15px;">
-                            <div class="form-group">
-                                <asp:TextBox ID="txtVersion" Style="margin-bottom: 0px;" placeholder="Version" runat="server" CssClass="form-control"></asp:TextBox>
-                                <asp:RequiredFieldValidator ID="RequiredFieldValidator20" ForeColor="Red"
-                                    ControlToValidate="txtVersion" InitialValue=""
-                                    ValidationGroup="ToolGroup"
-                                    ErrorMessage="Enter a version number."
-                                    runat="Server">
-                                </asp:RequiredFieldValidator>
-                            </div>
-                        </div>
+                                <div class="row" style="padding-right: 15px; padding-left: 15px;">
+                                    <div class="form-group">
+                                        <asp:TextBox ID="txtVersion" Style="margin-bottom: 0px;" placeholder="Version" runat="server" CssClass="form-control"></asp:TextBox>
+                                        <asp:RequiredFieldValidator ID="RequiredFieldValidator20" ForeColor="Red"
+                                            ControlToValidate="txtVersion" InitialValue=""
+                                            ValidationGroup="ToolGroup"
+                                            ErrorMessage="Enter a version number."
+                                            runat="Server">
+                                        </asp:RequiredFieldValidator>
+                                    </div>
+                                </div>
 
-                        <div class="row" style="padding-right: 15px; padding-left: 15px;">
-
-
-                            <div class="form-group" id="tfuDiv" runat="server">
-                                <input runat="server" onchange="setfile(3)" id="tfu" type="file" name="file" />
-                                <asp:RequiredFieldValidator ID="RequiredFieldValidator26" ForeColor="Red"
-                                    InitialValue=""
-                                    ControlToValidate="fileSelected"
-                                    ValidationGroup="ToolGroup"
-                                    ErrorMessage="Select a File."
-                                    runat="Server">
-                                </asp:RequiredFieldValidator>
-                            </div>
-                            <div class="form-group" style="display: none" id="tfuHasFile" runat="server">
-                                <asp:Label ID="lblTFU" runat="server" Style="font-size: 20px; font: bold;" Text="Testing" />
-                                <span onclick="clearfile(3)" style="color: #333333" class="close">&times;</span>
-                            </div>
+                                <div class="row" style="padding-right: 15px; padding-left: 15px;">
 
 
+                                    <div class="form-group" id="tfuDiv" runat="server">
+                                        <input runat="server" onchange="setfile(3)" id="tfu" type="file" name="file" />
+                                        <asp:RequiredFieldValidator ID="RequiredFieldValidator26" ForeColor="Red"
+                                            InitialValue=""
+                                            ControlToValidate="fileSelected"
+                                            ValidationGroup="ToolGroup"
+                                            ErrorMessage="Select a File."
+                                            runat="Server">
+                                        </asp:RequiredFieldValidator>
+                                    </div>
+                                    <div class="form-group" style="display: none" id="tfuHasFile" runat="server">
+                                        <asp:Label ID="lblTFU" runat="server" Style="font-size: 20px; font: bold;" Text="Testing" />
+                                        <span onclick="clearfile(3)" style="color: #333333" class="close">&times;</span>
+                                    </div>
 
 
 
 
-                        </div>
-
-                        <div class="row" style="padding-right: 15px; padding-left: 15px;">
-                            <div class="form-group">
-                                <asp:TextBox ID="txtFileDescription" placeholder="Release Notes" runat="server" CssClass="form-control" Style="max-height: 200px; max-width: 100%;" Height="200px" TextMode="MultiLine"></asp:TextBox>
-
-                            </div>
-                        </div>
 
 
-                        <div class="row" style="padding-right: 15px; padding-left: 15px;">
-                            <div class="form-group">
-                                <asp:Button ID="btnUploadTool" ValidationGroup="ToolGroup" OnClick="btnUploadTool_Click" class="btn btn-lg btn-primary btn-block btn-signin" runat="server" Text="Add New Tool" type="submit" />
-                            </div>
-                        </div>
+                                </div>
+
+                                <div class="row" style="padding-right: 15px; padding-left: 15px;">
+                                    <div class="form-group">
+                                        <asp:TextBox ID="txtReleaseNotes" placeholder="Release Notes" runat="server" CssClass="form-control" Style="max-height: 200px; max-width: 100%;" Height="200px" TextMode="MultiLine"></asp:TextBox>
+
+                                    </div>
+                                </div>
+
+
+                                <div class="row" style="padding-right: 15px; padding-left: 15px;">
+                                    <div class="form-group">
+                                        <asp:Button ID="btnUploadTool" ValidationGroup="ToolGroup" OnClick="btnUploadTool_Click" class="btn btn-lg btn-primary btn-block btn-signin" runat="server" Text="Add New Tool" type="submit" />
+                                    </div>
+                                </div>
+                            </ContentTemplate>
+                            <Triggers>
+                                <asp:PostBackTrigger ControlID="btnUploadTool" />
+                            </Triggers>
+                        </asp:UpdatePanel>
                     </div>
                 </div>
             </div>
