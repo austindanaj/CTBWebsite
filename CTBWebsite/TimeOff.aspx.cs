@@ -19,8 +19,6 @@ namespace CTBWebsite
                 return;
             }
 
-            openDBConnection();
-
             if (!IsPostBack)
             {
                 //cldTimeOffStart.SelectedDate = DateTime.Now;
@@ -34,8 +32,7 @@ namespace CTBWebsite
         }
         private void init()
         {
-
-            objConn.Open();
+         
             SqlDataReader reader = getReader("select ID, Start, TimeOff.[End] from TimeOff where Alna_num=@value1 ORDER BY ID desc", Session["Alna_num"]);
             if (reader == null)
             {
@@ -120,7 +117,6 @@ namespace CTBWebsite
 
             gv.DataSource = gridview;
             gv.DataBind();
-            objConn.Close();
         }
 
         private TimeOff.DATE_VALID validCalendarSelection(Date start, Date end)
@@ -138,7 +134,7 @@ namespace CTBWebsite
             return DATE_VALID.VALID;
         }
 
-        private bool doesntConflict(SqlConnection o, Date start, Date end)
+        private bool doesntConflict(Date start, Date end)
         {
             SqlDataReader reader = getReader("Select TimeOff.[Start], TimeOff.[End] from TimeOff where Alna_num=@value1", Session["Alna_num"]);
             if (reader == null) return false;
@@ -194,9 +190,9 @@ namespace CTBWebsite
                     break;
             }
 
-            objConn.Open();
+        
 
-            if (!doesntConflict(objConn, start, end))
+            if (!doesntConflict( start, end))
             {
                 throwJSAlert("This time conflicts with another vacation time you have.");
                 return;
@@ -204,8 +200,6 @@ namespace CTBWebsite
 
             object[] o = { Session["Alna_num"], start, end, chkBusinessTrip.Checked };
             executeVoidSQLQuery("INSERT INTO TimeOff (Alna_num, TimeOff.[Start], TimeOff.[End], Business) VALUES (@value1, @value2, @value3, @value4);", o);
-
-            objConn.Close();
             Session["success?"] = true;
             redirectSafely("~/TimeOff");
         }

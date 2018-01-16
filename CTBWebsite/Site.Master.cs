@@ -79,12 +79,7 @@ namespace CTBWebsite
                     string userName = Request.Cookies["userName"].Value;
                     Response.Cookies["userName"].Value = userName;
                     Response.Cookies["userName"].Expires = DateTime.Now.AddDays(10);
-
-                   // sql.objConn = new SqlConnection(SuperPage.LOCAL_TO_SERVER_CONNECTION_STRING);
-                    sql.openDBConnection();
-                    sql.objConn.Open();
-                  
-
+             
                     SqlDataReader reader = sql.getReader("Select Alna_num, Name, Full_time, Vehicle from Employees where Employees.[Name]=@value1;", Server.HtmlEncode(Request.Cookies["userName"].Value));
                     reader.Read();
                     Session["Alna_num"] = reader.GetValue(0);
@@ -103,9 +98,6 @@ namespace CTBWebsite
 
         private void loadEmployees()
         {
-
-            sql.openDBConnection();
-            sql.objConn.Open();
             SqlDataReader reader = sql.getReader("SELECT Name FROM Employees where Active=@value1 Order By Name;", true);
 
             while (reader.Read())
@@ -176,9 +168,6 @@ namespace CTBWebsite
 
             try
             {
-                sql.openDBConnection();
-                sql.objConn.Open();
-
                 object[] o = { inputUsername.Value, inputPassword.Value };
                 SqlDataReader reader = sql.getReader("SELECT User, Admin FROM Accounts WHERE Accounts.[User]=@value1 and Accounts.[Pass]=@value2", o);
                 if (reader == null)

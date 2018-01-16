@@ -598,9 +598,9 @@ namespace CTBWebsite
                     ifuHasFile.Style.Add("display", "block");
 
 
-                    openDBConnection();
-                    if (objConn.State == ConnectionState.Closed)
-                        objConn.Open();
+                //    openDBConnection();
+              //      if (objConn.State == ConnectionState.Closed)
+                //        objConn.Open();
 
                     SqlDataReader reader = getReader("select * from Pictures where ID=@value1", int.Parse(id));
                     if (reader.HasRows)

@@ -61,9 +61,6 @@ namespace CTBWebsite {
 
         public void initDate()
         {
-            bool state = objConn.State == ConnectionState.Closed;
-            if (state)
-                objConn.Open();
 
             SqlDataReader reader = getReader("select top 1 Dates, ID from Dates order by ID DESC;");
             if (reader == null) return;
@@ -93,34 +90,37 @@ namespace CTBWebsite {
                 Session["Date"] = date;
                 Session["Date_ID"] = id;
             }
-
-            if (state)
-                objConn.Close();
         }
 
         private object sqlExecuter(object o, SqlTypes type) {
             openDBConnection();
-            objConn.Open();
-
+            if(objConn.State == ConnectionState.Closed)
+                objConn.Open();
+            SqlCommand cmd;
             object returnVal;
             switch (type)
             {
                 case SqlTypes.DataReader:
-                    returnVal = ((SqlCommand)o).ExecuteReader();
+                    cmd = (SqlCommand) o;
+                    cmd.Connection = objConn;
+                    returnVal = cmd.ExecuteReader();
                     break;
                 case SqlTypes.VoidQuery:
-                    returnVal = ((SqlCommand)o).ExecuteNonQuery();
+                    cmd = (SqlCommand)o;
+                    cmd.Connection = objConn;
+                    returnVal = cmd.ExecuteNonQuery();
                     break;
                 default:
                     object[] adapterAndDataSet = (object[])o;
                     SqlDataAdapter objAdapter = (SqlDataAdapter)adapterAndDataSet[0];
+                    objAdapter.SelectCommand.Connection = objConn;
                     DataSet objDataSet = (DataSet)adapterAndDataSet[1];
                     objAdapter.Fill(objDataSet);
                     returnVal = objDataSet;
                     break;
             }
 
-            objConn.Close();
+         //   objConn.Close();
             return returnVal;
         }
 
@@ -130,12 +130,15 @@ namespace CTBWebsite {
         private object executeVoidSQLQuery(SqlCommand cmd)
         {
             cmd.Parameters.Add("@ReturnVal", SqlDbType.Int).Direction = ParameterDirection.Output;
+            sqlExecuter(cmd, SqlTypes.VoidQuery);
             return cmd.Parameters["@ReturnVal"].Value;
         }
 
         public object executeVoidSQLQuery(string command)
         {
-            SqlCommand objCmd = new SqlCommand(command, this.objConn);
+
+            SqlCommand objCmd = new SqlCommand(command);
+          //  return sqlExecuter(objCmd, SqlTypes.VoidQuery);
             return executeVoidSQLQuery(objCmd);
         }
 
@@ -147,7 +150,7 @@ namespace CTBWebsite {
             {
                 objCmd.Parameters.AddWithValue("@value1", parameter);
             }
-            return executeVoidSQLQuery(objCmd);
+            return sqlExecuter(objCmd, SqlTypes.VoidQuery);
         }
 
         public object executeVoidSQLQuery(string command, object[] parameters) {
@@ -328,10 +331,7 @@ namespace CTBWebsite {
 			}
 
 
-			if (objConn.State == ConnectionState.Closed)
-                openDBConnection();
-			bool state = objConn.State == ConnectionState.Closed;
-			if (state) objConn.Open();
+		
 			DataTable employeesData;
 			DataTable modelData;
 
@@ -357,7 +357,7 @@ namespace CTBWebsite {
 			}
 
 			DataTable hoursData = getDataTable("select Alna_num, " + innerID + ", Hours_worked from " + hoursTable + " where Date_ID=" + constraint, date);
-			if (state) objConn.Close();
+			//if (state) objConn.Close();
 
 			if (null == employeesData || null == modelData || null == hoursData)
 				return null;
@@ -567,7 +567,7 @@ namespace CTBWebsite {
 
     public class IOPage : SuperPage
     {
-        protected enum Tables {Report, File, Image, Tool};
+        public enum Tables {Report, File, Image, Tool};
         protected static readonly string HOME = @"\\AHMARVIN\Engineering\Core EE\CTB\GM_BLE_PEPS_measurement result\DONT MOVE THIS FOLDER\";
         protected static readonly string SERVER = Path.Combine(HOME, @"GAFMS\");
 
@@ -677,8 +677,8 @@ namespace CTBWebsite {
             // If the insertion succeeds and the write fails, we need to remove it from the database because the file already exists. This
             // requires that we delete the most recently inserted file.
             int id;
-            if (objConn.State == ConnectionState.Closed)
-                objConn.Open();
+          //  if (objConn.State == ConnectionState.Closed)
+          //      objConn.Open();
             try
             {
                 id = (int)executeVoidSQLQuery(insertionQuery, insertionData);
@@ -688,8 +688,8 @@ namespace CTBWebsite {
                 return;
             }
 
-            if (objConn.State == ConnectionState.Closed)
-                objConn.Open();
+         //   if (objConn.State == ConnectionState.Closed)
+         //       objConn.Open();
             try
             {
 
@@ -726,7 +726,7 @@ namespace CTBWebsite {
             return File.ReadAllBytes(filename);
         }
 
-        private string getPath(int id, Tables table)
+        public string getPath(int id, Tables table)
         {
             string query;
             switch (table)

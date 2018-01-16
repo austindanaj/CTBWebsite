@@ -17,17 +17,17 @@ namespace CTBWebsite
 				return;
 			}
 
-            openDBConnection();
+         
             if (!IsPostBack)
             {
-                objConn.Open();
+         
                 populateInternSchedules(dgvSchedule, ddlSelectScheduleDay);
-                populateScheduledHoursDdl(objConn);
-                objConn.Close();
+                populateScheduledHoursDdl();
+               
             }
         }
 
-        private void populateScheduledHoursDdl(SqlConnection objConn)
+        private void populateScheduledHoursDdl()
         {
             ddlScheduledHours.Items.Clear();
 
@@ -36,7 +36,6 @@ namespace CTBWebsite
             if (!reader.HasRows)            {
                
                 reader.Close();
-                objConn.Close();
                 return;
             }
 
@@ -45,7 +44,6 @@ namespace CTBWebsite
                 ddlScheduledHours.Items.Add("ID#" + reader.GetInt32(0) + ">" + military_to_standard(reader.GetInt16(1)) + " - " + military_to_standard(reader.GetInt16(2)));
             }
             reader.Close();
-            objConn.Close();
         }
 
         //----------------------------------------------------------------
@@ -54,11 +52,8 @@ namespace CTBWebsite
         protected void changeScheduleDay(object sender, EventArgs e)
         {
             Session["weekday"] = ddlSelectScheduleDay.SelectedIndex + 1;
-            
-            objConn.Open();
             populateInternSchedules(dgvSchedule, ddlSelectScheduleDay);
-            populateScheduledHoursDdl(objConn);
-            objConn.Close();
+            populateScheduledHoursDdl();
         }
 
         protected void saveOrDelete(object sender, EventArgs e)
@@ -135,8 +130,7 @@ namespace CTBWebsite
                     throwJSAlert("You are starting too early or ending too late. Earliest start is 6am, latest time you can be here is 7pm.");
                     return;
                 }
-
-                objConn.Open();
+              
                 object[] obj = { Session["Alna_num"], ddlDay.SelectedIndex + 1 };
                 SqlDataReader reader = getReader("select TimeStart, TimeEnd from Schedule where Alna_num=@value1 and DayOfWeek=@value2", obj);
                 while (reader.Read())
@@ -145,7 +139,6 @@ namespace CTBWebsite
                     if ((compareStart <= start & compareEnd >= start) | (compareStart <= end & compareEnd >= end) | (compareStart >= start & end >= compareEnd))
                     {
                         reader.Close();
-                        objConn.Close();
                         throwJSAlert("Conflicts with another schedule entry you have. Make sure that the day you want to add is selected in the dropdown, you may be adding it for Monday on accident.");
                         return;
                     }
@@ -165,10 +158,10 @@ namespace CTBWebsite
                     throwJSAlert("Something was wrong with the dropdown selection. It wasn't an integer.");
                     return;
                 }
-                objConn.Open();
+             
                 executeVoidSQLQuery("delete from Schedule where ID=@value1", id);
                 populateInternSchedules(dgvSchedule, ddlSelectScheduleDay);
-                populateScheduledHoursDdl(objConn);
+                populateScheduledHoursDdl();
             }
         }
     }

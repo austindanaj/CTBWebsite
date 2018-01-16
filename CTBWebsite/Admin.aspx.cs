@@ -23,8 +23,7 @@ namespace CTBWebsite
                 redirectSafely("~/Default");
                 return;
             }
-            openDBConnection();
-
+            
             if (!IsPostBack)
             {
                 populateTables();
@@ -101,26 +100,9 @@ namespace CTBWebsite
             }
 
             executeVoidSQLQuery("INSERT INTO Vehicles (Name, Abbreviation) VALUES (@value1, @value2);", new object[] { text.Replace(" ", "_"), txtCarAbbreviation.Text });
-
-          //  CreateDirectoryStructure("//AHMARVIN/Engineering/Core EE/CTB/GM_BLE_PEPS_measurement result/DONT MOVE THIS FOLDER/GAFMS/" + text);
-            
-
-
-
-
-
-
             Session["success?"] = true;
             redirectSafely("~/Admin");
         }
-
-        /*
-        private void CreateDirectoryStructure(string path)
-        {
-            Directory.CreateDirectory(path);
-        }
-        */
-
         protected void remove(object sender, EventArgs e)
         {
             string command;
@@ -176,8 +158,7 @@ namespace CTBWebsite
                 g.DataSource = getDataTable((string)args[0], true);
                 g.DataBind();
             });
-
-            objConn.Open();
+          
             object[] parameters = { "SELECT Alna_num, Employees.[Name], Full_time, Vehicle from Employees where Active=@value1 ORDER BY Alna_num", dgvUsers };
             populate(parameters);
             parameters[0] = "SELECT ID, Vehicles.[Name] FROM Vehicles where Active=@value1;";
@@ -189,7 +170,6 @@ namespace CTBWebsite
             parameters[0] = "select IssueList.ID, IssueList.Title, e.Name as Employee from IssueList inner join Employees e on e.Alna_num=IssueList.Reporter where IssueList.Active=@value1;";
             parameters[1] = dgvIssues;
             populate(parameters);
-            objConn.Close();
         }
     }
 }

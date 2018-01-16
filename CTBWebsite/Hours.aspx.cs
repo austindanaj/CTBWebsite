@@ -21,7 +21,7 @@ namespace CTBWebsite
 			}
             
 
-            openDBConnection();
+           // openDBConnection();
 
             if (!IsPostBack)
             {
@@ -47,7 +47,7 @@ namespace CTBWebsite
 
         private void getData()
         {
-            objConn.Open();
+         //   objConn.Open();
 
             if ((bool)Session["Active"])
             {
@@ -64,7 +64,7 @@ namespace CTBWebsite
             projectHoursData = getDataTable("select ID, Alna_num, Proj_ID, Hours_worked from ProjectHours where Date_ID=@value1", Session["Date_ID"]);
             vehicleHoursData = getDataTable("select ID, Alna_num, Vehicle_ID, Hours_worked from VehicleHours where Date_ID=@value1", Session["Date_ID"]);
             datesData = getDataTable("select Dates from Dates order by Dates desc");
-            objConn.Close();
+          //  objConn.Close();
 
             if (projectData == null || vehiclesData == null || projectHoursData == null || vehicleHoursData == null || datesData == null)
             {
@@ -142,7 +142,7 @@ namespace CTBWebsite
             leftButton.Visible = true;
             rightButton.Visible = true;
 
-            objConn.Close();
+           // objConn.Close();
         }
 
         protected void TriggerEvent(object sender, EventArgs e)
@@ -155,13 +155,11 @@ namespace CTBWebsite
                     throw new ArgumentException("Your date entered is bad; we forgot to add logic to check it, reenter it with a correct date and it'll work");
                 }
                 Session["Date"] = selection;
-                objConn.Open();
-                SqlCommand cmd = new SqlCommand("select ID from Dates where Dates=@value1", objConn);
-                cmd.Parameters.AddWithValue("@value1", selection);
-                SqlDataReader reader = cmd.ExecuteReader();
+          
+                SqlDataReader reader = getReader("select ID from Dates where Dates=@value1", selection);
                 reader.Read();
                 Session["Date_ID"] = (int)reader.GetValue(0);
-                objConn.Close();
+                reader.Close();
                 Session["Active"] = !chkInactive.Checked;
                 Session["selectedDate"] = ddlselectWeek.SelectedIndex;
                 redirectSafely("~/Hours");
@@ -198,7 +196,7 @@ namespace CTBWebsite
                     throw new ArgumentException("You changed the value of one of the dropdown items");
                 }
 
-                objConn.Open();
+               // objConn.Open();
                 object[] o;
                 if (table.Equals("VehicleHours"))
                 {
@@ -213,7 +211,7 @@ namespace CTBWebsite
                     o = new object[] { Session["Alna_num"], id };
                     executeVoidSQLQuery("delete from " + table + " where Alna_num=@value1 and ID=@value2", o);
                 }
-                objConn.Close();
+              //  objConn.Close();
                 redirectSafely("~/Hours");
             }
         }
@@ -245,7 +243,7 @@ namespace CTBWebsite
 
             try
             {
-                objConn.Open();
+              //  objConn.Open();
                 object[] o = { Session["Alna_num"], projectOrVehicle, Session["Date_ID"] };
                 SqlDataReader reader = getReader(readerQuery, o);
                 if (reader == null) return false;
@@ -271,7 +269,7 @@ namespace CTBWebsite
                     //o[1] = "BLE_Key_Pass_Global_A_Testing";
                 //    executeVoidSQLQuery("insert into ProjectHours values(@value1, (select Project_ID from Projects where Name=@value2), @value3, @value4)", o);
                 }
-                objConn.Close();
+                //objConn.Close();
             }
             catch (Exception ex)
             {

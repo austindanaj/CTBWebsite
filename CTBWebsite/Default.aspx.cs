@@ -15,8 +15,8 @@ namespace CTBWebsite
         {
             if (!IsPostBack)
             {
-                openDBConnection();
-                objConn.Open();
+              //  openDBConnection();
+             //   objConn.Open();
                 SqlDataReader reader = getReader("select Dates from Dates order by Dates desc");
                 if (reader == null)
                 {
@@ -25,10 +25,10 @@ namespace CTBWebsite
                 while (reader.Read())
                     ddlselectWeek.Items.Add(reader.GetDateTime(0).ToShortDateString());
                 reader.Close();
-                populatePieChart(objConn);
-                populateDaysOffTable(objConn);
+                populatePieChart();
+                populateDaysOffTable();
                 populateInternSchedules(dgvSchedule, ddlSelectScheduleDay);
-                objConn.Close();
+             //   objConn.Close();
             }
         }
 
@@ -37,7 +37,7 @@ namespace CTBWebsite
         //----------------------------------------------------------------
         // Inits
         //----------------------------------------------------------------
-        private void populatePieChart(SqlConnection objConn)
+        private void populatePieChart()
         {
             SqlDataReader reader = getReader("select p1.[Hours_worked], p2.Category from ProjectHours p1 inner join Projects p2 on p2.Project_ID=p1.Proj_ID where p1.Date_ID=(select top 1 ID from Dates order by Dates desc);");
             if (!reader.HasRows)
@@ -81,7 +81,7 @@ namespace CTBWebsite
             spanTOff.InnerText = (100 * Math.Round(projectHours[1], 2)) + "%";
         }
 
-        private void populateDaysOffTable(SqlConnection objConn)
+        private void populateDaysOffTable()
         {
             dgvOffThisWeek.DataSource = getDataTable("select e.Name as 'Name' from Employees e where e.Alna_num in (select Alna_num from TimeOff where TimeOff.[Start] >= (select top 1 Dates from Dates order by Dates desc) and TimeOff.[End] <=  (select dateadd(dd, 4, (select top 1 Dates from Dates order by Dates desc)) as NewDate));");
             dgvOffThisWeek.DataBind();
@@ -166,9 +166,9 @@ namespace CTBWebsite
         {
             Session["weekday"] = ddlSelectScheduleDay.SelectedIndex + 1;
             
-            objConn.Open();
+          //  objConn.Open();
             populateInternSchedules(dgvSchedule, ddlSelectScheduleDay);
-            objConn.Close();
+           // objConn.Close();
         }
 
         protected void dgvOffThisWeek_PageIndexChanged(object sender, GridViewPageEventArgs e)
