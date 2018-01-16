@@ -13,7 +13,7 @@ namespace CTBWebsite {
 	public class SuperPage : Page {
 		//private readonly static string DEPLOYMENT_CONNECTION_STRING = "Server=(local);Database=CTBwebsite;User Id=admin;Password=alnatest;";
 		public  readonly static string LOCAL_TO_SERVER_CONNECTION_STRING = "Data Source=ahfreya;Initial Catalog=CTBwebsite;Integrated Security=False;User ID=Admin;Password=alnatest;Connect Timeout=30;Encrypt=False;TrustServerCertificate=True;ApplicationIntent=ReadWrite;MultiSubnetFailover=False";
-        public SqlConnection objConn { get; set; }
+	    private SqlConnection objConn;
         private enum SqlTypes { DataTable, VoidQuery, DataReader };
 
         //Need to be deleted:
@@ -37,15 +37,14 @@ namespace CTBWebsite {
 				File.Create(@"" + Server.MapPath("~/Debug/StackTrace.txt"));
 			}
 			using (StreamWriter file = new StreamWriter(@"" + Server.MapPath("~/Debug/StackTrace.txt"))) {
-				file.WriteLine(Date.Today.ToString() + s + ex.ToString());
+				file.WriteLine(Date.Today + s + ex);
 				file.Close();
 			}
 		}
 
-		public void openDBConnection() {
-			//this.objConn = new SqlConnection(LOCALHOST_CONNECTION_STRING);
-			//this.objConn = new SqlConnection(DEPLOYMENT_CONNECTION_STRING);
-			objConn = objConn ?? new SqlConnection(LOCAL_TO_SERVER_CONNECTION_STRING);
+		private void openDBConnection() {
+			//objConn = objConn ?? new SqlConnection(DEPLOYMENT_CONNECTION_STRING);
+            objConn = objConn ?? new SqlConnection(LOCAL_TO_SERVER_CONNECTION_STRING);
 		}
 
         public void redirectSafely(string path)
@@ -100,41 +99,37 @@ namespace CTBWebsite {
         }
 
         private object sqlExecuter(object o, SqlTypes type) {
+            openDBConnection();
+            objConn.Open();
+
+            object returnVal;
             switch (type)
             {
                 case SqlTypes.DataReader:
-                    return ((SqlCommand)o).ExecuteReader();
+                    returnVal = ((SqlCommand)o).ExecuteReader();
+                    break;
                 case SqlTypes.VoidQuery:
-                    return ((SqlCommand)o).ExecuteNonQuery();
+                    returnVal = ((SqlCommand)o).ExecuteNonQuery();
+                    break;
                 default:
                     object[] adapterAndDataSet = (object[])o;
                     SqlDataAdapter objAdapter = (SqlDataAdapter)adapterAndDataSet[0];
                     DataSet objDataSet = (DataSet)adapterAndDataSet[1];
                     objAdapter.Fill(objDataSet);
-                    return objDataSet;
+                    returnVal = objDataSet;
+                    break;
             }
-		}
+
+            objConn.Close();
+            return returnVal;
+        }
 
         //==========================================================
         // Execute a query with no return value
         //==========================================================
         private object executeVoidSQLQuery(SqlCommand cmd)
         {
-            bool open = objConn.State == ConnectionState.Open;
-
-            if (!open)
-                objConn.Open();
-            //cmd.CommandType = CommandType.StoredProcedure;
-            
             cmd.Parameters.Add("@ReturnVal", SqlDbType.Int).Direction = ParameterDirection.Output;
-          //  var returnParameter = cmd.Parameters.Add("@ReturnVal", SqlDbType.Int);
-        //    returnParameter.Direction = ParameterDirection.Output;
-
-            int returnCode = (int) sqlExecuter(cmd, SqlTypes.VoidQuery);
-
-            if (!open)
-                objConn.Close();
-
             return cmd.Parameters["@ReturnVal"].Value;
         }
 
@@ -168,95 +163,64 @@ namespace CTBWebsite {
         //==========================================================
         // Return datatable
         //==========================================================
-        public DataTable getDataTable(string command) {
-            if (objConn.State == ConnectionState.Closed)
-            {
-                Session["UserMessageText"] = "SQL Error: Object connectino is closed";
+	    private DataTable getDataTable(SqlCommand cmd)
+	    {
+	        SqlDataAdapter objAdapter = new SqlDataAdapter();
+	        DataSet objDataSet = new DataSet();
+	        objAdapter.SelectCommand = cmd;
+	        object[] o = { objAdapter, objDataSet };
+	        objDataSet = (DataSet)sqlExecuter(o, SqlTypes.DataTable);
 
-            }
-				//throw new Exception("You forgot to open the object connection. You have to leave it open until you're done with the data reader.");
+	        return objDataSet.Tables[0];
+        }
 
-			SqlDataAdapter objAdapter = new SqlDataAdapter();
-			DataSet objDataSet = new DataSet();
+	    public DataTable getDataTable(string command) {
 			SqlCommand cmd = new SqlCommand(command, objConn);
-			objAdapter.SelectCommand = cmd;
-			object[] o = { objAdapter, objDataSet };
-			objDataSet = (DataSet)sqlExecuter(o, SqlTypes.DataTable);
-
-			return objDataSet == null ? null : objDataSet.Tables[0];
-		}
+	        return getDataTable(cmd);
+	    }
 
         public DataTable getDataTable(string command, object parameter) {
-			if (this.objConn.State == ConnectionState.Closed)
-				throw new Exception("You forgot to open the object connection. You have to leave it open until you're done with the data reader.");
-
-			SqlDataAdapter objAdapter = new SqlDataAdapter();
-			DataSet objDataSet = new DataSet();
 			SqlCommand cmd = new SqlCommand(command, objConn);
 			if (null != parameter)
 				cmd.Parameters.AddWithValue("@value1", parameter);
-			objAdapter.SelectCommand = cmd;
-			object[] o = { objAdapter, objDataSet };
-			objDataSet = (DataSet)sqlExecuter(o, SqlTypes.DataTable);
-
-			return objDataSet == null ? null : objDataSet.Tables[0];
+            return getDataTable(cmd);
 		}
 
 		public DataTable getDataTable(string command, object[] parameters) {
-			if (objConn.State == ConnectionState.Closed)
-				throw new Exception("You forgot to open the object connection. You have to leave it open until you're done with the data reader.");
-
-			SqlDataAdapter objAdapter = new SqlDataAdapter();
-			DataSet objDataSet = new DataSet();
 			SqlCommand cmd = new SqlCommand(command, objConn);
 			int i = 1;
 			foreach (object s in parameters) {
 				cmd.Parameters.AddWithValue("@value" + i, s);
 				i++;
 			}
-			objAdapter.SelectCommand = cmd;
-			object[] o = { objAdapter, objDataSet };
-			objDataSet = (DataSet)sqlExecuter(o, SqlTypes.DataTable);
 
-			return objDataSet == null ? null : objDataSet.Tables[0];
+		    return getDataTable(cmd);
 		}
 
         //==========================================================
         // Returns data reader
         //==========================================================
-        public SqlDataReader getReader(string query)
+	    public SqlDataReader getReader(string query)
         {
-            if (objConn.State == ConnectionState.Closed)
-                throw new Exception("You forgot to open the object connection. You have to leave it open until you're done with the data reader.");
-
             SqlCommand cmd = new SqlCommand(query, objConn);
-
             return (SqlDataReader)sqlExecuter(cmd, SqlTypes.DataReader); ;
         }
 
         public SqlDataReader getReader(string query, object parameters) {
-			if (objConn.State == ConnectionState.Closed)
-				throw new Exception("You forgot to open the object connection. You have to leave it open until you're done with the data reader.");
-
 			SqlCommand cmd = new SqlCommand(query, objConn);
 			if (parameters != null) {
 				cmd.Parameters.AddWithValue("@value1", parameters);
 			}
-
 			return (SqlDataReader)sqlExecuter(cmd, SqlTypes.DataReader); ;
 		}
 
 		public SqlDataReader getReader(string query, object[] parameters) {
-			if (objConn.State == ConnectionState.Closed)
-				throw new Exception("You forgot to open the object connection. You have to leave it open until you're done with the data reader.");
-
 			SqlCommand cmd = new SqlCommand(query, objConn);
 			int i = 1;
 			foreach (object o in parameters) {
 				cmd.Parameters.AddWithValue("@value" + i, o);
 				i++;
 			}
-
 			return (SqlDataReader)sqlExecuter(cmd, SqlTypes.DataReader);
 		}
 	}
@@ -607,11 +571,8 @@ namespace CTBWebsite {
         protected static readonly string HOME = @"\\AHMARVIN\Engineering\Core EE\CTB\GM_BLE_PEPS_measurement result\DONT MOVE THIS FOLDER\";
         protected static readonly string SERVER = Path.Combine(HOME, @"GAFMS\");
 
-        protected void update(IOPage.Tables table, object[] insertionData, int id)
+        protected void update(Tables table, object[] insertionData, int id)
         {
-            if (objConn.State == ConnectionState.Closed)
-                objConn.Open();
-
             string oldPath = getPath(id, table);
             
             string updateQuery;
@@ -634,16 +595,8 @@ namespace CTBWebsite {
                     updateQuery = "";
                     break;
             }
-            if (objConn.State == ConnectionState.Closed)
-                objConn.Open();
-
 
             int val = (int)executeVoidSQLQuery(updateQuery, insertionData);
-
-
-            if (objConn.State == ConnectionState.Closed)
-                objConn.Open();
-
 
             string newPath = getPath(id, table);
             if (!oldPath.Equals(newPath))
@@ -669,13 +622,10 @@ namespace CTBWebsite {
 
         protected void inactive(Tables table, int id)
         {
-            
-
             string updateQuery;
             object[] o = { 0, id };
             switch (table)
             {
-
                 case Tables.File:
                     updateQuery = "update GA_File Set Active=@value1 where ID=@value2";
                     break;
@@ -692,12 +642,11 @@ namespace CTBWebsite {
                     updateQuery = "";
                     break;
             }
-            if (objConn.State == ConnectionState.Closed)
-                objConn.Open();
+
             executeVoidSQLQuery(updateQuery, o);
         }
 
-        protected void write(IOPage.Tables table, object[] insertionData, HttpPostedFile uploader)
+        protected void write(Tables table, object[] insertionData, HttpPostedFile uploader)
         {
             string selectQuery, insertionQuery, deleteQuery;
             switch (table)
@@ -762,56 +711,19 @@ namespace CTBWebsite {
             }
         }
 
-        protected byte[] open(int id, IOPage.Tables table)
+        protected byte[] open(int id, Tables table)
         {
-            if (!Directory.Exists(SERVER))
-            {
-                throw new IOException("Someone moved our folders, they broke the website!");
-            }
+            string filename = getPath(id, table);
 
-            string query = null;
-            switch(table)
-            {
-                case Tables.File:
-                    query = "select Path, Name, Extension from GA_File where ID=@value1";
-                    break;
-                case Tables.Report:
-                    query = "select Path, Name, Extension from Report where ID=@value1";
-                    break;
-               
-                default:
-                    query = "";
-                    break;
-            }
-            if (objConn.State == ConnectionState.Closed)
-                objConn.Open();
-            SqlDataReader reader = getReader(query, id);
-            reader.Read();
-            string path = reader.GetString(0);
-            string filename = reader.GetString(1);
-            string extension = reader.GetString(2);
-            reader.Close();
-
-            filename = Path.Combine(path, filename, extension);
-
-            byte[] file;
-            if (File.Exists(filename))
-            {
-                file = File.ReadAllBytes(filename);
-            } else
-            {
+            if (!File.Exists(filename))
                 throw new IOException("File doesn't exist, someone moved it or didn't go through the proper process of deletion. Contact an admin.");
-            }
 
-            return file;
+            return File.ReadAllBytes(filename);
         }
 
-        protected string getPath(int id, Tables table)
+        private string getPath(int id, Tables table)
         {
-            if(objConn.State == ConnectionState.Closed)
-                objConn.Open();
-
-            string query = null;
+            string query;
             switch (table)
             {
                 case Tables.File:
@@ -837,7 +749,7 @@ namespace CTBWebsite {
             string filename = reader.GetString(1);
             string extension = reader.GetString(2);
             reader.Close();
-            return Path.Combine(SERVER, path, filename + extension);
+            return Path.Combine(SERVER, path, Path.ChangeExtension(filename, extension));
         }
     }
 }
