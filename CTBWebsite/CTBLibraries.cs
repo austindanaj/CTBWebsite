@@ -15,19 +15,7 @@ namespace CTBWebsite {
 		public  readonly static string LOCAL_TO_SERVER_CONNECTION_STRING = "Data Source=ahfreya;Initial Catalog=CTBwebsite;Integrated Security=False;User ID=Admin;Password=alnatest;Connect Timeout=30;Encrypt=False;TrustServerCertificate=True;ApplicationIntent=ReadWrite;MultiSubnetFailover=False";
 	    private SqlConnection objConn;
         private enum SqlTypes { DataTable, VoidQuery, DataReader };
-
-        //Need to be deleted:
-        public void throwJSAlert(string s)
-        {
-            try
-            {
-                Response.Write("<script>alert('" + s + "');</script>");
-            }
-            catch (System.Web.HttpException h)
-            {
-                writeStackTrace("http exception throwingJs alert", h);
-            }
-        }
+	    public SqlDataReader reader;
 
         //==========================================================
         // Basic functionality
@@ -46,6 +34,11 @@ namespace CTBWebsite {
 			//objConn = objConn ?? new SqlConnection(DEPLOYMENT_CONNECTION_STRING);
             objConn = objConn ?? new SqlConnection(LOCAL_TO_SERVER_CONNECTION_STRING);
 		}
+
+	    public void killConnections()
+	    {
+
+	    }
 
         public void redirectSafely(string path)
         {

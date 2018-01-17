@@ -30,8 +30,6 @@ namespace CTBWebsite
             TD4 = 4
         }
 
-        private static readonly string TOOLS_PATH = Path.Combine(HOME, "Tools/");
-
         //===========================================================
         // Init object
         //===========================================================
@@ -798,9 +796,7 @@ namespace CTBWebsite
             }
 
             redirectSafely("~/GlobalADefault");
-
         }
-
     
         public void LoadReportDropdowns()
         {
@@ -858,7 +854,6 @@ namespace CTBWebsite
         //===========================================================
         // Upload to DB
         //===========================================================
-
         protected void btnSubmitFile_OnClick(object sender, EventArgs e)
         {
 
@@ -954,7 +949,6 @@ namespace CTBWebsite
             redirectSafely("~/GlobalADefault");
         }
      
-
         protected void uploadImage(object sender, EventArgs e)
         {
 
@@ -1122,9 +1116,6 @@ namespace CTBWebsite
 
         protected void sort(object sender, GridViewSortEventArgs e)
         {
-            
-            
-
             string sortingDirection = string.Empty;
             if (direction == SortDirection.Ascending)
             {
