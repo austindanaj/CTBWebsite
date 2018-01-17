@@ -4,6 +4,7 @@ using System;
 using System.Web.UI.WebControls;
 using System.Data;
 using System.Collections;
+using System.Drawing;
 using System.IO;
 
 namespace CTBWebsite
@@ -273,7 +274,8 @@ namespace CTBWebsite
             }
             catch (Exception ex)
             {
-                throwJSAlert("Error connecting to database, check network connection");
+                promptAlertToUser("Error: Cannot connect to database, check network connection, or contact admin", Color.Empty);
+               // throwJSAlert("Error connecting to database, check network connection");
                 writeStackTrace("Hours Submit", ex);
                 return false;
             }

@@ -105,7 +105,7 @@
     </aside>
     <section id="services" class="services bg-primary">
 
-        <div class="container">
+        <div style="padding-left: 10%; padding-right: 10%;">
             <div class="row tab-content">
                 <div class="tab-pane active" id="Reports">
                     <!-- Report Tabs -->
@@ -549,7 +549,7 @@
                                 <div class="productItem">
                                     <asp:LinkButton ID="lnkEditClicked" Font-Size="12px" ForeColor="#00358c" CssClass="closeNotification" CommandName="Edit_Tool" CommandArgument='<%#Eval("ID") %>' runat="server" Text='Edit' />
                                     <div>
-                                        <img src='<%# "/images/icons/" + Eval("IconType") %>'
+                                        <img src='<%# "images/icons/" + Eval("IconType") %>'
                                             height="120" width="120" />
 
                                     </div>

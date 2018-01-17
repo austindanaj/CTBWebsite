@@ -2,6 +2,7 @@
 using System;
 using System.Web.UI.WebControls;
 using System.Data;
+using System.Drawing;
 using System.IO;
 using System.Web.UI;
 
@@ -58,9 +59,8 @@ namespace CTBWebsite
 
                 LoadDD();
 
-                //  LoadImages();
                 LoadTools();
-                //  
+                
 
             }
 
@@ -192,7 +192,7 @@ namespace CTBWebsite
                         case (int)FILE_TYPE.TD4:
                             dt.Rows[i]["Type"] = "TD4";
                             break;
-                    } // dt.Rows.Add();
+                    }
                 }
             }
 
@@ -229,10 +229,8 @@ namespace CTBWebsite
                     dt.Rows[i]["FormDate"] = date.ToString(format);
                 }
 
-                // dt.Rows.Add();
+              
             }
-
-            // DataTable dt = getDataTable("GetFilteredReport");
             return dt;
         }
 
@@ -339,9 +337,6 @@ namespace CTBWebsite
         {
             ddlImageVehicle.Items.Clear();
             ddlImageVehicle.Items.Add(new ListItem("-- Select a Vehicle --", "-1"));
-
-            
-            
             SqlDataReader reader = getReader("SELECT * FROM Vehicles  WHERE Active=@value1 ORDER BY Name ASC", true);
             while (reader.Read())
             {
@@ -354,7 +349,7 @@ namespace CTBWebsite
 
         public void LoadTools()
         {
-            DataTable ds = getDataTable("SELECT * FROM Tools ORDER BY Name ASC");
+            DataTable ds = getDataTable("SELECT * FROM Tools WHERE Active='1' ORDER BY Name ASC");
 
             ds.Columns.Add("FormDate", typeof(string));
             ds.Columns.Add("IconType", typeof(string));
@@ -459,7 +454,6 @@ namespace CTBWebsite
                     Response.TransmitFile(path);
                     Response.Flush();
                     Response.End();
-
                 }
                 else if (e.CommandName == "Edit_Report")
                 {
@@ -487,9 +481,6 @@ namespace CTBWebsite
                     rfuDiv.Style.Add("display", "none");
                     rfuHasFile.Style.Add("display", "block");
 
-                    
-                    
-
                     SqlDataReader reader = getReader("select * from Report where ID=@value1", int.Parse(id));
                     if (reader.HasRows)
                     {
@@ -508,8 +499,7 @@ namespace CTBWebsite
                         created = ((DateTime)reader.GetValue(11)).ToString("MM/dd/yyyy");
                         reader.Close();
                     }
-
-                    // reportUpload.
+                    
                     ddlVehicles.SelectedValue = vID;
                     ddlPhones.SelectedValue = pID;
                     onSelectedIndexChanged(ddlPhones, EventArgs.Empty);
@@ -548,10 +538,6 @@ namespace CTBWebsite
 
                     ffuDiv.Style.Add("display", "none");
                     ffuHasFile.Style.Add("display", "block");
-
-
-                    
-                    
 
                     SqlDataReader reader = getReader("select * from GA_File where ID=@value1", int.Parse(id));
                     if (reader.HasRows)
@@ -597,11 +583,6 @@ namespace CTBWebsite
                     ifuDiv.Style.Add("display", "none");
                     ifuHasFile.Style.Add("display", "block");
 
-
-                //    openDBConnection();
-              //      if (objConn.State == ConnectionState.Closed)
-                //        objConn.Open();
-
                     SqlDataReader reader = getReader("select * from Pictures where ID=@value1", int.Parse(id));
                     if (reader.HasRows)
                     {
@@ -623,8 +604,11 @@ namespace CTBWebsite
             }
             catch(Exception ex)
             {
-
+                writeStackTrace("Error: Filepath invalid", ex);
+                promptAlertToUser("Error: Filepath is invalid...contact admin", Color.Empty);
+                redirectSafely("~/GlobalADefault");
             }
+
         }
 
         protected void uploadPanel(object sender, EventArgs e)

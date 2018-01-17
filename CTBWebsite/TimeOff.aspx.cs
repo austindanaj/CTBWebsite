@@ -2,6 +2,7 @@
 using Date = System.DateTime;
 using System.Data.SqlClient;
 using System.Data;
+using System.Drawing;
 using System.Web.UI.WebControls;
 
 namespace CTBWebsite
@@ -36,7 +37,9 @@ namespace CTBWebsite
             SqlDataReader reader = getReader("select ID, Start, TimeOff.[End] from TimeOff where Alna_num=@value1 ORDER BY ID desc", Session["Alna_num"]);
             if (reader == null)
             {
-                throwJSAlert("Failed to grab data: SQL error");
+                promptAlertToUser("Error: Cannot access the database, please try again later...if problem persits contact admin", Color.Empty);
+                redirectSafely("~/TimeOff");
+                //throwJSAlert("Failed to grab data: SQL error");
                 return;
             }
 
@@ -84,7 +87,9 @@ namespace CTBWebsite
 
             if (employees == null | timeOff == null)
             {
-                throwJSAlert("Failed to grab data: SQL error");
+                promptAlertToUser("Error: Cannot access the database, please try again later...if problem persits contact admin", Color.Empty);
+                redirectSafely("~/TimeOff");
+                //throwJSAlert("Failed to grab data: SQL error");
                 return;
             }
 
@@ -178,8 +183,10 @@ namespace CTBWebsite
 
             switch (validCalendarSelection(start, end))
             {
-                case DATE_VALID.INVALID:                  
-                    throwJSAlert("Can only request days off in the future.");
+                case DATE_VALID.INVALID:
+                    promptAlertToUser("Error: Can only request days off in the future", Color.Empty);
+                    redirectSafely("~/TimeOff");
+                    // throwJSAlert("Can only request days off in the future.");
                     return;
                 case DATE_VALID.OUT_OF_ORDER:
                     Date d = end;
@@ -194,13 +201,14 @@ namespace CTBWebsite
 
             if (!doesntConflict( start, end))
             {
-                throwJSAlert("This time conflicts with another vacation time you have.");
+                promptAlertToUser("This time conflicts with another vacation time you have", Color.Empty);
+               // throwJSAlert("This time conflicts with another vacation time you have.");
                 return;
             }
 
             object[] o = { Session["Alna_num"], start, end, chkBusinessTrip.Checked };
             executeVoidSQLQuery("INSERT INTO TimeOff (Alna_num, TimeOff.[Start], TimeOff.[End], Business) VALUES (@value1, @value2, @value3, @value4);", o);
-            Session["success?"] = true;
+            promptAlertToUser("Success", Color.ForestGreen);
             redirectSafely("~/TimeOff");
         }
 
@@ -211,7 +219,9 @@ namespace CTBWebsite
                 return;
             executeVoidSQLQuery("DELETE FROM TimeOff WHERE ID=@value1", s.Substring(3, s.IndexOf(":") - 3));
             ddlTimeTakenOff.Items.Remove(s);
-            throwJSAlert("Your time off for " + s + " has been successfully removed");
+            promptAlertToUser("Your time off for " + s + " has been successfully removed", Color.ForestGreen);
+            //throwJSAlert("Your time off for " + s + " has been successfully removed");
+            redirectSafely("~/TimeOff");
         }
     }
 }

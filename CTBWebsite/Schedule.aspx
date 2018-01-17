@@ -48,7 +48,14 @@
                                 <span class="input-group-addon">
                                     <span class="glyphicon glyphicon-time"></span>
                                 </span>
+                              
                             </div>
+                            <asp:RequiredFieldValidator ID="RequiredFieldValidator3" ForeColor="Red"
+                                                        ControlToValidate="txtStartTime" InitialValue=""
+                                                        ValidationGroup="AddTimeGroup"
+                                                        ErrorMessage="Select a start time."
+                                                        runat="Server">
+                            </asp:RequiredFieldValidator>
                         </div>
                     </div>
                     <div class="row">
@@ -61,12 +68,19 @@
                                 <span class="input-group-addon">
                                     <span class="glyphicon glyphicon-time"></span>
                                 </span>
+
                             </div>
+                            <asp:RequiredFieldValidator ID="RequiredFieldValidator1" ForeColor="Red"
+                                                        ControlToValidate="txtEndTime" InitialValue=""
+                                                        ValidationGroup="AddTimeGroup"
+                                                        ErrorMessage="Select a end time."
+                                                        runat="Server">
+                            </asp:RequiredFieldValidator>
                         </div>
                     </div>
                     <div class="row">
                         <div class="form-group">
-                            <asp:Button ID="btnConfirmTime" runat="server" CssClass="btn btn-signin btn-lg" Text="Save" Width="100%" OnClick="saveOrDelete" />
+                            <asp:Button ID="btnConfirmTime" runat="server" CssClass="btn btn-signin btn-lg" Text="Save" Width="100%" ValidationGroup="AddTimeGroup" OnClick="saveOrDelete" />
                         </div>
                     </div>
                    
