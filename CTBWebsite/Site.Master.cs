@@ -12,7 +12,7 @@ namespace CTBWebsite
 {
     public partial class SiteMaster : MasterPage
     {
-        private enum SqlTypes { DataTable, VoidQuery, DataReader };
+      //  private enum SqlTypes { DataTable, VoidQuery, DataReader };
         private SuperPage sql;
         SqlConnection objConn;
 
@@ -60,22 +60,11 @@ namespace CTBWebsite
                     Session["UserMessageColor"] = null;
                 }
             }
-
-
-
-
+            
             if (!IsPostBack)
             {
-
-              
-
                 if (Request.Cookies["userName"] != null && Session["Alna_num"] == null)
                 {
-
-                 //   userMessage.Style.Add("display", "block");
-                 //   txtUserMessage.Text = "Please go check this shit out...";
-                 //   userMessage.Style.Add("background", "#0f5d7f");
-
                     string userName = Request.Cookies["userName"].Value;
                     Response.Cookies["userName"].Value = userName;
                     Response.Cookies["userName"].Expires = DateTime.Now.AddDays(10);
@@ -118,32 +107,29 @@ namespace CTBWebsite
             {
                 mpeLogin.Show();
                 loadEmployees();
-                return;
             }
             else
             {
-
                 HtmlAnchor a = (HtmlAnchor)sender;
-
                 switch (a.InnerText)
                 {
                     case "Hours":
-                        redirectSafely("~/Hours");
+                        sql.redirectSafely("~/Hours");
                         break;
                     case "Time Off":
-                        redirectSafely("~/TimeOff");
+                        sql.redirectSafely("~/TimeOff");
                         break;
                     case "Purchase List":
-                        redirectSafely("~/List");
+                        sql.redirectSafely("~/List");
                         break;
                     case "Phone Checkout":
-                        redirectSafely("~/PhoneCheckOut");
+                        sql.redirectSafely("~/PhoneCheckOut");
                         break;
                     case "Issues":
-                        redirectSafely("~/IssueList");
+                        sql.redirectSafely("~/IssueList");
                         break;
                     case "Global A":
-                        redirectSafely("~/GlobalADefault");
+                        sql.redirectSafely("~/GlobalADefault");
                         break;
                 }
             }
@@ -155,36 +141,33 @@ namespace CTBWebsite
             aCookie.Value = null;
             aCookie.Expires = DateTime.Now.AddDays(-1);
             Response.Cookies.Add(aCookie);
-
             Session.Clear();
-            Session["loginStatus"] = "Sign In";         
-          
-            redirectSafely("~/");
+            Session["loginStatus"] = "Sign In";
+            sql.redirectSafely("~/");
             
         }
         protected void Login_Clicked(Object sender, EventArgs e)
         {
-           
-
             try
             {
                 object[] o = { inputUsername.Value, inputPassword.Value };
                 SqlDataReader reader = sql.getReader("SELECT User, Admin FROM Accounts WHERE Accounts.[User]=@value1 and Accounts.[Pass]=@value2", o);
                 if (reader == null)
                 {
-                    throwJSAlert("Error accessing data");
+                    sql.promptAlertToUser("Error: Cannot access database, please contact admin", Color.Empty);
+                    sql.redirectSafely("~/");
                     return;
                 }
                 if (!reader.HasRows)
                 {
-                    throwJSAlert("Incorrect username or password");
+                    sql.promptAlertToUser("Error: Incorrect username or password", Color.Empty);
+                    sql.redirectSafely("~/");
                     reader.Close();
                     return;
                 }
                 reader.Read();
                 Session["Admin"] = reader.GetBoolean(1);
                 reader.Close();
-
                 reader = sql.getReader("Select Alna_num, Name, Full_time, Vehicle from Employees where Employees.[Name]=@value1;", ddl.Text);
                 reader.Read();
                 Session["Alna_num"] = reader.GetValue(0);
@@ -197,13 +180,13 @@ namespace CTBWebsite
                 aCookie.Value = reader.GetValue(1).ToString();
                 aCookie.Expires = DateTime.Now.AddDays(10);
                 Response.Cookies.Add(aCookie);
-
-
-                redirectSafely("~/");
+                sql.redirectSafely("~/");
             }
             catch (Exception ex)
             {
+                sql.promptAlertToUser("Error: Cannot login at the time please try again later...If problem persits, please contact admin", Color.Empty);
                 writeStackTrace("Login", ex);
+                sql.redirectSafely("~/");
             }
         }
         private void writeStackTrace(string s, Exception ex)
@@ -218,28 +201,6 @@ namespace CTBWebsite
                 file.Close();
             }
         }
-        private void throwJSAlert(string s)
-        {
-            try
-            {
-                Response.Write("<script>alert('" + s + "');</script>");
-            }
-            catch (System.Web.HttpException h)
-            {
-                writeStackTrace("http exception throwingJs alert", h);
-            }
-        }
-
-        private void redirectSafely(string path)
-        {
-            try
-            {
-                Response.Redirect(path, false);
-            }
-            catch (Exception e)
-            {
-                writeStackTrace("problem redirecting", e);
-            }
-        }
+     
     }
 }

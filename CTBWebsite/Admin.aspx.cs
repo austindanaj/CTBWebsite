@@ -8,6 +8,7 @@ using System.Data.Sql;
 using System.Text.RegularExpressions;
 
 using System.Data.SqlClient;
+using System.Drawing;
 using System.IO;
 
 namespace CTBWebsite
@@ -52,7 +53,7 @@ namespace CTBWebsite
             object[] o = { alna, txtName.Text, !chkPartTime.Checked, chkUseVehicle.Checked | chkPartTime.Checked };
 
             executeVoidSQLQuery("INSERT INTO Employees (Alna_num, Name, Full_Time, Vehicle) VALUES (@value1, @value2, @value3, @value4);", o);
-            Session["success?"] = true;
+            promptAlertToUser("Success", Color.ForestGreen);
             redirectSafely("~/Admin");
         }
 
@@ -86,7 +87,7 @@ namespace CTBWebsite
             object[] parameters = { text.Replace(" ", "_"), projectCategory, txtAbbreviation.Text };
             executeVoidSQLQuery("INSERT INTO Projects (Name, Category, Abbreviation) VALUES (@value1, @value2, @value3);", parameters);
 
-            Session["success?"] = true;
+            promptAlertToUser("Success", Color.ForestGreen);
             redirectSafely("~/Admin");
         }
 
@@ -95,12 +96,15 @@ namespace CTBWebsite
             string text = txtCar.Text;
             if (string.IsNullOrEmpty(text) | string.IsNullOrEmpty(txtCarAbbreviation.Text))
             {
-                throwJSAlert("Car needs a name and an abbreviation");
+                promptAlertToUser("Car needs a name and an abbreviation", Color.DarkGoldenrod);
+                // throwJSAlert("Car needs a name and an abbreviation");
+                redirectSafely("~/Admin");
                 return;
             }
 
             executeVoidSQLQuery("INSERT INTO Vehicles (Name, Abbreviation) VALUES (@value1, @value2);", new object[] { text.Replace(" ", "_"), txtCarAbbreviation.Text });
-            Session["success?"] = true;
+          //  Session["success?"] = true;
+            promptAlertToUser("Success", Color.ForestGreen);
             redirectSafely("~/Admin");
         }
         protected void remove(object sender, EventArgs e)
@@ -136,12 +140,14 @@ namespace CTBWebsite
 
             if (!int.TryParse(text, out int id))
             {
-                throwJSAlert("Not an integer!");
+                promptAlertToUser("Not an integer!", Color.Empty);
+                redirectSafely("~/Admin");
+                //throwJSAlert("Not an integer!");
                 return;
             }
             object[] args = { false, id };
             executeVoidSQLQuery(command, args);
-            Session["success?"] = true;
+            promptAlertToUser("Success", Color.ForestGreen);
             redirectSafely("~/Admin");
         }
 

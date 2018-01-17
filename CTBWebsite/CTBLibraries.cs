@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
+using System.Drawing;
 using System.IO;
 using System.Web;
 using System.Web.UI;
@@ -16,6 +17,15 @@ namespace CTBWebsite {
 	    private SqlConnection objConn;
         private enum SqlTypes { DataTable, VoidQuery, DataReader };
 	    public SqlDataReader reader;
+
+	    public void promptAlertToUser(string s, Color c)
+	    {
+	        Session["UserMessageText"] = s;
+            if (c != Color.Empty)
+                Session["UserMessageColor"] = ColorTranslator.ToHtml(c);
+            
+            
+	    }
 
         //==========================================================
         // Basic functionality
@@ -44,7 +54,7 @@ namespace CTBWebsite {
         {
             try
             {
-                Response.Redirect(Request.RawUrl, false);
+                HttpContext.Current.Response.Redirect(path, false);
             }
             catch (Exception e)
             {
@@ -198,12 +208,12 @@ namespace CTBWebsite {
         //==========================================================
 	    public SqlDataReader getReader(string query)
         {
-            SqlCommand cmd = new SqlCommand(query, objConn);
+            SqlCommand cmd = new SqlCommand(query);
             return (SqlDataReader)sqlExecuter(cmd, SqlTypes.DataReader); ;
         }
 
         public SqlDataReader getReader(string query, object parameters) {
-			SqlCommand cmd = new SqlCommand(query, objConn);
+			SqlCommand cmd = new SqlCommand(query);
 			if (parameters != null) {
 				cmd.Parameters.AddWithValue("@value1", parameters);
 			}
@@ -211,7 +221,7 @@ namespace CTBWebsite {
 		}
 
 		public SqlDataReader getReader(string query, object[] parameters) {
-			SqlCommand cmd = new SqlCommand(query, objConn);
+			SqlCommand cmd = new SqlCommand(query);
 			int i = 1;
 			foreach (object o in parameters) {
 				cmd.Parameters.AddWithValue("@value" + i, o);
@@ -721,33 +731,41 @@ namespace CTBWebsite {
 
         public string getPath(int id, Tables table)
         {
-            string query;
-            switch (table)
+            try
             {
-                case Tables.File:
-                    query = "select Path, Name, Extension from GA_File where ID=@value1";
-                    break;
-                case Tables.Report:
-                    query = "select Path, Name, Extension from Report where ID=@value1";
-                    break;
-                case Tables.Image:
-                    query = "select Path, Name, Extension from Pictures where ID=@value1";
-                    break;
-                case Tables.Tool:
-                    query = "select Path, Name, Extension from Tools where ID=@value1";
-                    break;
-                default:
-                    query = "";
-                    break;
-            }
+                string query;
+                switch (table)
+                {
+                    case Tables.File:
+                        query = "select Path, Name, Extension from GA_File where ID=@value1";
+                        break;
+                    case Tables.Report:
+                        query = "select Path, Name, Extension from Report where ID=@value1";
+                        break;
+                    case Tables.Image:
+                        query = "select Path, Name, Extension from Pictures where ID=@value1";
+                        break;
+                    case Tables.Tool:
+                        query = "select Path, Name, Extension from Tools where ID=@value1";
+                        break;
+                    default:
+                        query = "";
+                        break;
+                }
 
-            SqlDataReader reader = getReader(query, id);
-            reader.Read();
-            string path = reader.GetString(0);
-            string filename = reader.GetString(1);
-            string extension = reader.GetString(2);
-            reader.Close();
-            return Path.Combine(HOME, path, Path.ChangeExtension(filename, extension));
+                SqlDataReader reader = getReader(query, id);
+                reader.Read();
+                string path = reader.GetString(0);
+                string filename = reader.GetString(1);
+                string extension = reader.GetString(2);
+                reader.Close();
+                return Path.Combine(HOME, path, filename + extension);
+            }
+            catch (Exception ex)
+            {
+                promptAlertToUser("Error: Filepath is invalid...Contact admin", Color.Empty);
+                return null;
+            }
         }
     }
 }
