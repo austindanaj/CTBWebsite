@@ -600,9 +600,15 @@ namespace CTBWebsite {
                     updateQuery = "";
                     break;
             }
-
-            int val = (int)executeVoidSQLQuery(updateQuery, insertionData);
-
+            try
+            {
+                int val = (int)executeVoidSQLQuery(updateQuery, insertionData);
+            }
+            catch (Exception e)
+            {
+                promptAlertToUser("Error: Something went wrong...please contact admin", Color.Empty);
+                writeStackTrace("Error inserting into DB", e);
+            }
             string newPath = getPath(id, table);
             if (!oldPath.Equals(newPath))
             {
@@ -618,7 +624,8 @@ namespace CTBWebsite {
                     }
                     catch (Exception ex)
                     {
-                        
+                        promptAlertToUser("Error: Unable to move file...please contact admin", Color.Empty);
+                        writeStackTrace("Error moving file from: " + oldPath + " --- TO --- " + newPath, ex);
                     }
                 }
             }
@@ -647,8 +654,16 @@ namespace CTBWebsite {
                     updateQuery = "";
                     break;
             }
-
-            executeVoidSQLQuery(updateQuery, o);
+            try
+            {
+                executeVoidSQLQuery(updateQuery, o);
+            }
+            catch (Exception e)
+            {
+                promptAlertToUser("Error: Something went wrong...please contact admin", Color.Empty);
+                writeStackTrace("Error updating into DB", e);
+            }
+          
         }
 
         protected void write(Tables table, object[] insertionData, HttpPostedFile uploader)
@@ -687,6 +702,7 @@ namespace CTBWebsite {
                 id = (int)executeVoidSQLQuery(insertionQuery, insertionData);
             } catch (Exception e)
             {
+                promptAlertToUser("Error: Something went wrong...please contact admin", Color.Empty);
                 writeStackTrace("Error inserting into DB", e);
                 return;
             }
@@ -703,6 +719,7 @@ namespace CTBWebsite {
             }
             catch (Exception ex)
             {
+                promptAlertToUser("Error: Something went wrong...please contact admin", Color.Empty);
                 writeStackTrace("Error writing file", ex);
                 executeVoidSQLQuery(deleteQuery, id);
             }
@@ -717,7 +734,11 @@ namespace CTBWebsite {
             string filename = getPath(id, table);
 
             if (!File.Exists(filename))
-                throw new IOException("File doesn't exist, someone moved it or didn't go through the proper process of deletion. Contact an admin.");
+            {
+                promptAlertToUser("Error: File doesn't exist", Color.Empty);
+              //  writeStackTrace("File doesnt exist", null);
+            }
+              
 
             return File.ReadAllBytes(filename);
         }
@@ -756,7 +777,7 @@ namespace CTBWebsite {
             }
             catch
             {
-                promptAlertToUser("Error: Filepath is invalid...Contact admin", Color.Empty);
+                promptAlertToUser("Error: Filepath is invalid...please contact admin", Color.Empty);
                 return null;
             }
         }
