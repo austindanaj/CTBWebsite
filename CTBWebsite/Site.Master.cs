@@ -49,6 +49,10 @@ namespace CTBWebsite
             if (Session["Vehicle"] == null)
                 Session["Vehicle"] = false;
 
+
+          //  Session["UserMessageText"] = System.Security.Principal.WindowsIdentity.GetCurrent().Name;
+          //  Session["UserMessageColor"] = ColorTranslator.ToHtml(Color.DarkSlateGray);
+
             if (Session["UserMessageText"] != null)
             {
                 userMessage.Style.Add("display", "block");

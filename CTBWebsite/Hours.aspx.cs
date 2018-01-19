@@ -20,7 +20,10 @@ namespace CTBWebsite
 				redirectSafely("~/Default");
 				return;
 			}
-            
+            if (Session["PromptMessage"] == null)
+            {
+                
+            }
 
            // openDBConnection();
 
@@ -43,30 +46,21 @@ namespace CTBWebsite
         private void getDate()
         {
             Date date = (Date)Session["Date"];
-            lblWeekOf.Text = "Week of " + date.Month + "/" + date.Day + "/" + date.Year;
+            lblWeekOf.Text = "Week of " + date.ToString("M/d/yyyy");
         }
 
         private void getData()
         {
-         //   objConn.Open();
-
+            object[] o = { Session["Date_ID"], DBNull.Value };
             if ((bool)Session["Active"])
-            {
-                projectData = getDataTable("select Project_ID, Name, Category from Projects where Active=@value1 order by Projects.PriorityOrder", true);
-                vehiclesData = getDataTable("select ID, Name from Vehicles where Active=@value1", true);
-            }
-            else
-            {
-                projectData = getDataTable("select Project_ID, Name, Category from Projects order by Projects.PriorityOrder");
-                vehiclesData = getDataTable("select ID, Name from Vehicles;");
-            }
+                o[1] = true;
 
-            //Everything else
-            projectHoursData = getDataTable("select ID, Alna_num, Proj_ID, Hours_worked from ProjectHours where Date_ID=@value1", Session["Date_ID"]);
-            vehicleHoursData = getDataTable("select ID, Alna_num, Vehicle_ID, Hours_worked from VehicleHours where Date_ID=@value1", Session["Date_ID"]);
-            datesData = getDataTable("select Dates from Dates order by Dates desc");
-          //  objConn.Close();
-
+            projectData = getDataTable("select Project_ID, Name, Category from Projects where (Active=@value1 OR @value1 IS NULL) order by Projects.PriorityOrder", o[1]);
+            vehiclesData = getDataTable("select ID, Name from Vehicles where (Active=@value1 OR @value1 IS NULL)", o[1]);
+            projectHoursData = getDataTable("SELECT * FROM SelectProjectHours(@value1, @value2)", o);
+            vehicleHoursData = getDataTable("SELECT * FROM SelectVehicleHours(@value1, @value2)", o);
+            datesData = getDataTable("select ID, Dates from Dates order by Dates desc");
+         
             if (projectData == null || vehiclesData == null || projectHoursData == null || vehicleHoursData == null || datesData == null)
             {
                 throw new IOException("Problem accessing database; contact an admin");
@@ -80,70 +74,57 @@ namespace CTBWebsite
             ddlVehicles.Items.Clear();
 
             foreach (DataRow d in datesData.Rows)
-                ddlselectWeek.Items.Add(((Date)d[0]).ToShortDateString());
+                ddlselectWeek.Items.Add( new ListItem(((Date)d[1]).ToShortDateString(), d[0].ToString()));
 
             ddlselectWeek.SelectedIndex = (int) Session["selectedDate"];
 
-            Hashtable h = new Hashtable();
-
-            int id; string name, globalATesting = "BLE_Key_Pass_Global_A_Testing";
+            string id; string name, globalATesting = "BLE_Key_Pass_Global_A_Testing";
             foreach (DataRow r in projectData.Rows)
             {
-                id = (int)r[0];
+                id = r[0].ToString();
                 name = r[1].ToString();
-                h.Add(id, name);
                 if (!(bool)Session["Full_time"] && name.Equals(globalATesting))
                     continue;
-                ddlProjects.Items.Add(name);
+                ddlProjects.Items.Add(new ListItem(name.Replace("_", " "), id));
             }
 
             bool hasHoursWorked = false;
             int alna = (int)Session["Alna_num"];
             foreach (DataRow d in projectHoursData.Rows)
             {
-                if (alna == (int)d[1])
+                if (alna == (int)d[4])
                 {
                     hasHoursWorked = true;
-                    if (!(bool)Session["Full_time"] & h[d[2]].Equals(globalATesting))
+                    if (!(bool)Session["Full_time"] & d[2].Equals(globalATesting))
                         continue;
-                    ddlWorkedHours.Items.Add("P_ID#" + d[0].ToString() + ": worked " + d[3] + " hours on " + h[d[2]]);
+                    ddlWorkedHours.Items.Add(new ListItem(d[6] + " hours on " + d[2].ToString().Replace("_", " "), "P" + d[0].ToString()));
                 }
             }
             if (hasHoursWorked) pnlDeleteHours.Visible = true;
-
             hoursUpdate();
             if (!(bool)Session["Vehicle"]) return;
-         
-
-            h = new Hashtable();
             foreach (DataRow r in vehiclesData.Rows)
             {
-                id = (int)r[0];
+                id = r[0].ToString();
                 name = r[1].ToString();
-                ddlVehicles.Items.Add(name);
-                h.Add(id, name);
+                ddlVehicles.Items.Add(new ListItem(name.Replace("_", " "), id));
             }
 
             foreach (DataRow d in vehicleHoursData.Rows)
             {
-                if (alna == (int)d[1])
+                if (alna == (int)d[4])
                 {
                     hasHoursWorked = true;
-                    ddlWorkedHours.Items.Add("V_ID#" + d[0].ToString() + ": " + d[3] + " hrs on " + h[d[2]]);
+                    ddlWorkedHours.Items.Add(new ListItem(d[6] + " hours on " + d[2].ToString().Replace("_", " "), "V" + d[0].ToString()));
                 }
             }
             if (hasHoursWorked) pnlDeleteHours.Visible = true;
-
-
             lblVehicleTitle.Visible = true;
             ddlVehicles.Visible = true;
             ddlHoursVehicles.Visible = true;
             btnSubmitVehicles.Visible = true;
-
             leftButton.Visible = true;
             rightButton.Visible = true;
-
-           // objConn.Close();
         }
 
         protected void TriggerEvent(object sender, EventArgs e)
@@ -151,57 +132,33 @@ namespace CTBWebsite
             if (sender.Equals(btnselectWeek))
             {
                 Session["Active"] = !chkInactive.Checked;
-                if (!Date.TryParse(ddlselectWeek.SelectedValue, out Date selection))
-                {
-                    throw new ArgumentException("Your date entered is bad; we forgot to add logic to check it, reenter it with a correct date and it'll work");
-                }
-                Session["Date"] = selection;
-          
-                SqlDataReader reader = getReader("select ID from Dates where Dates=@value1", selection);
-                reader.Read();
-                Session["Date_ID"] = (int)reader.GetValue(0);
-                reader.Close();
+                Session["Date"] = Date.Parse(ddlselectWeek.SelectedItem.Text);
+                Session["Date_ID"] = int.Parse(ddlselectWeek.SelectedValue);
                 Session["Active"] = !chkInactive.Checked;
                 Session["selectedDate"] = ddlselectWeek.SelectedIndex;
-                redirectSafely("~/Hours");
+              
             }
             else if (sender.Equals(btnSubmitPercent))
             {
-                if (insertRecord(ddlProjects.SelectedValue, ddlHours.SelectedIndex, true))
-                    redirectSafely("~/Hours");
+                insertRecord(int.Parse(ddlProjects.SelectedValue), int.Parse(ddlHours.SelectedValue), true);
             }
             else if (sender.Equals(btnSubmitVehicles))
             {
-                if (insertRecord(ddlVehicles.SelectedValue, ddlHoursVehicles.SelectedIndex, false))
-                    redirectSafely("~/Hours");
+                insertRecord(int.Parse(ddlVehicles.SelectedValue), int.Parse(ddlHoursVehicles.SelectedValue), false);
             }
             else if (sender.Equals(btnDelete))
             {
-                if (!txtDelete.Text.Equals("YES"))
-                {
+                if (!txtDelete.Text.ToLower().Equals("yes"))
                     return;
-                }
 
                 string selection = ddlWorkedHours.SelectedValue;
-                if (string.IsNullOrEmpty(selection))
-                {
-                    throw new ArgumentException("You changed the value of one of the dropdown items");
-                }
-
                 string table = selection.Substring(0, 1).Equals("V") ? "VehicleHours" : "ProjectHours";
+                int id = int.Parse(selection.Substring(1));
 
-                int startIndex = selection.IndexOf("#") + 1, endIndex = selection.IndexOf(":");
-                selection = selection.Substring(startIndex, endIndex - startIndex);
-                if (!int.TryParse(selection, out int id))
-                {
-                    throw new ArgumentException("You changed the value of one of the dropdown items");
-                }
-
-               // objConn.Open();
                 object[] o;
                 if (table.Equals("VehicleHours"))
                 {
-                    o = new object[] { id, "BLE_Key_Pass_Global_A_Testing", Session["Alna_num"], Session["Date_ID"] };
+                    o = new [] { id, "BLE_Key_Pass_Global_A_Testing", Session["Alna_num"], Session["Date_ID"] };
 
                     if (!(bool)Session["Full_time"])
                         executeVoidSQLQuery("update ProjectHours set Hours_worked=Hours_worked-(select Hours_worked from VehicleHours where ID=@value1) where Proj_ID=(select Project_ID from Projects where Name=@value2) and Alna_num=@value3 and Date_ID=@value4", o);
@@ -212,9 +169,9 @@ namespace CTBWebsite
                     o = new object[] { Session["Alna_num"], id };
                     executeVoidSQLQuery("delete from " + table + " where Alna_num=@value1 and ID=@value2", o);
                 }
-              //  objConn.Close();
-                redirectSafely("~/Hours");
+               
             }
+            redirectSafely("~/Hours");
         }
 
         protected void dgvProject_PageIndexChanged(object sender, GridViewPageEventArgs e)
@@ -223,22 +180,22 @@ namespace CTBWebsite
             dgvProject.DataBind();
         }
  
-        private bool insertRecord(string projectOrVehicle, int hours, bool isProject)
+        private bool insertRecord(int projectOrVehicle, int hours, bool isProject)
         {
             string table, readerQuery, insertionQuery;
             DataTable tableToUpdate;
             if (isProject)
             {
                 table = "ProjectHours";
-                readerQuery = "select ID, Hours_worked from ProjectHours where Alna_num=@value1 and Proj_ID=(select Project_ID from Projects where Name=@value2) and Date_ID=@value3";
-                insertionQuery = "insert into ProjectHours values(@value1, (select Project_ID from Projects where Name=@value2), @value3, @value4)";
+                readerQuery = "select ID, Hours_worked from ProjectHours where Alna_num=@value1 and Proj_ID=@value2 and Date_ID=@value3";
+                insertionQuery = "insert into ProjectHours values(@value1, @value2, @value3, @value4)";
                 tableToUpdate = projectData;
             }
             else
             {
                 table = "VehicleHours";             
-                readerQuery = "select ID, Hours_worked from VehicleHours where Alna_num=@value1 and Vehicle_ID=(select ID from Vehicles where Name=@value2) and Date_ID=@value3";
-                insertionQuery = "insert into VehicleHours values(@value1, (select ID from Vehicles where Name=@value2), @value3, @value4)";
+                readerQuery = "select ID, Hours_worked from VehicleHours where Alna_num=@value1 and Vehicle_ID=@value2 and Date_ID=@value3";
+                insertionQuery = "insert into VehicleHours values(@value1, @value2, @value3, @value4)";
                 tableToUpdate = vehiclesData;
             }
 
@@ -247,7 +204,8 @@ namespace CTBWebsite
               //  objConn.Open();
                 object[] o = { Session["Alna_num"], projectOrVehicle, Session["Date_ID"] };
                 SqlDataReader reader = getReader(readerQuery, o);
-                if (reader == null) return false;
+                if (reader == null)
+                    return false;
 
                 if (reader.HasRows)
                 {
@@ -265,17 +223,10 @@ namespace CTBWebsite
 
                 o = new object[] { o[0], projectOrVehicle, hours, o[2] };
                 executeVoidSQLQuery(insertionQuery, o);
-                if (!(bool)Session["Full_time"] & !isProject)
-                {
-                    //o[1] = "BLE_Key_Pass_Global_A_Testing";
-                //    executeVoidSQLQuery("insert into ProjectHours values(@value1, (select Project_ID from Projects where Name=@value2), @value3, @value4)", o);
-                }
-                //objConn.Close();
             }
             catch (Exception ex)
             {
                 promptAlertToUser("Error: Cannot connect to database, check network connection, or contact admin", Color.Empty);
-               // throwJSAlert("Error connecting to database, check network connection");
                 writeStackTrace("Hours Submit", ex);
                 return false;
             }
@@ -331,9 +282,9 @@ namespace CTBWebsite
                 int session = (int)Session["Alna_num"];
                 foreach (DataRow d in temp.Rows)
                 {
-                    if ((int)d[1] == session)
-                        hoursWorked += (int)d[3];
-                    totalHours += (int)d[3];
+                    if ((int)d[4] == session)
+                        hoursWorked += (int)d[6];
+                    totalHours += (int)d[6];
                 }
             });
 
@@ -345,7 +296,7 @@ namespace CTBWebsite
                     if (i + hoursWorked > 40)
                         break;
                     hoursSpent = ((float)i / 40) * 100;
-                    temp.Items.Add("" + hoursSpent + "% -- " + i + " hours");
+                    temp.Items.Add(new ListItem("" + hoursSpent + "% -- " + i + " hours", i.ToString()));
                 }
             });
 
@@ -368,11 +319,8 @@ namespace CTBWebsite
                 Session["showVehicleHours"] = false;
                 return;
             }
-            else
-            {
-                Session["showVehicleHours"] = true;
-            }
 
+            Session["showVehicleHours"] = true;
             ddlHoursVehicles.Items.Add(new ListItem("--Select A Percent (Out of 40 hrs)--", "-1"));
             addDDLoptions(ddlHoursVehicles);
             lblUserHours.Text = "Logged " + hoursWorked + "/40";
