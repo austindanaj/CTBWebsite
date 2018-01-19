@@ -10,25 +10,21 @@ namespace CTBWebsite
 {
     public partial class _Default : SchedulePage
     {
-        private delegate string Lambda1(int time);
         protected void Page_Load(object sender, EventArgs e)
         {
             if (!IsPostBack)
             {
-              //  openDBConnection();
-             //   objConn.Open();
-                SqlDataReader reader = getReader("select Dates from Dates order by Dates desc");
+                getReader("select Dates from Dates order by Dates desc");
                 if (reader == null)
                 {
                     throw new Exception("We can't access the database currently; there may be a problem with the connection");
                 }
                 while (reader.Read())
                     ddlselectWeek.Items.Add(reader.GetDateTime(0).ToShortDateString());
-                reader.Close();
+                killConnections();
                 populatePieChart();
                 populateDaysOffTable();
                 populateInternSchedules(dgvSchedule, ddlSelectScheduleDay);
-             //   objConn.Close();
             }
         }
 
@@ -39,10 +35,9 @@ namespace CTBWebsite
         //----------------------------------------------------------------
         private void populatePieChart()
         {
-            SqlDataReader reader = getReader("select p1.[Hours_worked], p2.Category from ProjectHours p1 inner join Projects p2 on p2.Project_ID=p1.Proj_ID where p1.Date_ID=(select top 1 ID from Dates order by Dates desc);");
+            getReader("select p1.[Hours_worked], p2.Category from ProjectHours p1 inner join Projects p2 on p2.Project_ID=p1.Proj_ID where p1.Date_ID=(select top 1 ID from Dates order by Dates desc);");
             if (!reader.HasRows)
             {
-
                 //chartPercent.Visible = false;
                 reader.Close();
                 return;
@@ -63,7 +58,7 @@ namespace CTBWebsite
                     projectHours[3] += hours;
                 totalHours += hours;
             }
-            reader.Close();
+            killConnections();
 
             for (int i = 0; i < projectHours.Length; i++)
                 projectHours[i] /= totalHours;

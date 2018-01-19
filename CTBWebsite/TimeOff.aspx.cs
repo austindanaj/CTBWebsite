@@ -1,6 +1,5 @@
 ﻿using System;
 using Date = System.DateTime;
-using System.Data.SqlClient;
 using System.Data;
 using System.Drawing;
 using System.Web.UI.WebControls;
@@ -10,7 +9,6 @@ namespace CTBWebsite
     public partial class TimeOff : SuperPage
     {
         private enum DATE_VALID { OUT_OF_ORDER, VALID, INVALID };
-   //     SqlConnection objConn;
 
         protected void Page_Load(object sender, EventArgs e)
         {
@@ -34,7 +32,7 @@ namespace CTBWebsite
         private void init()
         {
          
-            SqlDataReader reader = getReader("select ID, Start, TimeOff.[End] from TimeOff where Alna_num=@value1 ORDER BY ID desc", Session["Alna_num"]);
+            getReader("select ID, Start, TimeOff.[End] from TimeOff where Alna_num=@value1 ORDER BY ID desc", Session["Alna_num"]);
             if (reader == null)
             {
                 promptAlertToUser("Error: Cannot access the database, please try again later...if problem persits contact admin", Color.Empty);
@@ -141,7 +139,7 @@ namespace CTBWebsite
 
         private bool doesntConflict(Date start, Date end)
         {
-            SqlDataReader reader = getReader("Select TimeOff.[Start], TimeOff.[End] from TimeOff where Alna_num=@value1", Session["Alna_num"]);
+            getReader("Select TimeOff.[Start], TimeOff.[End] from TimeOff where Alna_num=@value1", Session["Alna_num"]);
             if (reader == null) return false;
             if (!reader.HasRows)
             {

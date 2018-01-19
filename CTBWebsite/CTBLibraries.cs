@@ -23,8 +23,6 @@ namespace CTBWebsite {
 	        Session["UserMessageText"] = s;
             if (c != Color.Empty)
                 Session["UserMessageColor"] = ColorTranslator.ToHtml(c);
-            
-            
 	    }
 
         //==========================================================
@@ -47,8 +45,15 @@ namespace CTBWebsite {
 
 	    public void killConnections()
 	    {
+	        reader.Close();
+	        reader.Dispose();
+            objConn.Close();
+        }
 
-	    }
+	    public void closeConnections()
+	    {
+	        reader.Close();
+        }
 
         public void redirectSafely(string path)
         {
@@ -64,13 +69,12 @@ namespace CTBWebsite {
 
         public void initDate()
         {
-
-            SqlDataReader reader = getReader("select top 1 Dates, ID from Dates order by ID DESC;");
+            getReader("select top 1 Dates, ID from Dates order by ID DESC;");
             if (reader == null) return;
             reader.Read();
             Date date = (Date)reader.GetValue(0);
             int id = (int)reader.GetValue(1);
-            reader.Close();
+            closeConnections();
             if (Date.Today > date.AddDays(6))
             {
                 date = date.AddDays(7);
@@ -79,14 +83,12 @@ namespace CTBWebsite {
 
                 string sqlDateString = date.Year + "-" + date.Month + "-" + date.Day;
                 executeVoidSQLQuery("insert into Dates (Dates.[Dates]) values (@value1)", sqlDateString);
-                reader = getReader("select top 1 ID, Dates from Dates order by ID desc");
-
-                if (reader == null) return;
+                getReader("select top 1 ID, Dates from Dates order by ID desc");
 
                 reader.Read();
                 Session["Date_ID"] = (int)reader.GetValue(0);
                 Session["Date"] = (Date)reader.GetValue(1);
-                reader.Close();
+                killConnections();
             }
             else
             {
@@ -100,18 +102,19 @@ namespace CTBWebsite {
             if(objConn.State == ConnectionState.Closed)
                 objConn.Open();
             SqlCommand cmd;
-            object returnVal;
+            object returnVal = null;
             switch (type)
             {
                 case SqlTypes.DataReader:
                     cmd = (SqlCommand) o;
                     cmd.Connection = objConn;
-                    returnVal = cmd.ExecuteReader();
+                    reader = cmd.ExecuteReader();
                     break;
                 case SqlTypes.VoidQuery:
                     cmd = (SqlCommand)o;
                     cmd.Connection = objConn;
                     returnVal = cmd.ExecuteNonQuery();
+                    objConn.Close();
                     break;
                 default:
                     object[] adapterAndDataSet = (object[])o;
@@ -120,10 +123,10 @@ namespace CTBWebsite {
                     DataSet objDataSet = (DataSet)adapterAndDataSet[1];
                     objAdapter.Fill(objDataSet);
                     returnVal = objDataSet;
+                    objConn.Close();
                     break;
             }
 
-         //   objConn.Close();
             return returnVal;
         }
 
@@ -206,28 +209,28 @@ namespace CTBWebsite {
         //==========================================================
         // Returns data reader
         //==========================================================
-	    public SqlDataReader getReader(string query)
+	    public void getReader(string query)
         {
             SqlCommand cmd = new SqlCommand(query);
-            return (SqlDataReader)sqlExecuter(cmd, SqlTypes.DataReader); ;
+            sqlExecuter(cmd, SqlTypes.DataReader);
         }
 
-        public SqlDataReader getReader(string query, object parameters) {
+        public void getReader(string query, object parameters) {
 			SqlCommand cmd = new SqlCommand(query);
 			if (parameters != null) {
 				cmd.Parameters.AddWithValue("@value1", parameters);
 			}
-			return (SqlDataReader)sqlExecuter(cmd, SqlTypes.DataReader); ;
+			sqlExecuter(cmd, SqlTypes.DataReader);
 		}
 
-		public SqlDataReader getReader(string query, object[] parameters) {
+		public void getReader(string query, object[] parameters) {
 			SqlCommand cmd = new SqlCommand(query);
 			int i = 1;
 			foreach (object o in parameters) {
 				cmd.Parameters.AddWithValue("@value" + i, o);
 				i++;
 			}
-			return (SqlDataReader)sqlExecuter(cmd, SqlTypes.DataReader);
+			sqlExecuter(cmd, SqlTypes.DataReader);
 		}
 	}
 
@@ -393,7 +396,7 @@ namespace CTBWebsite {
 				colAndRowTracker++;
 			}
 
-			int whatCol = 0, whatRow;
+			int whatCol, whatRow;
 			foreach (DataRow d in hoursData.Rows) {
 				int alna = (int)d[0];
 				if (!employeeHashTable.ContainsKey(alna))   //We skip full time employees since they will not appear in the Hashtable
@@ -473,7 +476,7 @@ namespace CTBWebsite {
 			//1. First get Alna nums and names
 			List<int> temp_alna_nums = new List<int>();
 			List<string> temp_names = new List<string>();
-			SqlDataReader reader = getReader("select Alna_num, Name from Employees where Active=@value1 and Full_time!=@value1 order by Alna_num asc", true);
+			getReader("select Alna_num, Name from Employees where Active=@value1 and Full_time!=@value1 order by Alna_num asc", true);
 			while (reader.Read()) {
 				temp_alna_nums.Add(reader.GetInt32(0));
 				temp_names.Add(reader.GetString(1));
@@ -486,7 +489,7 @@ namespace CTBWebsite {
 			temp_alna_nums = new List<int>();
 			List<int> temp_timestart_list = new List<int>();
 			List<int> temp_timeend_list = new List<int>();
-			reader = getReader("select Alna_num, TimeStart, TimeEnd from Schedule where DayOfWeek=@value1 order by Alna_num asc", Session["weekday"]);
+			getReader("select Alna_num, TimeStart, TimeEnd from Schedule where DayOfWeek=@value1 order by Alna_num asc", Session["weekday"]);
 			while (reader.Read()) {
 				temp_alna_nums.Add(reader.GetInt32(0));
 				temp_timestart_list.Add(reader.GetInt16(1));
@@ -572,7 +575,6 @@ namespace CTBWebsite {
     {
         public enum Tables {Report, File, Image, Tool};
         protected static readonly string HOME = @"\\AHMARVIN\Engineering\Core EE\CTB\GM_BLE_PEPS_measurement result\DONT MOVE THIS FOLDER\";
-        protected static readonly string SERVER = Path.Combine(HOME, @"GAFMS\");
 
         protected void update(Tables table, object[] insertionData, int id)
         {
@@ -680,8 +682,6 @@ namespace CTBWebsite {
             // If the insertion succeeds and the write fails, we need to remove it from the database because the file already exists. This
             // requires that we delete the most recently inserted file.
             int id;
-          //  if (objConn.State == ConnectionState.Closed)
-          //      objConn.Open();
             try
             {
                 id = (int)executeVoidSQLQuery(insertionQuery, insertionData);
@@ -691,31 +691,24 @@ namespace CTBWebsite {
                 return;
             }
 
-         //   if (objConn.State == ConnectionState.Closed)
-         //       objConn.Open();
             try
             {
-
-                SqlDataReader reader = getReader(selectQuery, id);
-                if (reader.HasRows)
+                string fullPath = getPath(id, table);
+                string directory = Path.GetDirectoryName(fullPath);
+                if (!Directory.Exists(directory))
                 {
-                    reader.Read();
-                    string path = reader.GetString(0);
-                    string filename = reader.GetString(1);
-                    string extension = reader.GetString(2);
-                    reader.Close();
-
-                    string fullPath = Path.Combine(HOME, path);
-                    if (!Directory.Exists(fullPath))
-                        Directory.CreateDirectory(fullPath);
-
-                    uploader.SaveAs(Path.Combine(fullPath, filename + extension));
+                    Directory.CreateDirectory(directory);
                 }
+                uploader.SaveAs(fullPath);
             }
             catch (Exception ex)
             {
                 writeStackTrace("Error writing file", ex);
                 executeVoidSQLQuery(deleteQuery, id);
+            }
+            finally
+            {
+                killConnections();
             }
         }
 
@@ -753,15 +746,15 @@ namespace CTBWebsite {
                         break;
                 }
 
-                SqlDataReader reader = getReader(query, id);
+                getReader(query, id);
                 reader.Read();
                 string path = reader.GetString(0);
                 string filename = reader.GetString(1);
                 string extension = reader.GetString(2);
-                reader.Close();
-                return Path.Combine(HOME, path, filename + extension);
+                killConnections();
+                return Path.Combine(HOME, path, Path.ChangeExtension(filename, extension));
             }
-            catch (Exception ex)
+            catch
             {
                 promptAlertToUser("Error: Filepath is invalid...Contact admin", Color.Empty);
                 return null;

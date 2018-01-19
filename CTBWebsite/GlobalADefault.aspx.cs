@@ -244,23 +244,21 @@ namespace CTBWebsite
             ddlFileAuthor2.Items.Add(new ListItem("-- Select Author 2 --", "-2"));
             ddlFileAuthor2.Items.Add(new ListItem("N/A", "-1"));
 
-            
-            
-            SqlDataReader reader = getReader("SELECT * FROM Vehicles  WHERE Active=@value1 ORDER BY Name ASC", true);
+            getReader("SELECT * FROM Vehicles  WHERE Active=@value1 ORDER BY Name ASC", true);
             while (reader.Read())
             {
                 ddlFileVehicle.Items.Add(new ListItem(reader.GetString(1), reader.GetValue(0).ToString()));
             }
 
-            reader.Close();
-            reader = getReader("SELECT * FROM Phones  WHERE Active=@value1 ORDER BY Name ASC", true);
+            closeConnections();
+            getReader("SELECT * FROM Phones  WHERE Active=@value1 ORDER BY Name ASC", true);
             while (reader.Read())
             {
                 ddlFilePhone.Items.Add(new ListItem(reader.GetString(1), reader.GetValue(0).ToString()));
             }
 
-            reader.Close();
-            reader = getReader("SELECT * FROM Employees  WHERE Active=@value1 ORDER BY Name ASC", true);
+            closeConnections();
+            getReader("SELECT * FROM Employees  WHERE Active=@value1 ORDER BY Name ASC", true);
             while (reader.Read())
             {
                 string id = reader.GetValue(0).ToString();
@@ -269,9 +267,7 @@ namespace CTBWebsite
                 ddlFileAuthor2.Items.Add(new ListItem(name, id));
             }
 
-            reader.Close();
-            reader.Dispose();
-
+            killConnections();
         }
 
         public void LoadDD()
@@ -282,7 +278,7 @@ namespace CTBWebsite
             ddlVehicleReportFilter.Items.Add(new ListItem("-- Vehicle Filter --", "-1"));
             ddlFileVehicleFilter.Items.Add(new ListItem("-- Vehicle Filter --", "-1"));
             ddlImageVehicleFilter.Items.Add(new ListItem("-- Vehicle Filter --", "-1"));
-            SqlDataReader reader = getReader("SELECT * FROM Vehicles WHERE Active=@value1 ORDER BY Name ASC", true);
+            getReader("SELECT * FROM Vehicles WHERE Active=@value1 ORDER BY Name ASC", true);
             string id;
             string name;
             while (reader.Read())
@@ -300,7 +296,7 @@ namespace CTBWebsite
             ddlFilePhoneFilter.Items.Clear();
             ddlPhoneReportFilter.Items.Add(new ListItem("-- Phone Filter --", "-1"));
             ddlFilePhoneFilter.Items.Add(new ListItem("-- Phone Filter --", "-1"));
-            reader = getReader("SELECT * FROM Phones WHERE Active=@value1 ORDER BY Name ASC", true);
+            getReader("SELECT * FROM Phones WHERE Active=@value1 ORDER BY Name ASC", true);
             while (reader.Read())
             {
                 id = reader.GetValue(0).ToString();
@@ -317,7 +313,7 @@ namespace CTBWebsite
             ddlEmployeeReportFilter.Items.Add(new ListItem("-- Author Filter --", "-1"));
             ddlFileAuthorFilter.Items.Add(new ListItem("-- Author Filter --", "-1"));
             ddlImageAuthorFilter.Items.Add(new ListItem("-- Author Filter --", "-1"));
-            reader = getReader("SELECT * FROM Employees  WHERE Active=@value1 ORDER BY Name ASC", true);
+            getReader("SELECT * FROM Employees  WHERE Active=@value1 ORDER BY Name ASC", true);
             while (reader.Read())
             {
                 id = reader.GetValue(0).ToString();
@@ -335,7 +331,7 @@ namespace CTBWebsite
         {
             ddlImageVehicle.Items.Clear();
             ddlImageVehicle.Items.Add(new ListItem("-- Select a Vehicle --", "-1"));
-            SqlDataReader reader = getReader("SELECT * FROM Vehicles  WHERE Active=@value1 ORDER BY Name ASC", true);
+            getReader("SELECT * FROM Vehicles  WHERE Active=@value1 ORDER BY Name ASC", true);
             while (reader.Read())
             {
                 ddlImageVehicle.Items.Add(new ListItem(reader.GetString(1), reader.GetValue(0).ToString()));
@@ -479,7 +475,7 @@ namespace CTBWebsite
                     rfuDiv.Style.Add("display", "none");
                     rfuHasFile.Style.Add("display", "block");
 
-                    SqlDataReader reader = getReader("select * from Report where ID=@value1", int.Parse(id));
+                    getReader("select * from Report where ID=@value1", int.Parse(id));
                     if (reader.HasRows)
                     {
                         reader.Read();
@@ -537,7 +533,7 @@ namespace CTBWebsite
                     ffuDiv.Style.Add("display", "none");
                     ffuHasFile.Style.Add("display", "block");
 
-                    SqlDataReader reader = getReader("select * from GA_File where ID=@value1", int.Parse(id));
+                    getReader("select * from GA_File where ID=@value1", int.Parse(id));
                     if (reader.HasRows)
                     {
                         reader.Read();
@@ -581,7 +577,7 @@ namespace CTBWebsite
                     ifuDiv.Style.Add("display", "none");
                     ifuHasFile.Style.Add("display", "block");
 
-                    SqlDataReader reader = getReader("select * from Pictures where ID=@value1", int.Parse(id));
+                    getReader("select * from Pictures where ID=@value1", int.Parse(id));
                     if (reader.HasRows)
                     {
                         reader.Read();
@@ -670,7 +666,7 @@ namespace CTBWebsite
                 tfuHasFile.Style.Add("display", "block");
 
 
-                SqlDataReader reader = getReader("select * from Tools where ID=@value1", int.Parse(id));
+                getReader("select * from Tools where ID=@value1", int.Parse(id));
                 if (reader.HasRows)
                 {
                     reader.Read();
@@ -794,21 +790,21 @@ namespace CTBWebsite
             ddlAuthor2.Items.Add(new ListItem("-- Select Author 2 --", "-2"));
             ddlAuthor2.Items.Add(new ListItem("N/A", "-1"));
             
-            SqlDataReader reader = getReader("SELECT * FROM Vehicles  WHERE Active=@value1 ORDER BY Name ASC", true);
+            getReader("SELECT * FROM Vehicles  WHERE Active=@value1 ORDER BY Name ASC", true);
             while (reader.Read())
             {
                 ddlVehicles.Items.Add(new ListItem(reader.GetString(1), reader.GetValue(0).ToString()));
             }
 
             reader.Close();
-            reader = getReader("SELECT * FROM Phones  WHERE Active=@value1 ORDER BY Name ASC", true);
+            getReader("SELECT * FROM Phones  WHERE Active=@value1 ORDER BY Name ASC", true);
             while (reader.Read())
             {
                 ddlPhones.Items.Add(new ListItem(reader.GetString(1), reader.GetValue(0).ToString()));
             }
 
             reader.Close();
-            reader = getReader("SELECT * FROM Employees WHERE Active=@value1 ORDER BY Name ASC", true);
+            getReader("SELECT * FROM Employees WHERE Active=@value1 ORDER BY Name ASC", true);
             while (reader.Read())
             {
                 string id = reader.GetValue(0).ToString();
@@ -847,7 +843,7 @@ namespace CTBWebsite
                 //this throws an exception until there's a way to give user feedback
                 throw new ArgumentException("Comment is too long, database only accepts 255 or less");
             }
-            else if (((string)comment).Equals(""))
+            if (((string)comment).Equals(""))
             {
                 comment = DBNull.Value;
             }
@@ -1062,9 +1058,7 @@ namespace CTBWebsite
                 
                 object[] o = { int.Parse(ddlPhones.SelectedValue), int.Parse(ddlVehicles.SelectedValue) };
 
-                SqlDataReader reader =
-                    getReader(
-                        "SELECT * FROM GA_File WHERE Phone_ID=@value1 AND Vehicle_ID=@value2 ORDER BY Name ASC", o);
+                getReader("SELECT * FROM GA_File WHERE Phone_ID=@value1 AND Vehicle_ID=@value2 ORDER BY Name ASC", o);
                 int tdNumber;
                 while (reader.Read())
                 {

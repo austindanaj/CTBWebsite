@@ -69,12 +69,13 @@ namespace CTBWebsite
                     Response.Cookies["userName"].Value = userName;
                     Response.Cookies["userName"].Expires = DateTime.Now.AddDays(10);
              
-                    SqlDataReader reader = sql.getReader("Select Alna_num, Name, Full_time, Vehicle from Employees where Employees.[Name]=@value1;", Server.HtmlEncode(Request.Cookies["userName"].Value));
-                    reader.Read();
-                    Session["Alna_num"] = reader.GetValue(0);
-                    Session["Name"] = reader.GetValue(1);
-                    Session["Full_time"] = reader.GetValue(2);
-                    Session["Vehicle"] = reader.GetValue(3);
+                    sql.getReader("Select Alna_num, Name, Full_time, Vehicle from Employees where Employees.[Name]=@value1;", Server.HtmlEncode(Request.Cookies["userName"].Value));
+                    sql.reader.Read();
+                    Session["Alna_num"] = sql.reader.GetValue(0);
+                    Session["Name"] = sql.reader.GetValue(1);
+                    Session["Full_time"] = sql.reader.GetValue(2);
+                    Session["Vehicle"] = sql.reader.GetValue(3);
+                    sql.killConnections();
                     Session["loginStatus"] = Session["Name"];
 
                     btnLogin.Visible = false;
@@ -87,12 +88,13 @@ namespace CTBWebsite
 
         private void loadEmployees()
         {
-            SqlDataReader reader = sql.getReader("SELECT Name FROM Employees where Active=@value1 Order By Name;", true);
+            sql.getReader("SELECT Name FROM Employees where Active=@value1 Order By Name;", true);
 
-            while (reader.Read())
+            while (sql.reader.Read())
             {
-                ddl.Items.Add(reader.GetString(0));
+                ddl.Items.Add(sql.reader.GetString(0));
             }
+            sql.killConnections();
         }
     
         protected void Open_Login(Object sender, EventArgs e)
@@ -151,33 +153,27 @@ namespace CTBWebsite
             try
             {
                 object[] o = { inputUsername.Value, inputPassword.Value };
-                SqlDataReader reader = sql.getReader("SELECT User, Admin FROM Accounts WHERE Accounts.[User]=@value1 and Accounts.[Pass]=@value2", o);
-                if (reader == null)
-                {
-                    sql.promptAlertToUser("Error: Cannot access database, please contact admin", Color.Empty);
-                    sql.redirectSafely("~/");
-                    return;
-                }
-                if (!reader.HasRows)
+                sql.getReader("SELECT User, Admin FROM Accounts WHERE Accounts.[User]=@value1 and Accounts.[Pass]=@value2", o);
+                if (!sql.reader.HasRows)
                 {
                     sql.promptAlertToUser("Error: Incorrect username or password", Color.Empty);
                     sql.redirectSafely("~/");
-                    reader.Close();
+                    sql.killConnections();
                     return;
                 }
-                reader.Read();
-                Session["Admin"] = reader.GetBoolean(1);
-                reader.Close();
-                reader = sql.getReader("Select Alna_num, Name, Full_time, Vehicle from Employees where Employees.[Name]=@value1;", ddl.Text);
-                reader.Read();
-                Session["Alna_num"] = reader.GetValue(0);
-                Session["Name"] = reader.GetValue(1);
-                Session["Full_time"] = reader.GetValue(2);
-                Session["Vehicle"] = reader.GetValue(3);
+                sql.reader.Read();
+                Session["Admin"] = sql.reader.GetBoolean(1);
+                
+                sql.getReader("Select Alna_num, Name, Full_time, Vehicle from Employees where Employees.[Name]=@value1;", ddl.Text);
+                sql.closeConnections();
+                Session["Alna_num"] = sql.reader.GetValue(0);
+                Session["Name"] = sql.reader.GetValue(1);
+                Session["Full_time"] = sql.reader.GetValue(2);
+                Session["Vehicle"] = sql.reader.GetValue(3);
                 Session["loginStatus"] = Session["Name"];
 
                 HttpCookie aCookie = new HttpCookie("userName");
-                aCookie.Value = reader.GetValue(1).ToString();
+                aCookie.Value = sql.reader.GetValue(1).ToString();
                 aCookie.Expires = DateTime.Now.AddDays(10);
                 Response.Cookies.Add(aCookie);
                 sql.redirectSafely("~/");

@@ -157,7 +157,7 @@ namespace CTBWebsite
                 }
                 Session["Date"] = selection;
           
-                SqlDataReader reader = getReader("select ID from Dates where Dates=@value1", selection);
+                getReader("select ID from Dates where Dates=@value1", selection);
                 reader.Read();
                 Session["Date_ID"] = (int)reader.GetValue(0);
                 reader.Close();
@@ -246,7 +246,7 @@ namespace CTBWebsite
             {
               //  objConn.Open();
                 object[] o = { Session["Alna_num"], projectOrVehicle, Session["Date_ID"] };
-                SqlDataReader reader = getReader(readerQuery, o);
+                getReader(readerQuery, o);
                 if (reader == null) return false;
 
                 if (reader.HasRows)

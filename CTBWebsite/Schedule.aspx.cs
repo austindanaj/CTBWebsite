@@ -21,10 +21,8 @@ namespace CTBWebsite
          
             if (!IsPostBack)
             {
-         
                 populateInternSchedules(dgvSchedule, ddlSelectScheduleDay);
                 populateScheduledHoursDdl();
-               
             }
         }
 
@@ -33,18 +31,13 @@ namespace CTBWebsite
             ddlScheduledHours.Items.Clear();
 
             object[] o = { Session["Alna_num"], Session["weekday"] };
-            SqlDataReader reader = getReader("select ID, TimeStart, TimeEnd from Schedule where Alna_num=@value1 and DayOfWeek=@value2", o);
-            if (!reader.HasRows)            {
-               
-                reader.Close();
-                return;
-            }
+            getReader("select ID, TimeStart, TimeEnd from Schedule where Alna_num=@value1 and DayOfWeek=@value2", o);
 
             while (reader.Read())
             {
                 ddlScheduledHours.Items.Add("ID#" + reader.GetInt32(0) + ">" + military_to_standard(reader.GetInt16(1)) + " - " + military_to_standard(reader.GetInt16(2)));
             }
-            reader.Close();
+            killConnections();
         }
 
         //----------------------------------------------------------------
@@ -143,7 +136,7 @@ namespace CTBWebsite
                 }
               
                 object[] obj = { Session["Alna_num"], ddlDay.SelectedIndex + 1 };
-                SqlDataReader reader = getReader("select TimeStart, TimeEnd from Schedule where Alna_num=@value1 and DayOfWeek=@value2", obj);
+                getReader("select TimeStart, TimeEnd from Schedule where Alna_num=@value1 and DayOfWeek=@value2", obj);
                 while (reader.Read())
                 {
                     int compareStart = reader.GetInt16(0), compareEnd = reader.GetInt16(1);
@@ -156,7 +149,7 @@ namespace CTBWebsite
                         return;
                     }
                 }
-                reader.Close();
+                killConnections();
 
                 obj = new object[] { Session["Alna_num"], start, end, ddlDay.SelectedIndex + 1 };
                 executeVoidSQLQuery("insert into Schedule (Alna_num, TimeStart, TimeEnd, DayOfWeek) values (@value1, @value2, @value3, @value4)", obj);
