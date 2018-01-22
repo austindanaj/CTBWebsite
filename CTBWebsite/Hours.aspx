@@ -167,36 +167,22 @@
     </section>
     <!--/#main-slider-->
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     <!--/#feature-->
     <section id="middle">
         <div class="clients-area center wow fadeInDown">
 
             <asp:UpdatePanel runat="server" ID="udpTables" ChildrenAsTriggers="True">
                 <ContentTemplate>
-                    <div class="center wow fadeInDown animated">
-                        <asp:GridView ID="dgvProject" runat="server" ForeColor="WhiteSmoke" HeaderStyle-VerticalAlign="Middle" HeaderStyle-HorizontalAlign="Center" RowStyle-VerticalAlign="Middle" RowStyle-HorizontalAlign="Center" AllowPaging="true" PageSize="30" OnPageIndexChanging="dgvProject_PageIndexChanged" CssClass="table table-bordered table-hover table-responsive"
-                            OnRowDataBound="color" />
-                    </div>
-                    <div class="center wow fadeInDown animated">
-                        <asp:GridView ID="dgvCars" runat="server" ForeColor="WhiteSmoke" HeaderStyle-VerticalAlign="Middle" HeaderStyle-HorizontalAlign="Center" RowStyle-VerticalAlign="Middle" RowStyle-HorizontalAlign="Center" CssClass="table table-bordered table-hover table-responsive"
-                                      hidden="true" />
+                  
+                  
+                        <div class="center wow fadeInDown animated" style="overflow: auto">
+                            <asp:GridView ID="dgvProject" runat="server" ForeColor="WhiteSmoke" style="min-width: 1475px" HeaderStyle-VerticalAlign="Middle" HeaderStyle-HorizontalAlign="Center" RowStyle-VerticalAlign="Middle" RowStyle-HorizontalAlign="Center" AllowPaging="true" PageSize="30" OnPageIndexChanging="dgvProject_PageIndexChanged" CssClass="table table-bordered table-hover table-responsive"
+                                          OnRowDataBound="color" />
+                            <asp:GridView ID="dgvCars" runat="server" ForeColor="WhiteSmoke" style="min-width: 1475px" HeaderStyle-VerticalAlign="Middle" HeaderStyle-HorizontalAlign="Center" RowStyle-VerticalAlign="Middle" RowStyle-HorizontalAlign="Center" CssClass="table table-bordered table-hover table-responsive"
+                                          hidden="true" />
+                        </div>
+              
+                 
 
                     </div>
                 </ContentTemplate>
@@ -209,7 +195,16 @@
 
     <script type="text/javascript">
 
-   
+        $(function () {
+            $(".wrapper1").scroll(function () {
+                $(".wrapper2")
+                    .scrollLeft($(".wrapper1").scrollLeft());
+            });
+            $(".wrapper2").scroll(function () {
+                $(".wrapper1")
+                    .scrollLeft($(".wrapper2").scrollLeft());
+            });
+        });
 
         function ChangeView() {
 

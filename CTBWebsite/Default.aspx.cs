@@ -74,6 +74,8 @@ namespace CTBWebsite
 
             prgTOff.Style.Add("width", "" + (100 * Math.Round(projectHours[1], 2)) + "%");
             spanTOff.InnerText = (100 * Math.Round(projectHours[1], 2)) + "%";
+
+            lblTotalHours.InnerText = $"Out of: {totalHours} Hours";
         }
 
         private void populateDaysOffTable()
@@ -96,6 +98,7 @@ namespace CTBWebsite
             {
                 throw new Exception("We forgot to add some functionality to check the date, remind us to do that. Your date was bad, put in a valid one and it'll work");
             }
+           
 
             HoursPage h = new HoursPage();
             DataTable projectDataTable = h.getProjectHours(date, true, true);
@@ -160,10 +163,8 @@ namespace CTBWebsite
         protected void changeScheduleDay(object sender, EventArgs e)
         {
             Session["weekday"] = ddlSelectScheduleDay.SelectedIndex + 1;
-            
-          //  objConn.Open();
             populateInternSchedules(dgvSchedule, ddlSelectScheduleDay);
-           // objConn.Close();
+        
         }
 
         protected void dgvOffThisWeek_PageIndexChanged(object sender, GridViewPageEventArgs e)

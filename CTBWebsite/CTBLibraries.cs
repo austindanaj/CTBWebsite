@@ -337,31 +337,20 @@ namespace CTBWebsite {
 			}
 
 
-		
-			DataTable employeesData;
-			DataTable modelData;
+		    DataTable modelData;
+		    object[] o = {DBNull.Value, DBNull.Value };
 
-			if (isActive) {
-				if (isProjectHours) {
-					modelData = getDataTable("select Project_ID, Abbreviation from Projects where Active=@value1 order by Projects.PriorityOrder", true);
-					employeesData = getDataTable("select Alna_num, Name, Full_time from Employees where Active=@value1 Order By Name", true);
-				}
-				else {
-					employeesData = getDataTable("select Alna_num, Name, Full_time from Employees where Active=@value1 and Vehicle=@value1 Order By Name", true);
-					modelData = getDataTable("select ID, Abbreviation from Vehicles where Active=@value1", true);
-				}
-			}
-			else {
-				if (isProjectHours) {
-					modelData = getDataTable("select Project_ID, Abbreviation from Projects order by Projects.PriorityOrder");
-					employeesData = getDataTable("select Alna_num, Name, Full_time from Employees Order By Name");
-				}
-				else {
-					modelData = getDataTable("select ID, Abbreviation from Vehicles");
-					employeesData = getDataTable("select Alna_num, Name, Full_time from Employees where Vehicle=@value1 Order By Name", true);
-				}
-			}
-
+		    if (isActive)
+		        o[0] = true;
+		    if (isProjectHours)
+		        modelData = getDataTable("SELECT Project_ID, Abbreviation FROM Projects WHERE (Active=@value1 OR @value1 IS NULL) ORDER BY Projects.PriorityOrder", o[0]);
+		    else
+		    {
+		        o[1] = true;
+		        modelData = getDataTable("SELECT ID, Abbreviation FROM Vehicles WHERE (Active=@value1 OR @value1 IS NULL)", o[0]);
+		    }
+		    var employeesData = getDataTable("SELECT Alna_num, Name, Full_time FROM Employees WHERE (Active=@value1 OR @value1 IS NULL) AND (Vehicle=@value2 OR @value2 IS NULL) Order By Name", o);
+            
 			DataTable hoursData = getDataTable("select Alna_num, " + innerID + ", Hours_worked from " + hoursTable + " where Date_ID=" + constraint, date);
 			//if (state) objConn.Close();
 
@@ -585,7 +574,7 @@ namespace CTBWebsite {
             switch (table)
             {
                 case Tables.File:
-                    updateQuery = "exec @ReturnVal = Update_File @value1, @value2, @value3, @value4, @value5, @value6, @value7, @value8, @value9, @value10";
+                    updateQuery = "exec @ReturnVal = Update_File @value1, @value2, @value3, @value4, @value5, @value6, @value7, @value8, @value9";
                     break;
                 case Tables.Report:
                     updateQuery = "exec @ReturnVal = Update_Report @value1, @value2, @value3, @value4, @value5, @value6, @value7, @value8, @value9, @value10, @value11, @value12, @value13";

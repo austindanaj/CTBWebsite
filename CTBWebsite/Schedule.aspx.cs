@@ -35,7 +35,7 @@ namespace CTBWebsite
 
             while (reader.Read())
             {
-                ddlScheduledHours.Items.Add("ID#" + reader.GetInt32(0) + ">" + military_to_standard(reader.GetInt16(1)) + " - " + military_to_standard(reader.GetInt16(2)));
+                ddlScheduledHours.Items.Add(new ListItem(military_to_standard(reader.GetInt16(1)) + " - " + military_to_standard(reader.GetInt16(2)), reader.GetInt32(0).ToString()));   
             }
             killConnections();
         }
@@ -159,7 +159,7 @@ namespace CTBWebsite
             }
             else
             {
-                string string_id = ddlScheduledHours.SelectedValue.Substring(3, ddlScheduledHours.SelectedValue.IndexOf(">") - ddlScheduledHours.SelectedValue.IndexOf("#") - 1);
+                string string_id = ddlScheduledHours.SelectedValue;
                 if (!int.TryParse(string_id, out int id))
                 {
                     promptAlertToUser("Error: Something was wrong with the dropdown selection. It wasn't an integer...contact admin", Color.Empty);

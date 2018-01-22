@@ -33,21 +33,19 @@ namespace CTBWebsite
 
         protected void User_Clicked(object sender, EventArgs e)
         {
-            if (string.IsNullOrEmpty(txtName.Text))
-            {
-                throw new ArgumentException("Error: name blank! Please fill in all fields!");
-            }
-
             if (!int.TryParse(txtAlna.Text, out int alna))
             {
-                new ArgumentException("Alna number is not a number");
+                promptAlertToUser("Input is not a number", Color.DarkGoldenrod);
+                redirectSafely("~/Admin");
                 return;
             }
 
             string text = txtName.Text;
             if (!Regex.IsMatch(text, @"[A-z]+ [A-z]+"))
             {
-                throw new ArgumentException("The name you entered makes no sense. Only letters and one space are allowed");
+                promptAlertToUser("Name may only contain letters", Color.DarkGoldenrod);
+                redirectSafely("~/Admin");
+                return;
             }
 
             object[] o = { alna, txtName.Text, !chkPartTime.Checked, chkUseVehicle.Checked | chkPartTime.Checked };
@@ -97,13 +95,11 @@ namespace CTBWebsite
             if (string.IsNullOrEmpty(text) | string.IsNullOrEmpty(txtCarAbbreviation.Text))
             {
                 promptAlertToUser("Car needs a name and an abbreviation", Color.DarkGoldenrod);
-                // throwJSAlert("Car needs a name and an abbreviation");
                 redirectSafely("~/Admin");
                 return;
             }
 
             executeVoidSQLQuery("INSERT INTO Vehicles (Name, Abbreviation) VALUES (@value1, @value2);", new object[] { text.Replace(" ", "_"), txtCarAbbreviation.Text });
-          //  Session["success?"] = true;
             promptAlertToUser("Success", Color.ForestGreen);
             redirectSafely("~/Admin");
         }
@@ -124,13 +120,8 @@ namespace CTBWebsite
             }
             else if (sender.Equals(btnRemoveProject))
             {
-                command = "Update Projects set Active=@value1 WHERE ID=@value2;";
+                command = "Update Projects set Active=@value1 WHERE Project_ID=@value2;";
                 text = txtRemoveProject.Text;
-            }
-            else if (sender.Equals(btnRemoveIssue))
-            {
-                command = "update IssueList set Active=@value1 where ID=@value2;";
-                text = txtRemoveIssue.Text;
             }
             else
             {
@@ -141,8 +132,7 @@ namespace CTBWebsite
             if (!int.TryParse(text, out int id))
             {
                 promptAlertToUser("Not an integer!", Color.Empty);
-                redirectSafely("~/Admin");
-                //throwJSAlert("Not an integer!");
+                redirectSafely("~/Admin");    
                 return;
             }
             object[] args = { false, id };
@@ -172,9 +162,6 @@ namespace CTBWebsite
             populate(parameters);
             parameters[0] = "SELECT Project_ID, Name, Category FROM Projects where Active=@value1;";
             parameters[1] = dgvProjects;
-            populate(parameters);
-            parameters[0] = "select IssueList.ID, IssueList.Title, e.Name as Employee from IssueList inner join Employees e on e.Alna_num=IssueList.Reporter where IssueList.Active=@value1;";
-            parameters[1] = dgvIssues;
             populate(parameters);
         }
     }
