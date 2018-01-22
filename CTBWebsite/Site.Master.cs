@@ -160,16 +160,14 @@ namespace CTBWebsite
                 sql.getReader("SELECT User, Admin FROM Accounts WHERE Accounts.[User]=@value1 and Accounts.[Pass]=@value2", o);
                 if (!sql.reader.HasRows)
                 {
-                    sql.promptAlertToUser("Error: Incorrect username or password", Color.Empty);
-                    sql.redirectSafely("~/");
                     sql.killConnections();
+                    sql.promptAlertToUser("Error: Incorrect username or password");
                     return;
                 }
                 sql.reader.Read();
                 Session["Admin"] = sql.reader.GetBoolean(1);
                 
                 sql.getReader("Select Alna_num, Name, Full_time, Vehicle from Employees where Employees.[Name]=@value1;", ddl.Text);
-                sql.closeConnections();
                 Session["Alna_num"] = sql.reader.GetValue(0);
                 Session["Name"] = sql.reader.GetValue(1);
                 Session["Full_time"] = sql.reader.GetValue(2);
@@ -180,13 +178,13 @@ namespace CTBWebsite
                 aCookie.Value = sql.reader.GetValue(1).ToString();
                 aCookie.Expires = DateTime.Now.AddDays(10);
                 Response.Cookies.Add(aCookie);
+                sql.killConnections();
                 sql.redirectSafely("~/");
             }
             catch (Exception ex)
             {
-                sql.promptAlertToUser("Error: Cannot login at the time please try again later...If problem persits, please contact admin", Color.Empty);
                 writeStackTrace("Login", ex);
-                sql.redirectSafely("~/");
+                sql.promptAlertToUser("Error: Cannot login at the time please try again later...If problem persits, please contact admin");
             }
         }
         private void writeStackTrace(string s, Exception ex)

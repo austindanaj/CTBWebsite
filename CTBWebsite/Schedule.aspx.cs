@@ -1,10 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using System.Web.UI;
-using System.Web.UI.WebControls;
-using System.Data.SqlClient;
 using System.Drawing;
 
 namespace CTBWebsite
@@ -96,8 +90,6 @@ namespace CTBWebsite
                 if (temp == -1)
                 {
                     promptAlertToUser("Start time is not a correct time format", Color.DarkGoldenrod);
-                    //  throwJSAlert("Start time is not a correct time format");
-                    redirectSafely("~/Schedule");
                     return;
                 }
                 int start = temp;
@@ -105,8 +97,6 @@ namespace CTBWebsite
                 if (temp == -1)
                 {
                     promptAlertToUser("End time is not a correct time format", Color.DarkGoldenrod);
-                    //   throwJSAlert("End time is not a correct time format");
-                    redirectSafely("~/Schedule");
                     return;
                 }
                 int end = temp;
@@ -114,24 +104,18 @@ namespace CTBWebsite
                 if (start >= end)
                 {
                     promptAlertToUser("End time cannot be before start time", Color.DarkGoldenrod);
-                    //  throwJSAlert("You cant work impossible hours...");
-                    redirectSafely("~/Schedule");
                     return;
                 }
 
                 if (start + 100 > end)
                 {
                     promptAlertToUser("You should schedule yourself for over an hour at least", Color.DarkGoldenrod);
-                    //  throwJSAlert("You should schedule yourself for over an hour at least");
-                    redirectSafely("~/Schedule");
                     return;
                 }
 
                 if (start < 600 | end > 1900)
                 {
                     promptAlertToUser("You are starting too early or ending too late. Earliest start is 6am, latest time you can be here is 7pm.", Color.DarkGoldenrod);
-                    //    throwJSAlert("You are starting too early or ending too late. Earliest start is 6am, latest time you can be here is 7pm.");
-                    redirectSafely("~/Schedule");
                     return;
                 }
               
@@ -142,10 +126,8 @@ namespace CTBWebsite
                     int compareStart = reader.GetInt16(0), compareEnd = reader.GetInt16(1);
                     if ((compareStart <= start & compareEnd >= start) | (compareStart <= end & compareEnd >= end) | (compareStart >= start & end >= compareEnd))
                     {
-                        reader.Close();
-                        promptAlertToUser("Error: Time conflicts with your schedule", Color.Empty);
-                        // throwJSAlert("Conflicts with another schedule entry you have. Make sure that the day you want to add is selected in the dropdown, you may be adding it for Monday on accident.");
-                        redirectSafely("~/Schedule");
+                        killConnections();
+                        promptAlertToUser("Error: Time conflicts with your schedule");
                         return;
                     }
                 }
@@ -155,16 +137,13 @@ namespace CTBWebsite
                 executeVoidSQLQuery("insert into Schedule (Alna_num, TimeStart, TimeEnd, DayOfWeek) values (@value1, @value2, @value3, @value4)", obj);
                 promptAlertToUser("Successfully added new schedule entry", Color.DarkGreen);
              //   throwJSAlert("Successfully added new schedule entry");                
-                redirectSafely("~/Schedule");
             }
             else
             {
                 string string_id = ddlScheduledHours.SelectedValue.Substring(3, ddlScheduledHours.SelectedValue.IndexOf(">") - ddlScheduledHours.SelectedValue.IndexOf("#") - 1);
                 if (!int.TryParse(string_id, out int id))
                 {
-                    promptAlertToUser("Error: Something was wrong with the dropdown selection. It wasn't an integer...contact admin", Color.Empty);
-                    // throwJSAlert("Something was wrong with the dropdown selection. It wasn't an integer.");
-                    redirectSafely("~/Schedule");
+                    promptAlertToUser("Error: Something was wrong with the dropdown selection. It wasn't an integer...contact admin");
                     return;
                 }
              

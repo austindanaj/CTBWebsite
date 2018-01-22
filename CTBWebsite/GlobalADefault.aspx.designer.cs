@@ -625,6 +625,15 @@ namespace CTBWebsite {
         protected global::System.Web.UI.WebControls.TextBox txtReportComment;
         
         /// <summary>
+        /// chkReportActive control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.CheckBox chkReportActive;
+        
+        /// <summary>
         /// btnSubmitReport control.
         /// </summary>
         /// <remarks>
@@ -814,6 +823,15 @@ namespace CTBWebsite {
         protected global::System.Web.UI.WebControls.TextBox txtFileComment;
         
         /// <summary>
+        /// chkFileActive control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.CheckBox chkFileActive;
+        
+        /// <summary>
         /// UploadClicked control.
         /// </summary>
         /// <remarks>
@@ -931,6 +949,15 @@ namespace CTBWebsite {
         protected global::System.Web.UI.WebControls.TextBox txtImageComment;
         
         /// <summary>
+        /// chkImageActive control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.CheckBox chkImageActive;
+        
+        /// <summary>
         /// btnUploadImage control.
         /// </summary>
         /// <remarks>
@@ -1046,6 +1073,15 @@ namespace CTBWebsite {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.TextBox txtReleaseNotes;
+        
+        /// <summary>
+        /// chkToolActive control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.CheckBox chkToolActive;
         
         /// <summary>
         /// btnUploadTool control.

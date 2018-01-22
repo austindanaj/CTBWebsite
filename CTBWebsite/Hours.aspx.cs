@@ -3,7 +3,6 @@ using Date = System.DateTime;
 using System;
 using System.Web.UI.WebControls;
 using System.Data;
-using System.Collections;
 using System.Drawing;
 using System.IO;
 
@@ -18,14 +17,9 @@ namespace CTBWebsite
             
 			if (Session["Alna_num"] == null) {
 				redirectSafely("~/Default");
-				return;
+                promptAlertToUser("Need to be logged in to access Hours page", Color.DarkGoldenrod);
+			    return;
 			}
-            if (Session["PromptMessage"] == null)
-            {
-                
-            }
-
-           // openDBConnection();
 
             if (!IsPostBack)
             {
@@ -63,7 +57,7 @@ namespace CTBWebsite
          
             if (projectData == null || vehiclesData == null || projectHoursData == null || vehicleHoursData == null || datesData == null)
             {
-                throw new IOException("Problem accessing database; contact an admin");
+                promptAlertToUser("Problem accessing database; contact an admin");
             }
         }
 
@@ -203,7 +197,7 @@ namespace CTBWebsite
             {
               //  objConn.Open();
                 object[] o = { Session["Alna_num"], projectOrVehicle, Session["Date_ID"] };
-                SqlDataReader reader = getReader(readerQuery, o);
+                getReader(readerQuery, o);
                 if (reader == null)
                     return false;
 
@@ -226,7 +220,7 @@ namespace CTBWebsite
             }
             catch (Exception ex)
             {
-                promptAlertToUser("Error: Cannot connect to database, check network connection, or contact admin", Color.Empty);
+                promptAlertToUser("Error: Cannot connect to database, check network connection, or contact admin");
                 writeStackTrace("Hours Submit", ex);
                 return false;
             }

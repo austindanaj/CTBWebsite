@@ -13,16 +13,21 @@ namespace CTBWebsite {
 	public delegate void Lambda(object o);
 	public class SuperPage : Page {
 		//private readonly static string DEPLOYMENT_CONNECTION_STRING = "Server=(local);Database=CTBwebsite;User Id=admin;Password=alnatest;";
-		public  readonly static string LOCAL_TO_SERVER_CONNECTION_STRING = "Data Source=ahfreya;Initial Catalog=CTBwebsite;Integrated Security=False;User ID=Admin;Password=alnatest;Connect Timeout=30;Encrypt=False;TrustServerCertificate=True;ApplicationIntent=ReadWrite;MultiSubnetFailover=False";
+		public static readonly string LOCAL_TO_SERVER_CONNECTION_STRING = "Data Source=ahfreya;Initial Catalog=CTBwebsite;Integrated Security=False;User ID=Admin;Password=alnatest;Connect Timeout=30;Encrypt=False;TrustServerCertificate=True;ApplicationIntent=ReadWrite;MultiSubnetFailover=False";
 	    private SqlConnection objConn;
         private enum SqlTypes { DataTable, VoidQuery, DataReader };
 	    public SqlDataReader reader;
 
-	    public void promptAlertToUser(string s, Color c)
+	    public void promptAlertToUser(string s)
 	    {
 	        Session["UserMessageText"] = s;
-            if (c != Color.Empty)
-                Session["UserMessageColor"] = ColorTranslator.ToHtml(c);
+	        redirectSafely(HttpContext.Current.Request.RawUrl);
+	    }
+
+        public void promptAlertToUser(string s, Color c)
+	    {
+            Session["UserMessageColor"] = ColorTranslator.ToHtml(c);
+            promptAlertToUser(s);
 	    }
 
         //==========================================================
@@ -50,11 +55,6 @@ namespace CTBWebsite {
             objConn.Close();
         }
 
-	    public void closeConnections()
-	    {
-	        reader.Close();
-        }
-
         public void redirectSafely(string path)
         {
             try
@@ -74,7 +74,7 @@ namespace CTBWebsite {
             reader.Read();
             Date date = (Date)reader.GetValue(0);
             int id = (int)reader.GetValue(1);
-            closeConnections();
+            reader.Close();
             if (Date.Today > date.AddDays(6))
             {
                 date = date.AddDays(7);
@@ -140,15 +140,7 @@ namespace CTBWebsite {
             return cmd.Parameters["@ReturnVal"].Value;
         }
 
-        public object executeVoidSQLQuery(string command)
-        {
-
-            SqlCommand objCmd = new SqlCommand(command);
-          //  return sqlExecuter(objCmd, SqlTypes.VoidQuery);
-            return executeVoidSQLQuery(objCmd);
-        }
-
-        public object executeVoidSQLQuery(string command, object parameter)
+        public object executeVoidSQLQuery(string command, object parameter = null)
         {
             SqlCommand objCmd = new SqlCommand(command, this.objConn);
 
@@ -183,12 +175,7 @@ namespace CTBWebsite {
 	        return objDataSet.Tables[0];
         }
 
-	    public DataTable getDataTable(string command) {
-			SqlCommand cmd = new SqlCommand(command, objConn);
-	        return getDataTable(cmd);
-	    }
-
-        public DataTable getDataTable(string command, object parameter) {
+        public DataTable getDataTable(string command, object parameter = null) {
 			SqlCommand cmd = new SqlCommand(command, objConn);
 			if (null != parameter)
 				cmd.Parameters.AddWithValue("@value1", parameter);
@@ -209,13 +196,7 @@ namespace CTBWebsite {
         //==========================================================
         // Returns data reader
         //==========================================================
-	    public void getReader(string query)
-        {
-            SqlCommand cmd = new SqlCommand(query);
-            sqlExecuter(cmd, SqlTypes.DataReader);
-        }
-
-        public void getReader(string query, object parameters) {
+        public void getReader(string query, object parameters = null) {
 			SqlCommand cmd = new SqlCommand(query);
 			if (parameters != null) {
 				cmd.Parameters.AddWithValue("@value1", parameters);
@@ -606,7 +587,7 @@ namespace CTBWebsite {
             }
             catch (Exception e)
             {
-                promptAlertToUser("Error: Something went wrong...please contact admin", Color.Empty);
+                promptAlertToUser("Error: Something went wrong...please contact admin");
                 writeStackTrace("Error inserting into DB", e);
             }
             string newPath = getPath(id, table);
@@ -624,7 +605,7 @@ namespace CTBWebsite {
                     }
                     catch (Exception ex)
                     {
-                        promptAlertToUser("Error: Unable to move file...please contact admin", Color.Empty);
+                        promptAlertToUser("Error: Unable to move file...please contact admin");
                         writeStackTrace("Error moving file from: " + oldPath + " --- TO --- " + newPath, ex);
                     }
                 }
@@ -660,7 +641,7 @@ namespace CTBWebsite {
             }
             catch (Exception e)
             {
-                promptAlertToUser("Error: Something went wrong...please contact admin", Color.Empty);
+                promptAlertToUser("Error: Something went wrong...please contact admin");
                 writeStackTrace("Error updating into DB", e);
             }
           
@@ -702,7 +683,7 @@ namespace CTBWebsite {
                 id = (int)executeVoidSQLQuery(insertionQuery, insertionData);
             } catch (Exception e)
             {
-                promptAlertToUser("Error: Something went wrong...please contact admin", Color.Empty);
+                promptAlertToUser("Error: Something went wrong...please contact admin");
                 writeStackTrace("Error inserting into DB", e);
                 return;
             }
@@ -719,7 +700,7 @@ namespace CTBWebsite {
             }
             catch (Exception ex)
             {
-                promptAlertToUser("Error: Something went wrong...please contact admin", Color.Empty);
+                promptAlertToUser("Error: Something went wrong...please contact admin");
                 writeStackTrace("Error writing file", ex);
                 executeVoidSQLQuery(deleteQuery, id);
             }
@@ -735,7 +716,7 @@ namespace CTBWebsite {
 
             if (!File.Exists(filename))
             {
-                promptAlertToUser("Error: File doesn't exist", Color.Empty);
+                promptAlertToUser("Error: File doesn't exist");
               //  writeStackTrace("File doesnt exist", null);
             }
               
@@ -777,7 +758,7 @@ namespace CTBWebsite {
             }
             catch
             {
-                promptAlertToUser("Error: Filepath is invalid...please contact admin", Color.Empty);
+                promptAlertToUser("Error: Filepath is invalid...please contact admin");
                 return null;
             }
         }

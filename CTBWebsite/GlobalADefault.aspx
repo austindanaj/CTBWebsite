@@ -154,6 +154,7 @@
                                         PageSize="30"
                                         OnRowCommand="onRowCommand"
                                         AutoGenerateColumns="False"
+                                        OnPageIndexChanging="nextPage"
                                         CssClass="table table-bordered table-responsive">
                                         <Columns>
                                             <asp:TemplateField>
@@ -259,6 +260,12 @@
                                                         Text='<%# Eval("Comment") %>'></asp:Label>
                                                 </ItemTemplate>
                                             </asp:TemplateField>
+                                            <asp:TemplateField HeaderText="Active" SortExpression="Active">
+                                                <ItemTemplate>
+                                                    <asp:Label runat="server"
+                                                        Text='<%# Eval("Active") %>'></asp:Label>
+                                                </ItemTemplate>
+                                            </asp:TemplateField>
                                         </Columns>
                                     </asp:GridView>
                                 </asp:Panel>
@@ -325,6 +332,7 @@
                                         PageSize="30"
                                         OnRowCommand="onRowCommand"
                                         AutoGenerateColumns="False"
+                                        OnPageIndexChanging="nextPage"
                                         CssClass="table table-bordered table-responsive">
                                         <Columns>
                                             <asp:TemplateField>
@@ -402,7 +410,12 @@
                                                         Text='<%# Eval("Comment") %>'></asp:Label>
                                                 </ItemTemplate>
                                             </asp:TemplateField>
-
+                                            <asp:TemplateField HeaderText="Active" SortExpression="Active">
+                                                <ItemTemplate>
+                                                    <asp:Label runat="server"
+                                                               Text='<%# Eval("Active") %>'></asp:Label>
+                                                </ItemTemplate>
+                                            </asp:TemplateField>
                                         </Columns>
                                     </asp:GridView>
                                 </asp:Panel>
@@ -457,6 +470,7 @@
                                         PageSize="30"
                                         OnRowCommand="onRowCommand"
                                         AutoGenerateColumns="False"
+                                        OnPageIndexChanging="nextPage"
                                         CssClass="table table-bordered table-responsive">
                                         <Columns>
                                             <asp:TemplateField>
@@ -518,7 +532,12 @@
                                                         Text='<%# Eval("Comment") %>'></asp:Label>
                                                 </ItemTemplate>
                                             </asp:TemplateField>
-
+                                            <asp:TemplateField HeaderText="Active" SortExpression="Active">
+                                                <ItemTemplate>
+                                                    <asp:Label runat="server"
+                                                               Text='<%# Eval("Active") %>'></asp:Label>
+                                                </ItemTemplate>
+                                            </asp:TemplateField>
                                         </Columns>
                                     </asp:GridView>
                                 </asp:Panel>
@@ -832,6 +851,9 @@
                                 <asp:TextBox ID="txtReportComment" placeholder="Comment" runat="server" CssClass="form-control" Font-Size="Medium" Style="max-height: 200px; max-width: 100%;" Height="200px" TextMode="MultiLine"></asp:TextBox>
                             </div>
                             <div class="form-group">
+                                <asp:CheckBox runat="server" Text="Active" ID="chkReportActive" />
+                            </div>
+                            <div class="form-group">
                                 <asp:Button ID="btnSubmitReport" class="btn btn-lg btn-primary btn-block btn-signin" runat="server" OnClick="btnSubmitReport_OnClick" Text="Submit Report" type="submit" ValidationGroup="ReportGroup" />
                             </div>
                         </ContentTemplate>
@@ -994,11 +1016,12 @@
                                         <asp:TextBox ID="txtFileComment" placeholder="Comment" runat="server" Style="max-height: 200px; max-width: 100%;" Height="200px" CssClass="form-control" TextMode="MultiLine"></asp:TextBox>
                                     </div>
 
-
+                                    <div class="form-group">
+                                        <asp:CheckBox runat="server" Text="Active" ID="chkFileActive" />
+                                    </div>
                                     <div class="form-group">
                                         <asp:Button ID="UploadClicked" class="btn btn-lg btn-primary btn-block btn-signin" OnClick="btnSubmitFile_OnClick" runat="server" Text="Upload File" type="submit" ValidationGroup="UploadGroup" />
                                     </div>
-
                                 </ContentTemplate>
                                 <Triggers>
                                     <asp:PostBackTrigger ControlID="UploadClicked" />
@@ -1083,10 +1106,11 @@
                                 </div>
 
 
-                                <div class="row" style="padding-right: 15px; padding-left: 15px;">
-                                    <div class="form-group">
-                                        <asp:Button ID="btnUploadImage" OnClick="uploadImage" class="btn btn-lg btn-primary btn-block btn-signin" runat="server" Text="Upload Image" type="submit" ValidationGroup="ImageGroup" />
-                                    </div>
+                                <div class="form-group">
+                                    <asp:CheckBox runat="server" Text="Active" ID="chkImageActive" />
+                                </div>
+                                <div class="form-group">
+                                    <asp:Button ID="btnUploadImage" OnClick="uploadImage" class="btn btn-lg btn-primary btn-block btn-signin" runat="server" Text="Upload Image" type="submit" ValidationGroup="ImageGroup" />
                                 </div>
                             </ContentTemplate>
                             <Triggers>
@@ -1156,12 +1180,6 @@
                                         <asp:Label ID="lblTFU" runat="server" Style="font-size: 20px; font: bold;" Text="Testing" />
                                         <span onclick="clearfile(3)" style="color: #333333" class="close">&times;</span>
                                     </div>
-
-
-
-
-
-
                                 </div>
 
                                 <div class="row" style="padding-right: 15px; padding-left: 15px;">
@@ -1172,10 +1190,11 @@
                                 </div>
 
 
-                                <div class="row" style="padding-right: 15px; padding-left: 15px;">
-                                    <div class="form-group">
-                                        <asp:Button ID="btnUploadTool" ValidationGroup="ToolGroup" OnClick="btnUploadTool_Click" class="btn btn-lg btn-primary btn-block btn-signin" runat="server" Text="Add New Tool" type="submit" />
-                                    </div>
+                                <div class="form-group">
+                                    <asp:CheckBox runat="server" Text="Active" ID="chkToolActive" />
+                                </div>
+                                <div class="form-group">
+                                    <asp:Button ID="btnUploadTool" ValidationGroup="ToolGroup" OnClick="btnUploadTool_Click" class="btn btn-lg btn-primary btn-block btn-signin" runat="server" Text="Add New Tool" type="submit" />
                                 </div>
                             </ContentTemplate>
                             <Triggers>
@@ -1221,25 +1240,25 @@
                     document.getElementById('<%=rfuDiv.ClientID %>').innerHTML = document.getElementById('<%=rfuDiv.ClientID %>').innerHTML;
                     document.getElementById('<%=rfuHasFile.ClientID %>').style.display = 'none';
                     document.getElementById('<%=rfuDiv.ClientID %>').style.display = 'block';
-                
+
                     break;
                 case 1:
                     document.getElementById('<%=ffuDiv.ClientID %>').innerHTML = document.getElementById('<%=ffuDiv.ClientID %>').innerHTML;
                     document.getElementById('<%=ffuHasFile.ClientID %>').style.display = 'none';
                     document.getElementById('<%=ffuDiv.ClientID %>').style.display = 'block';
-                   
+
                     break;
                 case 2:
                     document.getElementById('<%=ifuDiv.ClientID %>').innerHTML = document.getElementById('<%=ifuDiv.ClientID %>').innerHTML;
                     document.getElementById('<%=ifuHasFile.ClientID %>').style.display = 'none';
                     document.getElementById('<%=ifuDiv.ClientID %>').style.display = 'block';
-                  
+
                     break;
                 case 3:
                     document.getElementById('<%=tfuDiv.ClientID %>').innerHTML = document.getElementById('<%=tfuDiv.ClientID %>').innerHTML;
                     document.getElementById('<%=tfuHasFile.ClientID %>').style.display = 'none';
                     document.getElementById('<%=tfuDiv.ClientID %>').style.display = 'block';
-                   
+
                     break;
 
 

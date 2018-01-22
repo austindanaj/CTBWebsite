@@ -35,26 +35,27 @@ namespace CTBWebsite
         {
             if (string.IsNullOrEmpty(txtName.Text))
             {
-                throw new ArgumentException("Error: name blank! Please fill in all fields!");
+                promptAlertToUser("Error: name blank! Please fill in all fields!");
+                return;
             }
 
             if (!int.TryParse(txtAlna.Text, out int alna))
             {
-                new ArgumentException("Alna number is not a number");
+                promptAlertToUser("Alna num isn't a number");
                 return;
             }
 
             string text = txtName.Text;
             if (!Regex.IsMatch(text, @"[A-z]+ [A-z]+"))
             {
-                throw new ArgumentException("The name you entered makes no sense. Only letters and one space are allowed");
+                promptAlertToUser("The name you entered makes no sense. Only letters and one space are allowed");
+                return;
             }
 
             object[] o = { alna, txtName.Text, !chkPartTime.Checked, chkUseVehicle.Checked | chkPartTime.Checked };
 
             executeVoidSQLQuery("INSERT INTO Employees (Alna_num, Name, Full_Time, Vehicle) VALUES (@value1, @value2, @value3, @value4);", o);
             promptAlertToUser("Success", Color.ForestGreen);
-            redirectSafely("~/Admin");
         }
 
         protected void Project_Clicked(object sender, EventArgs e)
@@ -88,7 +89,6 @@ namespace CTBWebsite
             executeVoidSQLQuery("INSERT INTO Projects (Name, Category, Abbreviation) VALUES (@value1, @value2, @value3);", parameters);
 
             promptAlertToUser("Success", Color.ForestGreen);
-            redirectSafely("~/Admin");
         }
 
         protected void Car_Clicked(object sender, EventArgs e)
@@ -97,15 +97,11 @@ namespace CTBWebsite
             if (string.IsNullOrEmpty(text) | string.IsNullOrEmpty(txtCarAbbreviation.Text))
             {
                 promptAlertToUser("Car needs a name and an abbreviation", Color.DarkGoldenrod);
-                // throwJSAlert("Car needs a name and an abbreviation");
-                redirectSafely("~/Admin");
                 return;
             }
 
             executeVoidSQLQuery("INSERT INTO Vehicles (Name, Abbreviation) VALUES (@value1, @value2);", new object[] { text.Replace(" ", "_"), txtCarAbbreviation.Text });
-          //  Session["success?"] = true;
             promptAlertToUser("Success", Color.ForestGreen);
-            redirectSafely("~/Admin");
         }
         protected void remove(object sender, EventArgs e)
         {
@@ -140,15 +136,12 @@ namespace CTBWebsite
 
             if (!int.TryParse(text, out int id))
             {
-                promptAlertToUser("Not an integer!", Color.Empty);
-                redirectSafely("~/Admin");
-                //throwJSAlert("Not an integer!");
+                promptAlertToUser("Not an integer!");
                 return;
             }
             object[] args = { false, id };
             executeVoidSQLQuery(command, args);
             promptAlertToUser("Success", Color.ForestGreen);
-            redirectSafely("~/Admin");
         }
 
         private void populateTables()
