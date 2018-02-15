@@ -151,11 +151,7 @@ namespace CTBWebsite
 
                 object[] o;
                 if (table.Equals("VehicleHours"))
-                {
-                    o = new [] { id, "BLE_Key_Pass_Global_A_Testing", Session["Alna_num"], Session["Date_ID"] };
-
-                    if (!(bool)Session["Full_time"])
-                        executeVoidSQLQuery("update ProjectHours set Hours_worked=Hours_worked-(select Hours_worked from VehicleHours where ID=@value1) where Proj_ID=(select Project_ID from Projects where Name=@value2) and Alna_num=@value3 and Date_ID=@value4", o);
+                {      
                     executeVoidSQLQuery("delete from VehicleHours where ID=@value1", id);
                 }
                 else

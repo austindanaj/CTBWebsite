@@ -830,7 +830,10 @@
                             <div class="row" style="padding-right: 15px; padding-left: 15px;" runat="server">
 
                                 <div class="form-group" id="rfuDiv" runat="server">
-                                    <input runat="server" onchange="setfile(0)" id="rfu" type="file" name="file" />
+                                    <label class="btn btn-block form-control" style="cursor: pointer;">
+                                        Browse...
+                                        <input runat="server" style="display: none" onchange="setfile(0)" id="rfu" type="file" />
+                                    </label>
                                     <asp:RequiredFieldValidator ID="RequiredFieldValidator22" ForeColor="Red"
                                         ControlToValidate="fileSelected"
                                         InitialValue=""
@@ -990,8 +993,10 @@
                                     <div class="row">
 
                                         <div class="form-group" style="padding-left: 15px; padding-right: 15px;" id="ffuDiv" runat="server">
-
-                                            <input runat="server" onchange="setfile(1)" id="ffu" type="file" name="file" />
+                                            <label class="btn btn-block form-control" style="cursor: pointer;">
+                                                Browse...
+                                            <input runat="server" style="display: none" onchange="setfile(1)" id="ffu" type="file" />
+                                            </label>
                                             <asp:RequiredFieldValidator ID="RequiredFieldValidator15" ForeColor="Red"
                                                 ControlToValidate="fileSelected"
                                                 InitialValue=""
@@ -1084,7 +1089,10 @@
 
                                 <div class="row" style="padding-right: 15px; padding-left: 15px;">
                                     <div class="form-group" id="ifuDiv" runat="server">
-                                        <input runat="server" onchange="setfile(2)" id="ifu" type="file" name="file" />
+                                        <label class="btn btn-block form-control" style="cursor: pointer;">
+                                            Browse...
+                                        <input runat="server" style="display: none" onchange="setfile(2)" id="ifu" type="file" name="file" />
+                                        </label>
                                         <asp:RequiredFieldValidator ID="RequiredFieldValidator25" ForeColor="Red"
                                             ControlToValidate="fileSelected"
                                             InitialValue=""
@@ -1167,7 +1175,10 @@
 
 
                                     <div class="form-group" id="tfuDiv" runat="server">
-                                        <input runat="server" onchange="setfile(3)" id="tfu" type="file" name="file" />
+                                        <label class="btn btn-block form-control" style="cursor: pointer;">
+                                        Browse...
+                                        <input runat="server" style="display: none" onchange="setfile(3)" id="tfu" type="file" name="file" />
+                                            </label>
                                         <asp:RequiredFieldValidator ID="RequiredFieldValidator26" ForeColor="Red"
                                             InitialValue=""
                                             ControlToValidate="fileSelected"
@@ -1233,6 +1244,7 @@
     </asp:UpdatePanel>
 
     <script type="text/javascript">
+
         function clearfile(tagID) {
             document.getElementById('<%=fileSelected.ClientID %>').value = '';
             switch (tagID) {
@@ -1273,27 +1285,27 @@
                 case 0:
                     document.getElementById('<%=lblRFU.ClientID %>').innerHTML = document.getElementById('<%=rfu.ClientID %>').files[0].name;
                     document.getElementById('<%=rfuHasFile.ClientID %>').style.display = 'block';
-                    document.getElementById('<%=rfuDiv.ClientID %>').style.display = 'none';
-                    document.getElementById('<%=fileSelected.ClientID %>').value = document.getElementById('<%=rfu.ClientID %>').files[0].name;
-                    break;
+                document.getElementById('<%=rfuDiv.ClientID %>').style.display = 'none';
+                document.getElementById('<%=fileSelected.ClientID %>').value = document.getElementById('<%=rfu.ClientID %>').files[0].name;
+                break;
                 case 1:
                     document.getElementById('<%=lblFFU.ClientID %>').innerHTML = document.getElementById('<%=ffu.ClientID %>').files[0].name;
                     document.getElementById('<%=ffuHasFile.ClientID %>').style.display = 'block';
-                    document.getElementById('<%=ffuDiv.ClientID %>').style.display = 'none';
-                    document.getElementById('<%=fileSelected.ClientID %>').value = document.getElementById('<%=ffu.ClientID %>').files[0].name;
-                    break;
-                case 2:
-                    document.getElementById('<%=lblIFU.ClientID %>').innerHTML = document.getElementById('<%=ifu.ClientID %>').files[0].name;
+                document.getElementById('<%=ffuDiv.ClientID %>').style.display = 'none';
+                document.getElementById('<%=fileSelected.ClientID %>').value = document.getElementById('<%=ffu.ClientID %>').files[0].name;
+                break;
+            case 2:
+                document.getElementById('<%=lblIFU.ClientID %>').innerHTML = document.getElementById('<%=ifu.ClientID %>').files[0].name;
                     document.getElementById('<%=ifuHasFile.ClientID %>').style.display = 'block';
-                    document.getElementById('<%=ifuDiv.ClientID %>').style.display = 'none';
-                    document.getElementById('<%=fileSelected.ClientID %>').value = document.getElementById('<%=ifu.ClientID %>').files[0].name;
-                    break;
-                case 3:
-                    document.getElementById('<%=lblTFU.ClientID %>').innerHTML = document.getElementById('<%=tfu.ClientID %>').files[0].name;
+                document.getElementById('<%=ifuDiv.ClientID %>').style.display = 'none';
+                document.getElementById('<%=fileSelected.ClientID %>').value = document.getElementById('<%=ifu.ClientID %>').files[0].name;
+                break;
+            case 3:
+                document.getElementById('<%=lblTFU.ClientID %>').innerHTML = document.getElementById('<%=tfu.ClientID %>').files[0].name;
                     document.getElementById('<%=tfuHasFile.ClientID %>').style.display = 'block';
-                    document.getElementById('<%=tfuDiv.ClientID %>').style.display = 'none';
-                    document.getElementById('<%=fileSelected.ClientID %>').value = document.getElementById('<%=tfu.ClientID %>').files[0].name;
-                    break;
+                document.getElementById('<%=tfuDiv.ClientID %>').style.display = 'none';
+                document.getElementById('<%=fileSelected.ClientID %>').value = document.getElementById('<%=tfu.ClientID %>').files[0].name;
+                break;
 
 
             }

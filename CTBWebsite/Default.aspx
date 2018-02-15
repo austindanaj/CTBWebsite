@@ -22,6 +22,7 @@
                                 <div class="col-sm-6">
                                     <div class="carousel-content">
                                         <h1>Project Hours</h1>
+                                        
                                         <div class="progress-wrap animation animated-item-1">
                                             <h3 style="color: #fff;">Advance Dev</h3>
                                             <br />
@@ -61,6 +62,9 @@
                                                     <span id="spanTOff" runat="server" class="bar-width">0%</span>
                                                 </div>
                                             </div>
+                                        </div>
+                                        <div class="progress-wrap animation animated-item-4">
+                                            <h3 runat="server" id="lblTotalHours">Out of: 0 Hours</h3>
                                         </div>
                                     </div>
                                 </div>
